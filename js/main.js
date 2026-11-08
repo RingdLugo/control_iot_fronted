@@ -107,9 +107,6 @@ function renderVehicle(vehicle) {
   $("#header-vehicle-id").textContent = String(vehicle.id_vehiculo).padStart(2, "0");
   $("#vehicle-controller").textContent = typeof vehicle.microcontrolador === "string" && vehicle.microcontrolador.trim()
     ? vehicle.microcontrolador : "Controlador IoT";
-  const model = typeof vehicle.modelo === "string" ? vehicle.modelo.trim() : "";
-  $("#vehicle-model").textContent = model;
-  $("#vehicle-model-chip").hidden = model.length === 0;
 }
 
 async function loadVehicle() {
@@ -444,22 +441,30 @@ let joysticks = [];
 
 async function initialize() {
   drawStatuses();
+  const setActiveView = (view) => {
+    const showDemo = view === "demo";
+    $("#control-view").hidden = showDemo;
+    $("#demo-view").hidden = !showDemo;
+    controlNavigation.querySelectorAll("[data-view-target]").forEach((button) => {
+      const active = button.dataset.viewTarget === view;
+      button.classList.toggle("is-current", active);
+      if (active) button.setAttribute("aria-current", "page");
+      else button.removeAttribute("aria-current");
+    });
+    menuToggle.setAttribute("aria-expanded", "false");
+    menuToggle.setAttribute("aria-label", "Abrir menú");
+    controlNavigation.dataset.open = "false";
+  };
+
   menuToggle.addEventListener("click", () => {
     const open = menuToggle.getAttribute("aria-expanded") !== "true";
     menuToggle.setAttribute("aria-expanded", String(open));
-    menuToggle.setAttribute("aria-label", open ? "Cerrar navegación" : "Abrir navegación");
+    menuToggle.setAttribute("aria-label", open ? "Cerrar menú" : "Abrir menú");
     controlNavigation.dataset.open = String(open);
   });
-  controlNavigation.querySelectorAll("a").forEach((link) => link.addEventListener("click", () => {
-    menuToggle.setAttribute("aria-expanded", "false");
-    menuToggle.setAttribute("aria-label", "Abrir navegación");
-    controlNavigation.dataset.open = "false";
-    controlNavigation.querySelectorAll("a").forEach((item) => {
-      item.classList.toggle("is-current", item === link);
-      if (item === link) item.setAttribute("aria-current", "page");
-      else item.removeAttribute("aria-current");
-    });
-  }));
+  controlNavigation.querySelectorAll("[data-view-target]").forEach((button) => {
+    button.addEventListener("click", () => setActiveView(button.dataset.viewTarget));
+  });
   connectWebSocket((value) => { state.websocket = value; drawStatuses(); }, handleSocketMessage);
   void refreshApiStatus();
   setInterval(() => { void refreshApiStatus(); }, APP_CONFIG.apiCheckIntervalMs);

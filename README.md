@@ -4,9 +4,9 @@ Frontend estático para la etapa de CONTROL del proyecto IoT. Se publica en GitH
 
 La interfaz usa una identidad pastel, celestial y pop inspirada en el diseño editorial de álbumes K-pop, sin reutilizar logotipos ni recursos de artistas. Es Mobile First, admite mouse, teclado y pantalla táctil, y presenta las acciones cargadas del catálogo real.
 
-La interfaz sigue la referencia del mando: un joystick principal, el catálogo de movimientos adicionales, DETENER prioritario y el selector de DEMO en la misma pantalla. Conserva una paleta pastel pop; no inventa movimientos 90°/360° cuando no existen en el catálogo del vehículo. El favicon SVG original mantiene la identidad visual y el pie conserva un marcador para el nombre completo del alumno.
+La vista inicial se concentra en el mando: joystick, cruceta direccional, DETENER prioritario y botones de acciones del catálogo. DEMO abre desde su opción de menú y no ocupa la pantalla del control. Conserva una paleta pastel pop; no inventa movimientos 90°/360° cuando no existen en el catálogo del vehículo. El favicon SVG original mantiene la identidad visual y el pie conserva un marcador para el nombre completo del alumno.
 
-En escritorio incluye navegación lateral para saltar entre Control, DEMO y conexión; en móvil, esas mismas anclas están en un menú compacto. La cruceta coloca DETENER al centro y los cuatro botones usan los IDs del catálogo consultado a la API.
+En escritorio incluye navegación lateral para Control y DEMO; en móvil, esas mismas vistas están en un menú compacto. Los tres indicadores de conexión permanecen en una franja compacta. La cruceta coloca DETENER al centro y los cuatro botones usan los IDs del catálogo consultado a la API.
 
 ## Estructura
 

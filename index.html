@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <meta name="theme-color" content="#fff7fc" />
     <meta name="description" content="Control táctil para el vehículo IoT." />
-    <title>Wish Ride · Control IoT</title>
+    <title>Control IoT · Wish Ride</title>
     <link rel="icon" type="image/svg+xml" href="./assets/favicon.svg" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -16,117 +16,105 @@
   <body>
     <div class="page-shell">
       <header class="topbar container-xl">
-        <a class="brand" href="./" aria-label="Wish Ride, inicio">
+        <a class="brand" href="./" aria-label="Wish Ride, Control IoT">
           <span class="brand-orbit" aria-hidden="true">✦</span>
           <span><strong>Control IoT</strong><small>WISH RIDE · VEHÍCULO <span id="header-vehicle-id">05</span></small></span>
         </a>
-        <button class="mobile-menu-button" id="menu-toggle" type="button" aria-expanded="false" aria-controls="control-navigation" aria-label="Abrir navegación">☰</button>
+        <button class="mobile-menu-button" id="menu-toggle" type="button" aria-expanded="false" aria-controls="control-navigation" aria-label="Abrir menú">☰</button>
       </header>
 
       <main class="container-xl app-main">
-        <section class="vehicle-banner" aria-labelledby="vehicle-title">
-          <div class="vehicle-copy">
-            <p class="eyebrow">TU VEHÍCULO</p>
-            <h1 id="vehicle-title"><span id="vehicle-name">Cargando vehículo…</span></h1>
-            <div class="vehicle-chips">
-              <span class="soft-chip"><span aria-hidden="true">✿</span> <span id="vehicle-id">Vehículo 05</span></span>
-              <span class="soft-chip"><span aria-hidden="true">⌁</span> <span id="vehicle-controller">ESP8266</span></span>
-              <span class="soft-chip model-chip" id="vehicle-model-chip" hidden><span aria-hidden="true">♡</span> <span id="vehicle-model"></span></span>
-            </div>
-          </div>
-          <div class="vehicle-art" aria-hidden="true"><span>🚜</span><i>✦</i><b>♡</b></div>
-        </section>
-
-        <section class="connect-panel" aria-label="Estado de conexión">
+        <section class="connection-strip" aria-label="Indicadores de servicio">
           <div class="status-grid" id="connection-status" aria-live="polite" aria-atomic="false">
-            <p class="status-loading">Comprobando conexiones…</p>
+            <p class="status-loading">Comprobando servicios…</p>
           </div>
-          <p class="status-footnote">WSS indica la conexión navegador-servidor, no la presencia del vehículo. API comprueba GET /; RDS queda «Sin verificar» si no hay diagnóstico disponible.</p>
+          <p class="status-footnote">WSS indica la conexión navegador-servidor, no al vehículo físico; API comprueba GET /; RDS queda sin verificar si no hay diagnóstico.</p>
         </section>
 
         <div class="workspace-grid">
-          <nav class="control-sidebar" id="control-navigation" aria-label="Secciones de Control IoT">
-            <a class="sidebar-link is-current" href="#drive-title" aria-current="page"><span aria-hidden="true">⌖</span> Control</a>
-            <a class="sidebar-link" href="#actions-title"><span aria-hidden="true">☷</span> DEMO</a>
-            <a class="sidebar-link" href="#connection-status"><span aria-hidden="true">◉</span> Conexión</a>
+          <nav class="control-sidebar" id="control-navigation" aria-label="Menú de Control IoT">
+            <button class="sidebar-link is-current" type="button" data-view-target="control" aria-current="page"><span aria-hidden="true">⌖</span> Control</button>
+            <button class="sidebar-link" type="button" data-view-target="demo"><span aria-hidden="true">☷</span> DEMO</button>
           </nav>
+
           <div class="workspace-content">
-          <div class="control-layout">
-          <section class="control-card drive-card" aria-labelledby="drive-title">
-            <div class="section-heading">
-              <div><p class="eyebrow">CONTROL EN TIEMPO REAL</p><h2 id="drive-title">Mando del vehículo <span>✦</span></h2></div>
-              <span class="heading-sticker" aria-hidden="true">♡</span>
-            </div>
-            <p class="section-hint">Arrastra el stick o usa los botones direccionales. Suelta el stick para solicitar DETENER.</p>
+            <section class="control-view" id="control-view" aria-labelledby="control-title">
+              <div class="section-heading controller-heading">
+                <div><p class="eyebrow">CONTROL EN TIEMPO REAL</p><h1 id="control-title">Mando del vehículo</h1></div>
+                <span class="heading-sticker" aria-hidden="true">♡</span>
+              </div>
 
-            <div class="controller-console" aria-label="Control de movimientos">
-              <div class="console-topline"><span class="console-logo">WISH RIDE <span aria-hidden="true">✦</span></span><span class="console-model">REMOTE · 05</span></div>
-              <div class="controller-main">
-                <section class="stick-unit" aria-labelledby="drive-stick-title">
-                  <h3 class="stick-title" id="drive-stick-title">DESPLAZAMIENTO</h3>
-                  <div class="joystick-wrap">
-                    <span class="joy-label joy-up" aria-hidden="true">▲</span>
-                    <span class="joy-label joy-left" aria-hidden="true">◀</span>
-                    <span class="joy-label joy-right" aria-hidden="true">▶</span>
-                    <span class="joy-label joy-down" aria-hidden="true">▼</span>
-                    <div class="joystick" id="joystick" role="group" tabindex="0" aria-disabled="true" aria-label="Joystick de desplazamiento. Usa flechas o WASD; suelta para solicitar DETENER.">
-                      <span class="joy-ring" aria-hidden="true"></span>
-                      <span class="joy-handle" id="joystick-handle" aria-hidden="true"><span>✦</span></span>
+              <div class="controller-console" aria-label="Control de movimientos">
+                <div class="console-topline">
+                  <span class="console-logo"><span id="vehicle-name">Vehículo IoT</span> <span aria-hidden="true">✦</span></span>
+                  <span class="console-model"><span id="vehicle-id">Vehículo 05</span> · <span id="vehicle-controller">ESP8266</span></span>
+                </div>
+
+                <div class="controller-main">
+                  <section class="stick-unit" aria-labelledby="drive-stick-title">
+                    <h2 class="stick-title" id="drive-stick-title">DESPLAZAMIENTO</h2>
+                    <div class="joystick-wrap">
+                      <span class="joy-label joy-up" aria-hidden="true">▲</span>
+                      <span class="joy-label joy-left" aria-hidden="true">◀</span>
+                      <span class="joy-label joy-right" aria-hidden="true">▶</span>
+                      <span class="joy-label joy-down" aria-hidden="true">▼</span>
+                      <div class="joystick" id="joystick" role="group" tabindex="0" aria-disabled="true" aria-label="Joystick de desplazamiento. Usa flechas o WASD; suelta para solicitar DETENER.">
+                        <span class="joy-ring" aria-hidden="true"></span>
+                        <span class="joy-handle" id="joystick-handle" aria-hidden="true"><span>✦</span></span>
+                      </div>
                     </div>
-                  </div>
-                  <div class="direction-readout" aria-live="polite"><span class="direction-dot"></span><span id="drive-direction-label">En pausa</span></div>
-                  <div class="stick-mapping" id="drive-mapping" aria-label="Comandos del joystick"></div>
-                </section>
+                    <div class="direction-readout" aria-live="polite"><span class="direction-dot"></span><span id="drive-direction-label">En pausa</span></div>
+                    <div class="stick-mapping" id="drive-mapping" aria-label="Comandos del joystick"></div>
+                  </section>
 
-                <section class="console-functions" aria-labelledby="movement-title">
-                  <div class="functions-heading"><div><p class="eyebrow">CATÁLOGO REAL</p><h3 id="movement-title">Movimientos</h3></div><span aria-hidden="true">✧</span></div>
-                  <div class="direction-button-grid" id="drive-buttons" aria-label="Botones de desplazamiento">
-                    <p class="subtle-message">Cargando direcciones…</p>
-                  </div>
-                </section>
-              </div>
-              <section class="extra-actions" aria-labelledby="extra-actions-title">
-                <div class="functions-heading"><div><p class="eyebrow">CATÁLOGO DEL VEHÍCULO</p><h3 id="extra-actions-title">Acciones adicionales</h3></div></div>
+                  <section class="console-functions" aria-labelledby="movement-title">
+                    <div class="functions-heading"><div><p class="eyebrow">CATÁLOGO REAL</p><h2 id="movement-title">Movimientos</h2></div><span aria-hidden="true">✧</span></div>
+                    <div class="direction-button-grid" id="drive-buttons" aria-label="Botones de desplazamiento">
+                      <p class="subtle-message">Cargando direcciones…</p>
+                    </div>
+                  </section>
+                </div>
+
+                <section class="extra-actions" aria-labelledby="extra-actions-title">
+                  <div class="functions-heading"><div><p class="eyebrow">DEL CATÁLOGO DEL VEHÍCULO</p><h2 id="extra-actions-title">Acciones</h2></div></div>
                   <div class="console-function-grid" id="auxiliary-controls" aria-live="polite">
-                    <p class="subtle-message">Cargando movimientos…</p>
+                    <p class="subtle-message">Cargando acciones…</p>
                   </div>
-              </section>
-              <button class="stop-button" id="stop-button" type="button" disabled aria-busy="false" aria-label="DETENER, acción prioritaria"><span class="stop-glyph" aria-hidden="true">■</span><span class="stop-label">DETENER</span><small>prioridad</small></button>
-            </div>
-          </section>
+                </section>
 
-          <section class="control-card action-card" aria-labelledby="actions-title">
-            <div class="section-heading">
-              <div><p class="eyebrow">SECUENCIAS GUARDADAS</p><h2 id="actions-title">DEMO <span>studio</span></h2></div>
-              <span class="heading-sticker sticker-blue" aria-hidden="true">♫</span>
-            </div>
-            <p class="section-hint">Selecciona una DEMO existente. La API ejecuta sus movimientos en orden y con sus pausas.</p>
-            <div class="demo-box">
-              <label class="visually-hidden" for="demo-select">Selecciona una DEMO</label>
-              <select id="demo-select" class="form-select demo-select" disabled><option value="">Cargando DEMO…</option></select>
-              <div class="demo-preview" id="demo-preview" hidden aria-live="polite"></div>
-              <div class="demo-actions">
-                <button class="demo-start" id="demo-start" type="button" disabled><span aria-hidden="true">▶</span> Iniciar DEMO</button>
-                <button class="demo-cancel" id="demo-cancel" type="button" disabled>Cancelar</button>
+                <button class="stop-button" id="stop-button" type="button" disabled aria-busy="false" aria-label="DETENER, acción prioritaria"><span class="stop-glyph" aria-hidden="true">■</span><span class="stop-label">DETENER</span><small>prioridad</small></button>
               </div>
-              <p class="demo-note" id="demo-note" aria-live="polite">Preparando catálogo…</p>
-            </div>
-          </section>
-        </div>
 
-        <section class="action-status" aria-labelledby="action-status-title">
-          <div class="action-status-icon" aria-hidden="true">✦</div>
-          <div class="action-status-copy"><p class="eyebrow" id="action-status-title">ESTADO DE LA ACCIÓN</p><p id="action-message" aria-live="polite">Esperando tu primera indicación.</p></div>
-          <span class="action-state" id="action-state">EN ESPERA</span>
-        </section>
+              <section class="action-status" aria-labelledby="action-status-title">
+                <div class="action-status-icon" aria-hidden="true">✦</div>
+                <div class="action-status-copy"><p class="eyebrow" id="action-status-title">ÚLTIMA ACCIÓN</p><p id="action-message" aria-live="polite">Esperando una indicación.</p></div>
+                <span class="action-state" id="action-state">EN ESPERA</span>
+              </section>
+            </section>
+
+            <section class="demo-view" id="demo-view" aria-labelledby="actions-title" hidden>
+              <div class="section-heading">
+                <div><p class="eyebrow">SECUENCIAS GUARDADAS</p><h1 id="actions-title">DEMO studio</h1></div>
+                <span class="heading-sticker sticker-blue" aria-hidden="true">♫</span>
+              </div>
+              <p class="section-hint">Elige una secuencia existente. La API ejecuta sus movimientos en orden y con sus pausas.</p>
+              <div class="demo-box">
+                <label class="visually-hidden" for="demo-select">Selecciona una DEMO</label>
+                <select id="demo-select" class="form-select demo-select" disabled><option value="">Cargando DEMO…</option></select>
+                <div class="demo-preview" id="demo-preview" hidden aria-live="polite"></div>
+                <div class="demo-actions">
+                  <button class="demo-start" id="demo-start" type="button" disabled><span aria-hidden="true">▶</span> Iniciar DEMO</button>
+                  <button class="demo-cancel" id="demo-cancel" type="button" disabled>Cancelar</button>
+                </div>
+                <p class="demo-note" id="demo-note" aria-live="polite">Preparando catálogo…</p>
+              </div>
+            </section>
           </div>
         </div>
       </main>
 
       <footer class="app-footer container-xl">
-        <span class="footer-star" aria-hidden="true">✷</span>
         <p>Desarrollado por <strong>[nombre completo del alumno]</strong> · 2026</p>
-        <span class="footer-caption">made with a little stardust ♡</span>
       </footer>
     </div>
     <script type="module" src="./js/main.js"></script>
