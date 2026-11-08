@@ -118,6 +118,16 @@ h1, h2, h3 { font-family: Nunito, sans-serif; }
 .functions-heading { display: flex; align-items: center; justify-content: space-between; margin-bottom: 7px; color: #9b6cad; }
 .functions-heading .eyebrow { margin-bottom: 2px; font-size: .51rem; }
 .functions-heading h3 { margin: 0; color: #554965; font-size: .86rem; font-weight: 1000; }
+.direction-button-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; }
+.direction-button { min-height: 46px; justify-content: flex-start; border-color: #d9cce5; background: linear-gradient(145deg, #fff, #f5efff); }
+.direction-button:nth-child(4n+2) { background: linear-gradient(145deg, #fff, #eef6ff); }
+.direction-button:nth-child(4n+3) { background: linear-gradient(145deg, #fff, #f0faf4); }
+.direction-button:nth-child(4n) { background: linear-gradient(145deg, #fff, #fff8e4); }
+.direction-button-arrow { display: grid; width: 30px; height: 30px; flex: 0 0 30px; place-items: center; border: 1px solid #e7d9ef; border-radius: 10px; background: #fff; color: #81569b; font-size: .86rem; font-weight: 1000; }
+.direction-button-copy { min-width: 0; }
+.direction-button-name { min-width: 0; overflow-wrap: anywhere; color: #4f455a; font-size: .58rem; font-weight: 1000; line-height: 1.15; }
+.direction-button-code { display: block; margin-top: 2px; color: #64596e; font-size: .46rem; font-weight: 800; line-height: 1.1; }
+.extra-movements-label { margin: 9px 0 5px; color: #62576d; font-size: .55rem; font-weight: 900; letter-spacing: .04em; }
 .console-function-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; }
 .command-button { display: flex; min-width: 0; min-height: 52px; align-items: center; gap: 7px; padding: 7px; border: 1px solid #e9dfed; border-radius: 12px; background: linear-gradient(145deg, #fff, #fff7fb); color: #50465d; text-align: left; box-shadow: 0 3px 8px #68527d0a; transition: transform 120ms ease, box-shadow 120ms ease, border-color 120ms ease; }
 .command-button:nth-child(4n+2) { background: linear-gradient(145deg, #fff, #edf6ff); }
@@ -251,6 +261,12 @@ h1, h2, h3 { font-family: Nunito, sans-serif; }
   .console-functions { padding: 5px; }
   .functions-heading { margin-bottom: 4px; }
   .functions-heading h3 { font-size: .67rem; }
+  .direction-button-grid { gap: 4px; }
+  .direction-button { min-height: 34px; gap: 4px; padding: 3px; }
+  .direction-button-arrow { width: 22px; height: 22px; flex-basis: 22px; border-radius: 7px; font-size: .62rem; }
+  .direction-button-name { font-size: .43rem; }
+  .direction-button-code { font-size: .38rem; }
+  .extra-movements-label { margin: 5px 0 3px; font-size: .45rem; }
   .command-button { min-height: 37px; gap: 4px; padding: 4px; border-radius: 8px; }
   .command-glyph { width: 22px; height: 22px; flex-basis: 22px; border-radius: 7px; font-size: .7rem; }
   .command-name { font-size: .48rem; }

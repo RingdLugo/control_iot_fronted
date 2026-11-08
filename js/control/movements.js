@@ -10,6 +10,7 @@ const DIRECTION_GROUPS = {
 };
 
 const ARROWS = { forward: "▲", backward: "▼", left: "◀", right: "▶" };
+const DIRECTION_ORDER = ["forward", "backward", "left", "right"];
 
 export function commandForDirection(commands, direction, group = "drive") {
   const names = DIRECTION_GROUPS[group]?.[direction] ?? [];
@@ -17,9 +18,8 @@ export function commandForDirection(commands, direction, group = "drive") {
 }
 
 export function renderJoystickLegend(container, commands, group) {
-  const directions = ["forward", "backward", "left", "right"];
   container.replaceChildren();
-  for (const direction of directions) {
+  for (const direction of DIRECTION_ORDER) {
     const command = commandForDirection(commands, direction, group);
     const item = document.createElement("span");
     item.className = "stick-map-item";
@@ -33,6 +33,45 @@ export function renderJoystickLegend(container, commands, group) {
     label.textContent = command ? command.nombre.replaceAll("_", " ") : "No disponible";
     item.append(arrow, label);
     container.append(item);
+  }
+}
+
+export function renderDrivingButtons(container, commands, onCommand) {
+  container.replaceChildren();
+  for (const direction of DIRECTION_ORDER) {
+    const command = commandForDirection(commands, direction);
+    if (!command) continue;
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "command-button direction-button";
+    button.dataset.commandId = String(command.id_comando);
+    button.dataset.state = "idle";
+    button.setAttribute("aria-label", `${command.nombre.replaceAll("_", " ")}, ID ${command.id_comando}, código ${command.codigo}`);
+    button.setAttribute("aria-busy", "false");
+
+    const arrow = document.createElement("span");
+    arrow.className = "direction-button-arrow";
+    arrow.setAttribute("aria-hidden", "true");
+    arrow.textContent = ARROWS[direction];
+    const name = document.createElement("span");
+    name.className = "direction-button-name";
+    name.textContent = command.nombre.replaceAll("_", " ");
+    const code = document.createElement("small");
+    code.className = "direction-button-code";
+    code.textContent = `ID ${command.id_comando} · código ${command.codigo}`;
+    const text = document.createElement("span");
+    text.className = "direction-button-copy";
+    text.append(name, code);
+    button.append(arrow, text);
+    button.addEventListener("click", () => onCommand(command));
+    container.append(button);
+  }
+
+  if (!container.childElementCount) {
+    const empty = document.createElement("p");
+    empty.className = "subtle-message";
+    empty.textContent = "No hay direcciones activas en el catálogo.";
+    container.append(empty);
   }
 }
 

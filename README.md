@@ -39,7 +39,17 @@ Inicializar Git en esta carpeta y conectar el repositorio individual del alumno.
 
 El navegador reporta estados WSS y HTTP de forma independiente. Una respuesta de `GET /` confirma que la ruta raíz de FastAPI contestó en ese momento; no valida las 21 operaciones ni RDS. La apertura del socket no confirma que el vehículo físico esté conectado ni que se haya ejecutado un movimiento.
 
-El joystick único mapea avanzar, retroceder e izquierda/derecha. Los demás movimientos disponibles (incluidos los de pala) aparecen como botones accesibles y sus nombres proceden del catálogo activo de la API. Cada cambio de dirección se envía una sola vez y se solicita `DETENER` al volver al centro o cancelar el gesto. Las solicitudes se serializan; `DETENER` toma prioridad. Una DEMO activa bloquea los demás movimientos y permite cancelar o detener. El backend ejecuta sus pasos y pausas.
+El joystick único y los botones `AVANZAR`, `RETROCEDER`, `GIRAR_IZQUIERDA` y `GIRAR_DERECHA` comparten la misma lógica de comandos. El resto de los movimientos disponibles (incluidos los de pala) aparecen como botones accesibles y sus nombres e IDs proceden del catálogo activo de la API. Cada cambio del joystick se envía una sola vez y al soltar se solicita `DETENER`. Las solicitudes se serializan; `DETENER` toma prioridad. Una DEMO activa bloquea los demás movimientos y permite cancelar o detener. El backend ejecuta sus pasos y pausas.
+
+## Comprobar un botón de movimiento
+
+1. Abre el proyecto con Live Server o ejecuta `python -m http.server 8000` en esta carpeta. Abre `http://localhost:8000`.
+2. En DevTools abre **Network/Red**, activa **Preserve log/Conservar registro** y filtra por **Fetch/XHR**.
+3. Pulsa `AVANZAR`. Debe aparecer `POST https://iotalis.duckdns.org/vehiculos/5/movimiento`, con JSON `{"comando_id":14,"origen":"WEB_CONTROL"}`. El estado «Aceptado por API» solo aparece tras una respuesta HTTP exitosa.
+4. Para confirmar el catálogo leído al abrir la página, revisa `GET /comandos/vehiculo/5/detalle`; el ID de cada botón proviene de esa respuesta.
+5. En la pestaña **Network/Red**, filtra por **WS** y abre `/ws/vehiculo/5`. Si el socket se mantiene abierto, el servidor debe enviar `conexion_establecida` y publicar `movimiento_individual` después del POST.
+
+Una comprobación local desde Edge interceptó `AVANZAR` antes de AWS y confirmó que la interfaz construye el POST con el ID 14 y origen `WEB_CONTROL`; ese ensayo no llegó a escribir en la base. La última conexión real WSS observada se cerró con `1006` antes del evento inicial, por lo que el éxito HTTP y los eventos WSS deben verificarse como etapas distintas. La API accede a RDS; el navegador no abre una conexión MySQL directa.
 
 En una comprobación desde Edge el 8 de noviembre de 2026, WSS abrió y cerró con código anormal `1006` antes de recibir el evento inicial. Mientras el backend/proxy no mantenga la sesión, la interfaz muestra «Reconectando» y no puede confirmar eventos WSS.
 

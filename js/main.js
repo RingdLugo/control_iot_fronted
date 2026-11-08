@@ -4,7 +4,7 @@ import { getVehicle } from "./api/vehicles.js";
 import { getCommands, postMovement } from "./api/commands.js";
 import { cancelDemo as cancelDemoRequest, getDemoSteps, getDemos, startDemo as startDemoRequest } from "./api/demos.js";
 import { mountJoystick } from "./control/joystick.js";
-import { commandForDirection, renderAuxiliaryCommands, renderJoystickLegend, stopCommand } from "./control/movements.js";
+import { commandForDirection, renderAuxiliaryCommands, renderDrivingButtons, renderJoystickLegend, stopCommand } from "./control/movements.js";
 import { renderDemoSteps, renderDemos } from "./control/demos.js";
 import { connectWebSocket } from "./websocket/client.js";
 import { renderStatuses } from "./ui/status.js";
@@ -418,6 +418,7 @@ async function refreshApiStatus() {
 }
 
 function installCommandControls() {
+  renderDrivingButtons($("#drive-buttons"), commands, queueCommand);
   renderAuxiliaryCommands($("#auxiliary-controls"), commands, queueCommand);
   renderJoystickLegend($("#drive-mapping"), commands, "drive");
   $("#stop-button").addEventListener("click", () => {
@@ -455,6 +456,7 @@ async function initialize() {
     if (!commands.length) throw new Error("El catálogo no contiene comandos.");
     installCommandControls();
   } catch (error) {
+    $("#drive-buttons").textContent = "No se pudo cargar el catálogo de movimientos.";
     $("#auxiliary-controls").textContent = "No se pudo cargar el catálogo de movimientos.";
     $("#drive-direction-label").textContent = "No disponible";
     $("#stop-button").disabled = true;
