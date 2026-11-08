@@ -1,0 +1,36 @@
+:root {
+  color-scheme: light;
+  --ink: #101d35;
+  --accent: #2478e5;
+  --surface: #fff;
+  --page: #f3f6fb;
+}
+
+body {
+  min-height: 100vh;
+  background: var(--page);
+  color: var(--ink);
+}
+
+.eyebrow {
+  color: var(--accent);
+  font-size: .75rem;
+  font-weight: 700;
+  letter-spacing: .12em;
+}
+
+.card {
+  border: 1px solid #e2e8f0;
+  border-radius: 1rem;
+  background: var(--surface);
+  box-shadow: 0 .5rem 1.5rem rgb(16 29 53 / 5%);
+}
+
+.status-value {
+  font-weight: 650;
+}
+
+:focus-visible {
+  outline: 3px solid #ffbf47;
+  outline-offset: 3px;
+}

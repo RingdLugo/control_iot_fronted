@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#101d35" />
+    <meta name="description" content="Panel web para controlar un vehículo IoT." />
+    <title>Control IoT</title>
+    <link rel="icon" type="image/svg+xml" href="./assets/favicon.svg" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="./css/styles.css" />
+  </head>
+  <body>
+    <main class="container py-4 py-lg-5">
+      <header class="mb-4">
+        <p class="eyebrow mb-2">VEHÍCULO IOT · ETAPA 1</p>
+        <h1 class="h2 mb-1">Control del vehículo</h1>
+        <p class="text-secondary mb-0">Vehículo de prueba · ID 5</p>
+      </header>
+
+      <section aria-labelledby="conectividad-titulo" class="card status-card mb-4">
+        <div class="card-body">
+          <h2 class="h5" id="conectividad-titulo">Conectividad</h2>
+          <div class="row g-3" id="connection-status" aria-live="polite">
+            <p class="text-secondary mb-0">Consultando estado inicial…</p>
+          </div>
+        </div>
+      </section>
+
+      <section aria-labelledby="preparacion-titulo" class="card">
+        <div class="card-body">
+          <h2 class="h5" id="preparacion-titulo">Proyecto preparado</h2>
+          <p class="mb-0">La estructura modular y el contrato de integración están documentados. Los controles se incorporarán sobre los comandos y rutas reales descritos en <a href="./API_CONTRACT.md">API_CONTRACT.md</a>.</p>
+        </div>
+      </section>
+    </main>
+
+    <footer class="container pb-4 text-center text-secondary small">
+      Desarrollado por [nombre completo del alumno] · 2026
+    </footer>
+    <script type="module" src="./js/main.js"></script>
+  </body>
+</html>
