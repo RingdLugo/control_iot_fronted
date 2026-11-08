@@ -7,7 +7,7 @@ const KEYS = {
   ArrowRight: "right", d: "right", D: "right",
 };
 
-export function mountJoystick({ pad, handle, commands, onCommand, onDirection }) {
+export function mountJoystick({ pad, handle, commands, onCommand, onDirection, group = "drive" }) {
   let activePointer = null;
   let direction = null;
   let keyDirection = null;
@@ -21,12 +21,12 @@ export function mountJoystick({ pad, handle, commands, onCommand, onDirection })
     if (direction === next) return;
     direction = next;
     if (next) {
-      const command = commandForDirection(commands, next);
-      onDirection(next);
+      const command = commandForDirection(commands, next, group);
+      onDirection(next, group);
       if (command) onCommand(command);
-      else onDirection(`missing:${next}`);
+      else onDirection(`missing:${next}`, group);
     } else {
-      onDirection("neutral");
+      onDirection("neutral", group);
     }
   };
 
@@ -81,7 +81,7 @@ export function mountJoystick({ pad, handle, commands, onCommand, onDirection })
       keyDirection = null;
       paint(0, 0, false);
       direction = null;
-      onDirection("neutral");
+      onDirection("neutral", group);
     }
   };
   const keyUp = (event) => {
@@ -112,7 +112,7 @@ export function mountJoystick({ pad, handle, commands, onCommand, onDirection })
       keyDirection = null;
       direction = null;
       paint(0, 0, false);
-      if (notify && hadInput) onDirection("neutral");
+      if (notify && hadInput) onDirection("neutral", group);
       if (id !== null && pad.hasPointerCapture?.(id)) pad.releasePointerCapture(id);
     },
   };

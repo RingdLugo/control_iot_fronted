@@ -3,7 +3,7 @@ import { checkApi } from "./api/health.js";
 import { getCommands, postMovement } from "./api/commands.js";
 import { cancelDemo as cancelDemoRequest, getDemos, startDemo as startDemoRequest } from "./api/demos.js";
 import { mountJoystick } from "./control/joystick.js";
-import { renderAuxiliaryCommands, stopCommand } from "./control/movements.js";
+import { commandForDirection, renderAuxiliaryCommands, renderJoystickLegend, stopCommand } from "./control/movements.js";
 import { renderDemos } from "./control/demos.js";
 import { connectWebSocket } from "./websocket/client.js";
 import { renderStatuses } from "./ui/status.js";
@@ -34,6 +34,9 @@ const demoCancelButton = $("#demo-cancel");
 const demoNote = $("#demo-note");
 const joystickPad = $("#joystick");
 const joystickHandle = $("#joystick-handle");
+const toolJoystickPad = $("#tool-joystick");
+const toolJoystickHandle = $("#tool-joystick-handle");
+const joystickPads = [joystickPad, toolJoystickPad];
 
 function showAction(message, status = "idle") {
   actionMessage.textContent = message;
@@ -73,8 +76,10 @@ function userFacingError(error) {
 function syncControlAvailability() {
   const locked = activeDemo || demoStarting || commandBusy;
   document.querySelectorAll(".command-button").forEach((button) => { button.disabled = locked; });
-  joystickPad.setAttribute("aria-disabled", String(locked));
-  joystickPad.classList.toggle("is-locked", locked);
+  joystickPads.forEach((pad) => {
+    pad.setAttribute("aria-disabled", String(locked));
+    pad.classList.toggle("is-locked", locked);
+  });
   $("#stop-button").disabled = !stopCommand(commands);
   demoSelect.disabled = locked || !demoSelect.querySelector("option[value]:not([value=''])");
   demoStartButton.disabled = locked || !demoSelect.value;
@@ -283,10 +288,9 @@ function handleSocketMessage(raw) {
   }
 }
 
-function setDirectionLabel(direction) {
-  const directionNames = { forward: "Adelante", backward: "Reversa", left: "Izquierda", right: "Derecha" };
-  const label = $("#direction-label");
-  const readout = document.querySelector(".direction-readout");
+function setDirectionLabel(direction, group = "drive") {
+  const label = $(`#${group}-direction-label`);
+  const readout = document.querySelector(`[data-stick="${group}"] .direction-readout`);
   if (direction === "neutral") {
     label.textContent = "En pausa · lista para comenzar";
     readout.dataset.active = "false";
@@ -301,7 +305,8 @@ function setDirectionLabel(direction) {
     if (stop) queueCommand(stop);
     return;
   }
-  label.textContent = `${directionNames[direction]} · enviando comando`;
+  const command = commandForDirection(commands, direction, group);
+  label.textContent = `${command ? commandName(command) : "Movimiento"} · enviando comando`;
   readout.dataset.active = "true";
 }
 
@@ -319,18 +324,31 @@ async function refreshApiStatus() {
 
 function installCommandControls() {
   renderAuxiliaryCommands($("#auxiliary-controls"), commands, queueCommand);
-  $("#stop-button").addEventListener("click", () => { joystick.release(false); void sendPriorityStop(); });
-  joystick = mountJoystick({
+  renderJoystickLegend($("#drive-mapping"), commands, "drive");
+  renderJoystickLegend($("#tool-mapping"), commands, "tool");
+  $("#stop-button").addEventListener("click", () => {
+    joysticks.forEach((stick) => stick.release(false));
+    void sendPriorityStop();
+  });
+  joysticks = [mountJoystick({
     pad: joystickPad,
     handle: joystickHandle,
     commands,
     onCommand: queueCommand,
     onDirection: setDirectionLabel,
-  });
+    group: "drive",
+  }), mountJoystick({
+    pad: toolJoystickPad,
+    handle: toolJoystickHandle,
+    commands,
+    onCommand: queueCommand,
+    onDirection: setDirectionLabel,
+    group: "tool",
+  })];
   syncControlAvailability();
 }
 
-let joystick = { release() {} };
+let joysticks = [];
 
 async function initialize() {
   drawStatuses();
@@ -345,7 +363,8 @@ async function initialize() {
     installCommandControls();
   } catch (error) {
     $("#auxiliary-controls").textContent = "No se pudo cargar el catálogo de movimientos.";
-    $("#direction-label").textContent = "Controles no disponibles";
+    $("#drive-direction-label").textContent = "No disponible";
+    $("#tool-direction-label").textContent = "No disponible";
     $("#stop-button").disabled = true;
     showAction(userFacingError(error), "error");
   }

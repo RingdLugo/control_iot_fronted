@@ -4,7 +4,7 @@ Frontend estático para la etapa de CONTROL del proyecto IoT. Se publica en GitH
 
 La interfaz usa una identidad pastel, celestial y pop inspirada en el diseño editorial de álbumes K-pop, sin reutilizar logotipos ni recursos de artistas. Es Mobile First, admite mouse, teclado y pantalla táctil, y presenta las acciones cargadas del catálogo real.
 
-La portada, el joystick, los botones y el selector de DEMO usan una paleta pastel coordinada; el favicon SVG original mantiene esa identidad en la pestaña. El pie conserva un marcador para colocar el nombre completo del alumno antes de publicar.
+La portada, el mando de dos sticks, las teclas de función y el selector de DEMO usan una paleta pastel coordinada; el favicon SVG original mantiene esa identidad en la pestaña. El pie conserva un marcador para colocar el nombre completo del alumno antes de publicar.
 
 ## Estructura
 
@@ -39,4 +39,4 @@ Inicializar Git en esta carpeta y conectar el repositorio individual del alumno.
 
 El navegador reporta estados WSS y HTTP de forma independiente. Una respuesta de `GET /` confirma que la ruta raíz de FastAPI contestó en ese momento; no valida las 21 operaciones ni RDS. La apertura del socket no confirma que el vehículo físico esté conectado ni que se haya ejecutado un movimiento.
 
-El joystick envía cada cambio de dirección disponible y solicita `DETENER` al volver al centro o cancelar el gesto. Las solicitudes de movimiento se serializan; `DETENER` toma prioridad. Una DEMO activa bloquea los demás movimientos y permite cancelar o detener. El backend ejecuta los pasos y sus pausas.
+El stick de desplazamiento mapea avance, reversa e izquierda/derecha; el stick de brazo mapea subir, bajar e izquierda/derecha de pala. Los nombres visibles proceden del catálogo activo de la API. Las funciones no direccionales se representan como teclas debajo de los sticks. Cada cambio de dirección se envía una sola vez y se solicita `DETENER` al volver al centro o cancelar el gesto. Las solicitudes se serializan; `DETENER` toma prioridad. Una DEMO activa bloquea los demás movimientos y permite cancelar o detener. El backend ejecuta sus pasos y pausas.

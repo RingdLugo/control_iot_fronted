@@ -136,7 +136,16 @@ h1, h2, h3 { font-family: Nunito, sans-serif; }
 .sticker-blue { border-color: #d9e9f8; background: #f2f8ff; color: #83a9db; }
 .section-hint { min-height: 32px; margin: 8px 0 12px; color: #8e869b; font-size: .74rem; line-height: 1.45; }
 
-.joystick-wrap { position: relative; width: min(100%, 280px); aspect-ratio: 1; margin: 6px auto 2px; display: grid; place-items: center; }
+.controller-console { margin-top: 10px; padding: clamp(10px, 2vw, 17px); border: 1px solid #ead9ed; border-radius: 23px; background: linear-gradient(145deg, #fff9fc, #f8f4ff 55%, #f0f9ff); box-shadow: inset 0 1px 0 #fff, 0 8px 20px rgb(120 91 143 / 8%); }
+.console-topline { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin: 0 2px 12px; }
+.console-logo { color: #78518e; font-family: Nunito, sans-serif; font-size: .75rem; font-weight: 1000; letter-spacing: .15em; }
+.console-logo span { color: #df81ab; }
+.console-model { padding: 5px 8px; border: 1px solid #ebdff0; border-radius: 999px; background: #fff; color: #85768f; font-size: .53rem; font-weight: 900; letter-spacing: .08em; }
+.joystick-pair { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: start; gap: clamp(6px, 1.4vw, 12px); }
+.stick-unit { min-width: 0; padding: 10px 7px 9px; border: 1px solid #eee4f2; border-radius: 18px; background: linear-gradient(155deg, #ffffffed, #fff8fc); box-shadow: 0 4px 10px rgb(122 87 141 / 5%); }
+.stick-title { min-height: 27px; margin: 0 0 5px; color: #766785; font-family: Nunito, sans-serif; font-size: .61rem; font-weight: 1000; letter-spacing: .06em; line-height: 1.25; text-align: center; }
+.stick-unit[data-stick="tool"] .stick-title { color: #6b83a1; }
+.joystick-wrap { position: relative; width: min(100%, 205px); aspect-ratio: 1; margin: 4px auto 0; display: grid; place-items: center; }
 .joystick { position: relative; width: 82%; aspect-ratio: 1; overflow: hidden; border: 1px solid #e8dcf1; border-radius: 50%; background: radial-gradient(circle at 48% 43%, #fff 0 12%, #f8effb 13% 42%, #f3e9f7 43% 68%, #eee4f3 69% 100%); box-shadow: inset 0 7px 17px #fff, inset 0 -8px 15px #dfd2e8, 0 9px 19px rgb(107 78 122 / 11%); cursor: grab; touch-action: none; user-select: none; }
 .joystick:active { cursor: grabbing; }
 .joystick.is-locked { cursor: not-allowed; opacity: .52; pointer-events: none; }
@@ -152,10 +161,25 @@ h1, h2, h3 { font-family: Nunito, sans-serif; }
 .joy-down { bottom: 0; left: 50%; transform: translateX(-50%); }
 .joy-left { top: 50%; left: 0; transform: translateY(-50%); }
 .joy-right { top: 50%; right: 0; transform: translateY(-50%); }
-.joy-center-label { position: absolute; bottom: 10px; z-index: 3; color: #ab9bb1; font-size: .5rem; font-weight: 900; letter-spacing: .11em; pointer-events: none; }
-.direction-readout { min-height: 30px; display: flex; align-items: center; justify-content: center; gap: 7px; margin: 4px 0 10px; color: #81768f; font-size: .7rem; font-weight: 700; text-align: center; }
+.joy-center-label { position: absolute; bottom: 8px; z-index: 3; color: #84738f; font-size: .5rem; font-weight: 900; letter-spacing: .11em; pointer-events: none; }
+.direction-readout { min-height: 31px; display: flex; align-items: center; justify-content: center; gap: 7px; margin: 4px 0 8px; color: #71677f; font-size: .66rem; font-weight: 800; text-align: center; }
 .direction-dot { width: 7px; height: 7px; border-radius: 50%; background: #c6bacf; }
 .direction-readout[data-active="true"] .direction-dot { background: #e774a1; box-shadow: 0 0 0 4px #ffe6f0; }
+.stick-mapping { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 4px; }
+.stick-map-item { display: flex; min-width: 0; min-height: 34px; align-items: center; gap: 4px; padding: 4px 5px; border: 1px solid #f0e7f2; border-radius: 9px; background: #fff; color: #60556d; }
+.stick-map-item[data-available="false"] { color: #948b9d; }
+.stick-map-arrow { display: grid; width: 19px; height: 19px; flex: 0 0 19px; place-items: center; border-radius: 6px; background: #f7e9f2; color: #b36e96; font-size: .61rem; font-weight: 900; }
+.stick-unit[data-stick="tool"] .stick-map-arrow { background: #eaf4fc; color: #668db7; }
+.stick-map-label { min-width: 0; overflow-wrap: anywhere; font-size: .53rem; font-weight: 800; line-height: 1.15; }
+.console-functions { margin: 12px 1px 10px; padding: 10px; border: 1px solid #eee4f1; border-radius: 15px; background: linear-gradient(115deg, #fff, #fff8fc 60%, #f8f6ff); }
+.console-function-label { margin: 0 0 7px; color: #75647f; font-size: .57rem; font-weight: 900; letter-spacing: .09em; }
+.console-function-label span { color: #92879a; font-weight: 600; letter-spacing: 0; }
+.console-function-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(82px, 1fr)); gap: 7px; }
+.console-function-grid .command-button { min-height: 55px; }
+.console-function-grid .command-name { font-size: .62rem; }
+.console-function-grid .command-meta { font-size: .52rem; }
+.console-function-grid .command-glyph { width: 28px; height: 28px; flex-basis: 28px; }
+.console-function-grid .subtle-message { grid-column: 1 / -1; }
 .stop-button { position: relative; display: flex; width: 100%; min-height: 52px; align-items: center; justify-content: center; gap: 10px; border: 1px solid #df6991; border-radius: 17px; background: linear-gradient(100deg, #e9779f, #d96e9d 55%, #c67bb1); color: #fff; font-family: Nunito, sans-serif; font-size: .9rem; font-weight: 900; letter-spacing: .08em; box-shadow: 0 7px 0 #b85783, 0 11px 17px rgb(200 93 142 / 20%); transition: transform 100ms ease, box-shadow 100ms ease, filter 100ms ease; }
 .stop-button span { display: grid; width: 21px; height: 21px; place-items: center; border: 2px solid #fff; border-radius: 6px; font-size: .58rem; }
 .stop-button small { padding: 3px 7px; border-radius: 999px; background: #ffffff30; font-family: 'DM Sans', sans-serif; font-size: .58rem; font-weight: 700; letter-spacing: 0; }
@@ -238,7 +262,15 @@ h1, h2, h3 { font-family: Nunito, sans-serif; }
   .control-card { padding: 17px 16px; border-radius: 21px; }
   .drive-card { order: 0; }
   .action-card { order: 1; }
-  .joystick-wrap { width: min(76vw, 280px); }
+  .controller-console { padding: 11px 8px; border-radius: 19px; }
+  .stick-unit { padding: 8px 5px; }
+  .joystick-wrap { width: min(100%, 165px); }
+  .stick-map-item { min-height: 38px; padding: 4px; }
+  .stick-map-label { font-size: .54rem; }
+  .console-function-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 5px; }
+  .console-function-grid .command-button { min-height: 64px; flex-direction: column; justify-content: center; gap: 4px; padding: 6px 4px; text-align: center; }
+  .console-function-grid .command-name { font-size: .55rem; }
+  .console-function-grid .command-meta { margin-top: 2px; font-size: .48rem; }
   .action-status { align-items: flex-start; padding: 12px; }
   .action-state { margin-top: 4px; }
 }

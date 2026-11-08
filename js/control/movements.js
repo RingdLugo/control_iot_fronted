@@ -1,15 +1,50 @@
 const clean = (value = "") => value.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toUpperCase().replace(/[^A-Z0-9]/g, "");
 
-const DIRECTIONS = {
-  forward: ["AVANZAR", "ADELANTE"],
-  backward: ["RETROCEDER", "ATRAS"],
-  left: ["GIRARIZQUIERDA", "IZQUIERDA"],
-  right: ["GIRARDERECHA", "DERECHA"],
+const DIRECTION_GROUPS = {
+  drive: {
+    forward: ["AVANZAR", "ADELANTE"],
+    backward: ["RETROCEDER", "ATRAS"],
+    left: ["GIRARIZQUIERDA", "IZQUIERDA"],
+    right: ["GIRARDERECHA", "DERECHA"],
+  },
+  tool: {
+    forward: ["SUBIRPALA"],
+    backward: ["BAJARPALA"],
+    left: ["PALAIZQUIERDA"],
+    right: ["PALADERECHA"],
+  },
 };
 
-export function commandForDirection(commands, direction) {
-  const names = DIRECTIONS[direction] ?? [];
+const ARROWS = { forward: "▲", backward: "▼", left: "◀", right: "▶" };
+
+export function commandForDirection(commands, direction, group = "drive") {
+  const names = DIRECTION_GROUPS[group]?.[direction] ?? [];
   return commands.find((command) => names.includes(clean(command.nombre)) && Number(command.activo) === 1) ?? null;
+}
+
+export function isToolCommand(command) {
+  const name = clean(command?.nombre);
+  return Object.values(DIRECTION_GROUPS.tool).flat().includes(name);
+}
+
+export function renderJoystickLegend(container, commands, group) {
+  const directions = ["forward", "backward", "left", "right"];
+  container.replaceChildren();
+  for (const direction of directions) {
+    const command = commandForDirection(commands, direction, group);
+    const item = document.createElement("span");
+    item.className = "stick-map-item";
+    item.dataset.available = String(Boolean(command));
+    const arrow = document.createElement("span");
+    arrow.className = "stick-map-arrow";
+    arrow.setAttribute("aria-hidden", "true");
+    arrow.textContent = ARROWS[direction];
+    const label = document.createElement("span");
+    label.className = "stick-map-label";
+    label.textContent = command ? command.nombre.replaceAll("_", " ") : "No disponible";
+    item.append(arrow, label);
+    container.append(item);
+  }
 }
 
 export function stopCommand(commands) {
@@ -25,7 +60,8 @@ export function isDriveCommand(command) {
 
 export function renderAuxiliaryCommands(container, commands, onCommand) {
   container.replaceChildren();
-  const available = commands.filter((command) => Number(command.activo) === 1 && !isDriveCommand(command));
+  const available = commands.filter((command) => Number(command.activo) === 1
+    && !isDriveCommand(command) && !isToolCommand(command));
   if (!available.length) {
     const empty = document.createElement("p");
     empty.className = "subtle-message";

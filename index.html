@@ -61,31 +61,60 @@
               <div><p class="eyebrow">TOMA EL CONTROL</p><h2 id="drive-title">Tu joystick <span>mágico</span></h2></div>
               <span class="heading-sticker" aria-hidden="true">♡</span>
             </div>
-            <p class="section-hint">Desliza o usa las flechas del teclado. Al soltar, se solicita DETENER a la API.</p>
-            <div class="joystick-wrap">
-              <span class="joy-label joy-up" aria-hidden="true">▲</span>
-              <span class="joy-label joy-left" aria-hidden="true">◀</span>
-              <span class="joy-label joy-right" aria-hidden="true">▶</span>
-              <span class="joy-label joy-down" aria-hidden="true">▼</span>
-              <div class="joystick" id="joystick" role="group" tabindex="0" aria-disabled="true" aria-label="Joystick. Usa flechas o WASD para moverte y espacio para detener.">
-                <span class="joy-ring" aria-hidden="true"></span>
-                <span class="joy-handle" id="joystick-handle" aria-hidden="true"><span>✦</span></span>
+            <p class="section-hint">Dos sticks como un mando de consola. Al soltar cualquiera, se solicita DETENER a la API.</p>
+            <div class="controller-console">
+              <div class="console-topline"><span class="console-logo">WISH RIDE <span aria-hidden="true">✦</span></span><span class="console-model">WR-05 · REMOTE</span></div>
+              <div class="joystick-pair">
+                <section class="stick-unit" data-stick="drive" aria-labelledby="drive-stick-title">
+                  <h3 class="stick-title" id="drive-stick-title">01 · DESPLAZAMIENTO</h3>
+                  <div class="joystick-wrap">
+                    <span class="joy-label joy-up" aria-hidden="true">▲</span>
+                    <span class="joy-label joy-left" aria-hidden="true">◀</span>
+                    <span class="joy-label joy-right" aria-hidden="true">▶</span>
+                    <span class="joy-label joy-down" aria-hidden="true">▼</span>
+                    <div class="joystick" id="joystick" role="group" tabindex="0" aria-disabled="true" aria-label="Stick de desplazamiento. Usa flechas o WASD. Suelta para solicitar DETENER.">
+                      <span class="joy-ring" aria-hidden="true"></span>
+                      <span class="joy-handle" id="joystick-handle" aria-hidden="true"><span>✦</span></span>
+                    </div>
+                    <span class="joy-center-label">NEUTRAL</span>
+                  </div>
+                  <div class="direction-readout" aria-live="polite"><span class="direction-dot"></span><span id="drive-direction-label">En pausa</span></div>
+                  <div class="stick-mapping" id="drive-mapping" aria-label="Comandos del stick de desplazamiento"></div>
+                </section>
+
+                <section class="stick-unit" data-stick="tool" aria-labelledby="tool-stick-title">
+                  <h3 class="stick-title" id="tool-stick-title">02 · BRAZO / PALA</h3>
+                  <div class="joystick-wrap">
+                    <span class="joy-label joy-up" aria-hidden="true">▲</span>
+                    <span class="joy-label joy-left" aria-hidden="true">◀</span>
+                    <span class="joy-label joy-right" aria-hidden="true">▶</span>
+                    <span class="joy-label joy-down" aria-hidden="true">▼</span>
+                    <div class="joystick" id="tool-joystick" role="group" tabindex="0" aria-disabled="true" aria-label="Stick de brazo y pala. Usa flechas o WASD. Suelta para solicitar DETENER.">
+                      <span class="joy-ring" aria-hidden="true"></span>
+                      <span class="joy-handle" id="tool-joystick-handle" aria-hidden="true"><span>✧</span></span>
+                    </div>
+                    <span class="joy-center-label">NEUTRAL</span>
+                  </div>
+                  <div class="direction-readout" aria-live="polite"><span class="direction-dot"></span><span id="tool-direction-label">En pausa</span></div>
+                  <div class="stick-mapping" id="tool-mapping" aria-label="Comandos del stick de brazo y pala"></div>
+                </section>
               </div>
-              <span class="joy-center-label">NEUTRAL</span>
+              <div class="console-functions">
+                <p class="console-function-label">TECLAS DE FUNCIÓN <span>· catálogo del vehículo</span></p>
+                <div class="console-function-grid" id="auxiliary-controls" aria-live="polite">
+                  <p class="subtle-message">Buscando funciones disponibles…</p>
+                </div>
+              </div>
+              <button class="stop-button" id="stop-button" type="button" disabled aria-busy="false"><span aria-hidden="true">■</span> DETENER <small>prioridad</small></button>
             </div>
-            <div class="direction-readout" aria-live="polite"><span class="direction-dot"></span><span id="direction-label">En pausa · lista para comenzar</span></div>
-            <button class="stop-button" id="stop-button" type="button" disabled aria-busy="false"><span aria-hidden="true">■</span> DETENER <small>prioridad</small></button>
           </section>
 
           <section class="control-card action-card" aria-labelledby="actions-title">
             <div class="section-heading">
-              <div><p class="eyebrow">MÁS FORMAS DE JUGAR</p><h2 id="actions-title">Acciones <span>extra</span></h2></div>
+              <div><p class="eyebrow">SECUENCIAS GUARDADAS</p><h2 id="actions-title">DEMO <span>studio</span></h2></div>
               <span class="heading-sticker sticker-blue" aria-hidden="true">✧</span>
             </div>
-            <p class="section-hint">Se cargan desde el catálogo real de tu vehículo.</p>
-            <div class="action-grid" id="auxiliary-controls" aria-live="polite">
-              <p class="subtle-message">Buscando movimientos disponibles…</p>
-            </div>
+            <p class="section-hint">Elige una secuencia existente. La API organiza los movimientos y sus pausas.</p>
             <div class="demo-box">
               <div class="demo-title-row"><span class="demo-icon" aria-hidden="true">♫</span><div><p class="eyebrow">MODO SECUENCIA</p><h3>DEMO time!</h3></div></div>
               <label class="visually-hidden" for="demo-select">Selecciona una DEMO</label>
