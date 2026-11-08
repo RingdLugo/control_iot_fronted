@@ -4,7 +4,7 @@ Frontend estático para la etapa de CONTROL del proyecto IoT. Se publica en GitH
 
 La interfaz usa una identidad pastel, celestial y pop inspirada en el diseño editorial de álbumes K-pop, sin reutilizar logotipos ni recursos de artistas. Es Mobile First, admite mouse, teclado y pantalla táctil, y presenta las acciones cargadas del catálogo real.
 
-La portada, el mando de dos sticks, las teclas de función y el selector de DEMO usan una paleta pastel coordinada; el favicon SVG original mantiene esa identidad en la pestaña. El pie conserva un marcador para colocar el nombre completo del alumno antes de publicar.
+La interfaz sigue la referencia del mando: un joystick principal, el catálogo de movimientos adicionales, DETENER prioritario y el selector de DEMO en la misma pantalla. Conserva una paleta pastel pop; no inventa movimientos 90°/360° cuando no existen en el catálogo del vehículo. El favicon SVG original mantiene la identidad visual y el pie conserva un marcador para el nombre completo del alumno.
 
 ## Estructura
 
@@ -39,7 +39,9 @@ Inicializar Git en esta carpeta y conectar el repositorio individual del alumno.
 
 El navegador reporta estados WSS y HTTP de forma independiente. Una respuesta de `GET /` confirma que la ruta raíz de FastAPI contestó en ese momento; no valida las 21 operaciones ni RDS. La apertura del socket no confirma que el vehículo físico esté conectado ni que se haya ejecutado un movimiento.
 
-El stick de desplazamiento mapea avance, reversa e izquierda/derecha; el stick de brazo mapea subir, bajar e izquierda/derecha de pala. Los nombres visibles proceden del catálogo activo de la API. Las funciones no direccionales se representan como teclas debajo de los sticks. Cada cambio de dirección se envía una sola vez y se solicita `DETENER` al volver al centro o cancelar el gesto. Las solicitudes se serializan; `DETENER` toma prioridad. Una DEMO activa bloquea los demás movimientos y permite cancelar o detener. El backend ejecuta sus pasos y pausas.
+El joystick único mapea avanzar, retroceder e izquierda/derecha. Los demás movimientos disponibles (incluidos los de pala) aparecen como botones accesibles y sus nombres proceden del catálogo activo de la API. Cada cambio de dirección se envía una sola vez y se solicita `DETENER` al volver al centro o cancelar el gesto. Las solicitudes se serializan; `DETENER` toma prioridad. Una DEMO activa bloquea los demás movimientos y permite cancelar o detener. El backend ejecuta sus pasos y pausas.
+
+En una comprobación desde Edge el 8 de noviembre de 2026, WSS abrió y cerró con código anormal `1006` antes de recibir el evento inicial. Mientras el backend/proxy no mantenga la sesión, la interfaz muestra «Reconectando» y no puede confirmar eventos WSS.
 
 ## Verificación independiente de WSS
 

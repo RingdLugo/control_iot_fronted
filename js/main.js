@@ -38,9 +38,7 @@ const demoNote = $("#demo-note");
 const demoPreview = $("#demo-preview");
 const joystickPad = $("#joystick");
 const joystickHandle = $("#joystick-handle");
-const toolJoystickPad = $("#tool-joystick");
-const toolJoystickHandle = $("#tool-joystick-handle");
-const joystickPads = [joystickPad, toolJoystickPad];
+const joystickPads = [joystickPad];
 
 function showAction(message, status = "idle") {
   actionMessage.textContent = message;
@@ -386,8 +384,8 @@ function handleSocketMessage(raw) {
 }
 
 function setDirectionLabel(direction, group = "drive") {
-  const label = $(`#${group}-direction-label`);
-  const readout = document.querySelector(`[data-stick="${group}"] .direction-readout`);
+  const label = $("#drive-direction-label");
+  const readout = $(".direction-readout");
   if (direction === "neutral") {
     label.textContent = "En pausa · lista para comenzar";
     readout.dataset.active = "false";
@@ -422,7 +420,6 @@ async function refreshApiStatus() {
 function installCommandControls() {
   renderAuxiliaryCommands($("#auxiliary-controls"), commands, queueCommand);
   renderJoystickLegend($("#drive-mapping"), commands, "drive");
-  renderJoystickLegend($("#tool-mapping"), commands, "tool");
   $("#stop-button").addEventListener("click", () => {
     joysticks.forEach((stick) => stick.release(false));
     void sendPriorityStop();
@@ -434,13 +431,6 @@ function installCommandControls() {
     onCommand: queueCommand,
     onDirection: setDirectionLabel,
     group: "drive",
-  }), mountJoystick({
-    pad: toolJoystickPad,
-    handle: toolJoystickHandle,
-    commands,
-    onCommand: queueCommand,
-    onDirection: setDirectionLabel,
-    group: "tool",
   })];
   syncControlAvailability();
 }
@@ -467,7 +457,6 @@ async function initialize() {
   } catch (error) {
     $("#auxiliary-controls").textContent = "No se pudo cargar el catálogo de movimientos.";
     $("#drive-direction-label").textContent = "No disponible";
-    $("#tool-direction-label").textContent = "No disponible";
     $("#stop-button").disabled = true;
     showAction(userFacingError(error), "error");
   }

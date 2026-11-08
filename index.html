@@ -18,93 +18,65 @@
       <header class="topbar container-xl">
         <a class="brand" href="./" aria-label="Wish Ride, inicio">
           <span class="brand-orbit" aria-hidden="true">✦</span>
-          <span><strong>WISH</strong><small>RIDE STUDIO</small></span>
+          <span><strong>WISH RIDE</strong><small>CONTROL STUDIO</small></span>
         </a>
-        <div class="topbar-note"><span class="live-dot" aria-hidden="true"></span> CONTROL EN TIEMPO REAL</div>
-        <span class="edition-pill">01 / CONTROL</span>
+        <span class="edition-pill"><span aria-hidden="true">⌁</span> CONTROL IoT</span>
       </header>
 
       <main class="container-xl app-main">
-        <section class="hero-panel" aria-labelledby="vehicle-title">
-          <div class="hero-copy">
-            <p class="eyebrow">TU COMPAÑERO DE AVENTURA <span>✧</span></p>
-            <h1 id="vehicle-title">Hola, <span id="vehicle-name">Excavadora IoT</span><br class="d-none d-sm-block" /> ¿lista para rodar?</h1>
-            <p class="hero-subtitle">Control suave, misión bonita. Conduce con cuidado y disfruta el viaje.</p>
+        <section class="vehicle-banner" aria-labelledby="vehicle-title">
+          <div class="vehicle-copy">
+            <p class="eyebrow">TU VEHÍCULO</p>
+            <h1 id="vehicle-title"><span id="vehicle-name">Cargando vehículo…</span></h1>
             <div class="vehicle-chips">
               <span class="soft-chip"><span aria-hidden="true">✿</span> <span id="vehicle-id">Vehículo 05</span></span>
               <span class="soft-chip"><span aria-hidden="true">⌁</span> <span id="vehicle-controller">ESP8266</span></span>
               <span class="soft-chip model-chip" id="vehicle-model-chip" hidden><span aria-hidden="true">♡</span> <span id="vehicle-model"></span></span>
             </div>
           </div>
-          <div class="hero-art" aria-hidden="true">
-            <div class="sparkle sparkle-one">✦</div><div class="sparkle sparkle-two">✧</div>
-            <div class="cloud cloud-back"></div><div class="cloud cloud-front"></div>
-            <div class="car-emoji">🚜</div>
-            <div class="orbit orbit-one"></div><div class="orbit orbit-two"></div>
-            <span class="art-caption">let's go! ♡</span>
-          </div>
+          <div class="vehicle-art" aria-hidden="true"><span>🚜</span><i>✦</i><b>♡</b></div>
         </section>
 
-        <section class="connect-panel" aria-labelledby="connect-title">
-          <div class="section-heading compact-heading">
-            <div><p class="eyebrow">SEÑAL DEL SISTEMA</p><h2 id="connect-title">Conexión <span>en armonía</span></h2></div>
-            <span class="connect-flower" aria-hidden="true">✿</span>
-          </div>
+        <section class="connect-panel" aria-label="Estado de conexión">
           <div class="status-grid" id="connection-status" aria-live="polite" aria-atomic="false">
-            <p class="status-loading">Conectando con los servicios…</p>
+            <p class="status-loading">Comprobando conexiones…</p>
           </div>
-          <p class="status-footnote">«API disponible» comprueba que GET / responde, no valida las 21 rutas. RDS permanece sin verificar; WSS no indica si el vehículo físico está conectado.</p>
+          <p class="status-footnote">WSS indica la conexión navegador-servidor, no la presencia del vehículo. API comprueba GET /; RDS queda «Sin verificar» si no hay diagnóstico disponible.</p>
         </section>
 
         <div class="control-layout">
           <section class="control-card drive-card" aria-labelledby="drive-title">
             <div class="section-heading">
-              <div><p class="eyebrow">TOMA EL CONTROL</p><h2 id="drive-title">Tu joystick <span>mágico</span></h2></div>
+              <div><p class="eyebrow">CONTROL EN TIEMPO REAL</p><h2 id="drive-title">Mando del vehículo <span>✦</span></h2></div>
               <span class="heading-sticker" aria-hidden="true">♡</span>
             </div>
-            <p class="section-hint">Dos sticks como un mando de consola. Al soltar cualquiera, se solicita DETENER a la API.</p>
-            <div class="controller-console">
-              <div class="console-topline"><span class="console-logo">WISH RIDE <span aria-hidden="true">✦</span></span><span class="console-model">WR-05 · REMOTE</span></div>
-              <div class="joystick-pair">
-                <section class="stick-unit" data-stick="drive" aria-labelledby="drive-stick-title">
-                  <h3 class="stick-title" id="drive-stick-title">01 · DESPLAZAMIENTO</h3>
+            <p class="section-hint">Arrastra el stick o usa las flechas del teclado. Al soltar, se solicita DETENER.</p>
+
+            <div class="controller-console" aria-label="Control de movimientos">
+              <div class="console-topline"><span class="console-logo">WISH RIDE <span aria-hidden="true">✦</span></span><span class="console-model">REMOTE · 05</span></div>
+              <div class="controller-main">
+                <section class="stick-unit" aria-labelledby="drive-stick-title">
+                  <h3 class="stick-title" id="drive-stick-title">DESPLAZAMIENTO</h3>
                   <div class="joystick-wrap">
                     <span class="joy-label joy-up" aria-hidden="true">▲</span>
                     <span class="joy-label joy-left" aria-hidden="true">◀</span>
                     <span class="joy-label joy-right" aria-hidden="true">▶</span>
                     <span class="joy-label joy-down" aria-hidden="true">▼</span>
-                    <div class="joystick" id="joystick" role="group" tabindex="0" aria-disabled="true" aria-label="Stick de desplazamiento. Usa flechas o WASD. Suelta para solicitar DETENER.">
+                    <div class="joystick" id="joystick" role="group" tabindex="0" aria-disabled="true" aria-label="Joystick de desplazamiento. Usa flechas o WASD; suelta para solicitar DETENER.">
                       <span class="joy-ring" aria-hidden="true"></span>
                       <span class="joy-handle" id="joystick-handle" aria-hidden="true"><span>✦</span></span>
                     </div>
-                    <span class="joy-center-label">NEUTRAL</span>
                   </div>
                   <div class="direction-readout" aria-live="polite"><span class="direction-dot"></span><span id="drive-direction-label">En pausa</span></div>
-                  <div class="stick-mapping" id="drive-mapping" aria-label="Comandos del stick de desplazamiento"></div>
+                  <div class="stick-mapping" id="drive-mapping" aria-label="Comandos del joystick"></div>
                 </section>
 
-                <section class="stick-unit" data-stick="tool" aria-labelledby="tool-stick-title">
-                  <h3 class="stick-title" id="tool-stick-title">02 · BRAZO / PALA</h3>
-                  <div class="joystick-wrap">
-                    <span class="joy-label joy-up" aria-hidden="true">▲</span>
-                    <span class="joy-label joy-left" aria-hidden="true">◀</span>
-                    <span class="joy-label joy-right" aria-hidden="true">▶</span>
-                    <span class="joy-label joy-down" aria-hidden="true">▼</span>
-                    <div class="joystick" id="tool-joystick" role="group" tabindex="0" aria-disabled="true" aria-label="Stick de brazo y pala. Usa flechas o WASD. Suelta para solicitar DETENER.">
-                      <span class="joy-ring" aria-hidden="true"></span>
-                      <span class="joy-handle" id="tool-joystick-handle" aria-hidden="true"><span>✧</span></span>
-                    </div>
-                    <span class="joy-center-label">NEUTRAL</span>
+                <section class="console-functions" aria-labelledby="movement-title">
+                  <div class="functions-heading"><div><p class="eyebrow">CATÁLOGO REAL</p><h3 id="movement-title">Más movimientos</h3></div><span aria-hidden="true">✧</span></div>
+                  <div class="console-function-grid" id="auxiliary-controls" aria-live="polite">
+                    <p class="subtle-message">Cargando movimientos…</p>
                   </div>
-                  <div class="direction-readout" aria-live="polite"><span class="direction-dot"></span><span id="tool-direction-label">En pausa</span></div>
-                  <div class="stick-mapping" id="tool-mapping" aria-label="Comandos del stick de brazo y pala"></div>
                 </section>
-              </div>
-              <div class="console-functions">
-                <p class="console-function-label">TECLAS DE FUNCIÓN <span>· catálogo del vehículo</span></p>
-                <div class="console-function-grid" id="auxiliary-controls" aria-live="polite">
-                  <p class="subtle-message">Buscando funciones disponibles…</p>
-                </div>
               </div>
               <button class="stop-button" id="stop-button" type="button" disabled aria-busy="false"><span aria-hidden="true">■</span> DETENER <small>prioridad</small></button>
             </div>
@@ -113,26 +85,25 @@
           <section class="control-card action-card" aria-labelledby="actions-title">
             <div class="section-heading">
               <div><p class="eyebrow">SECUENCIAS GUARDADAS</p><h2 id="actions-title">DEMO <span>studio</span></h2></div>
-              <span class="heading-sticker sticker-blue" aria-hidden="true">✧</span>
+              <span class="heading-sticker sticker-blue" aria-hidden="true">♫</span>
             </div>
-            <p class="section-hint">Elige una secuencia existente. La API organiza los movimientos y sus pausas.</p>
+            <p class="section-hint">Selecciona una DEMO existente. La API ejecuta sus movimientos en orden y con sus pausas.</p>
             <div class="demo-box">
-              <div class="demo-title-row"><span class="demo-icon" aria-hidden="true">♫</span><div><p class="eyebrow">MODO SECUENCIA</p><h3>DEMO time!</h3></div></div>
               <label class="visually-hidden" for="demo-select">Selecciona una DEMO</label>
               <select id="demo-select" class="form-select demo-select" disabled><option value="">Cargando DEMO…</option></select>
               <div class="demo-preview" id="demo-preview" hidden aria-live="polite"></div>
               <div class="demo-actions">
-                <button class="demo-start" id="demo-start" type="button" disabled><span aria-hidden="true">▶</span> Iniciar</button>
+                <button class="demo-start" id="demo-start" type="button" disabled><span aria-hidden="true">▶</span> Iniciar DEMO</button>
                 <button class="demo-cancel" id="demo-cancel" type="button" disabled>Cancelar</button>
               </div>
-              <p class="demo-note" id="demo-note" aria-live="polite">La API ejecuta los pasos y sus pausas.</p>
+              <p class="demo-note" id="demo-note" aria-live="polite">Preparando catálogo…</p>
             </div>
           </section>
         </div>
 
         <section class="action-status" aria-labelledby="action-status-title">
           <div class="action-status-icon" aria-hidden="true">✦</div>
-          <div class="action-status-copy"><p class="eyebrow" id="action-status-title">TU ÚLTIMA ACCIÓN</p><p id="action-message" aria-live="polite">Esperando tu primera indicación.</p></div>
+          <div class="action-status-copy"><p class="eyebrow" id="action-status-title">ESTADO DE LA ACCIÓN</p><p id="action-message" aria-live="polite">Esperando tu primera indicación.</p></div>
           <span class="action-state" id="action-state">EN ESPERA</span>
         </section>
       </main>

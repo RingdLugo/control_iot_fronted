@@ -7,12 +7,6 @@ const DIRECTION_GROUPS = {
     left: ["GIRARIZQUIERDA", "IZQUIERDA"],
     right: ["GIRARDERECHA", "DERECHA"],
   },
-  tool: {
-    forward: ["SUBIRPALA"],
-    backward: ["BAJARPALA"],
-    left: ["PALAIZQUIERDA"],
-    right: ["PALADERECHA"],
-  },
 };
 
 const ARROWS = { forward: "▲", backward: "▼", left: "◀", right: "▶" };
@@ -20,11 +14,6 @@ const ARROWS = { forward: "▲", backward: "▼", left: "◀", right: "▶" };
 export function commandForDirection(commands, direction, group = "drive") {
   const names = DIRECTION_GROUPS[group]?.[direction] ?? [];
   return commands.find((command) => names.includes(clean(command.nombre)) && Number(command.activo) === 1) ?? null;
-}
-
-export function isToolCommand(command) {
-  const name = clean(command?.nombre);
-  return Object.values(DIRECTION_GROUPS.tool).flat().includes(name);
 }
 
 export function renderJoystickLegend(container, commands, group) {
@@ -60,8 +49,7 @@ export function isDriveCommand(command) {
 
 export function renderAuxiliaryCommands(container, commands, onCommand) {
   container.replaceChildren();
-  const available = commands.filter((command) => Number(command.activo) === 1
-    && !isDriveCommand(command) && !isToolCommand(command));
+  const available = commands.filter((command) => Number(command.activo) === 1 && !isDriveCommand(command));
   if (!available.length) {
     const empty = document.createElement("p");
     empty.className = "subtle-message";
