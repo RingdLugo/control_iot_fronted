@@ -5,22 +5,40 @@ export function connectWebSocket(onState, onMessage) {
   let retryTimer;
   let stopped = false;
   let retryMs = 1_000;
+  let hasConnected = false;
 
   const connect = () => {
     if (stopped) return;
-    onState(retryMs === 1_000 ? "Conectando" : "Reconectando");
-    socket = new WebSocket(APP_CONFIG.websocketUrl);
+    onState(hasConnected ? "Reconectando" : "Conectando");
+    try {
+      socket = new WebSocket(APP_CONFIG.websocketUrl);
+    } catch {
+      onState("Desconectado");
+      scheduleRetry();
+      return;
+    }
     socket.addEventListener("open", () => {
+      hasConnected = true;
       retryMs = 1_000;
       onState("En línea");
     });
     socket.addEventListener("message", (event) => onMessage(event.data));
     socket.addEventListener("error", () => onState("Desconectado"));
     socket.addEventListener("close", () => {
+      if (stopped) return;
       onState("Reconectando");
-      retryTimer = setTimeout(connect, retryMs);
-      retryMs = Math.min(retryMs * 2, 30_000);
+      scheduleRetry();
     });
+  };
+
+  const scheduleRetry = () => {
+    if (stopped || retryTimer) return;
+    const jitter = Math.floor(Math.random() * 350);
+    retryTimer = setTimeout(() => {
+      retryTimer = undefined;
+      connect();
+    }, retryMs + jitter);
+    retryMs = Math.min(retryMs * 2, 30_000);
   };
 
   connect();
