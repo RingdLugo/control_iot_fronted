@@ -45,6 +45,7 @@ export function renderDrivingButtons(container, commands, onCommand) {
     button.type = "button";
     button.className = "command-button direction-button";
     button.dataset.commandId = String(command.id_comando);
+    button.dataset.direction = direction;
     button.dataset.state = "idle";
     button.setAttribute("aria-label", `${command.nombre.replaceAll("_", " ")}, ID ${command.id_comando}, código ${command.codigo}`);
     button.setAttribute("aria-busy", "false");

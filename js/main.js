@@ -39,6 +39,8 @@ const demoPreview = $("#demo-preview");
 const joystickPad = $("#joystick");
 const joystickHandle = $("#joystick-handle");
 const joystickPads = [joystickPad];
+const menuToggle = $("#menu-toggle");
+const controlNavigation = $("#control-navigation");
 
 function showAction(message, status = "idle") {
   actionMessage.textContent = message;
@@ -102,6 +104,7 @@ function renderVehicle(vehicle) {
     ? vehicle.nombre : `Vehículo ${APP_CONFIG.vehicleId}`;
   $("#vehicle-name").textContent = name;
   $("#vehicle-id").textContent = `Vehículo ${String(vehicle.id_vehiculo).padStart(2, "0")}`;
+  $("#header-vehicle-id").textContent = String(vehicle.id_vehiculo).padStart(2, "0");
   $("#vehicle-controller").textContent = typeof vehicle.microcontrolador === "string" && vehicle.microcontrolador.trim()
     ? vehicle.microcontrolador : "Controlador IoT";
   const model = typeof vehicle.modelo === "string" ? vehicle.modelo.trim() : "";
@@ -419,6 +422,7 @@ async function refreshApiStatus() {
 
 function installCommandControls() {
   renderDrivingButtons($("#drive-buttons"), commands, queueCommand);
+  $("#drive-buttons").append($("#stop-button"));
   renderAuxiliaryCommands($("#auxiliary-controls"), commands, queueCommand);
   renderJoystickLegend($("#drive-mapping"), commands, "drive");
   $("#stop-button").addEventListener("click", () => {
@@ -440,6 +444,22 @@ let joysticks = [];
 
 async function initialize() {
   drawStatuses();
+  menuToggle.addEventListener("click", () => {
+    const open = menuToggle.getAttribute("aria-expanded") !== "true";
+    menuToggle.setAttribute("aria-expanded", String(open));
+    menuToggle.setAttribute("aria-label", open ? "Cerrar navegación" : "Abrir navegación");
+    controlNavigation.dataset.open = String(open);
+  });
+  controlNavigation.querySelectorAll("a").forEach((link) => link.addEventListener("click", () => {
+    menuToggle.setAttribute("aria-expanded", "false");
+    menuToggle.setAttribute("aria-label", "Abrir navegación");
+    controlNavigation.dataset.open = "false";
+    controlNavigation.querySelectorAll("a").forEach((item) => {
+      item.classList.toggle("is-current", item === link);
+      if (item === link) item.setAttribute("aria-current", "page");
+      else item.removeAttribute("aria-current");
+    });
+  }));
   connectWebSocket((value) => { state.websocket = value; drawStatuses(); }, handleSocketMessage);
   void refreshApiStatus();
   setInterval(() => { void refreshApiStatus(); }, APP_CONFIG.apiCheckIntervalMs);

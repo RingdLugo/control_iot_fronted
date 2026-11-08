@@ -6,6 +6,8 @@ La interfaz usa una identidad pastel, celestial y pop inspirada en el diseño ed
 
 La interfaz sigue la referencia del mando: un joystick principal, el catálogo de movimientos adicionales, DETENER prioritario y el selector de DEMO en la misma pantalla. Conserva una paleta pastel pop; no inventa movimientos 90°/360° cuando no existen en el catálogo del vehículo. El favicon SVG original mantiene la identidad visual y el pie conserva un marcador para el nombre completo del alumno.
 
+En escritorio incluye navegación lateral para saltar entre Control, DEMO y conexión; en móvil, esas mismas anclas están en un menú compacto. La cruceta coloca DETENER al centro y los cuatro botones usan los IDs del catálogo consultado a la API.
+
 ## Estructura
 
 ```text

@@ -18,9 +18,9 @@
       <header class="topbar container-xl">
         <a class="brand" href="./" aria-label="Wish Ride, inicio">
           <span class="brand-orbit" aria-hidden="true">✦</span>
-          <span><strong>WISH RIDE</strong><small>CONTROL STUDIO</small></span>
+          <span><strong>Control IoT</strong><small>WISH RIDE · VEHÍCULO <span id="header-vehicle-id">05</span></small></span>
         </a>
-        <span class="edition-pill"><span aria-hidden="true">⌁</span> CONTROL IoT</span>
+        <button class="mobile-menu-button" id="menu-toggle" type="button" aria-expanded="false" aria-controls="control-navigation" aria-label="Abrir navegación">☰</button>
       </header>
 
       <main class="container-xl app-main">
@@ -44,13 +44,20 @@
           <p class="status-footnote">WSS indica la conexión navegador-servidor, no la presencia del vehículo. API comprueba GET /; RDS queda «Sin verificar» si no hay diagnóstico disponible.</p>
         </section>
 
-        <div class="control-layout">
+        <div class="workspace-grid">
+          <nav class="control-sidebar" id="control-navigation" aria-label="Secciones de Control IoT">
+            <a class="sidebar-link is-current" href="#drive-title" aria-current="page"><span aria-hidden="true">⌖</span> Control</a>
+            <a class="sidebar-link" href="#actions-title"><span aria-hidden="true">☷</span> DEMO</a>
+            <a class="sidebar-link" href="#connection-status"><span aria-hidden="true">◉</span> Conexión</a>
+          </nav>
+          <div class="workspace-content">
+          <div class="control-layout">
           <section class="control-card drive-card" aria-labelledby="drive-title">
             <div class="section-heading">
               <div><p class="eyebrow">CONTROL EN TIEMPO REAL</p><h2 id="drive-title">Mando del vehículo <span>✦</span></h2></div>
               <span class="heading-sticker" aria-hidden="true">♡</span>
             </div>
-            <p class="section-hint">Arrastra el stick, usa las flechas del teclado o toca AVANZAR, RETROCEDER e IZQUIERDA/DERECHA. Al soltar el stick se solicita DETENER.</p>
+            <p class="section-hint">Arrastra el stick o usa los botones direccionales. Suelta el stick para solicitar DETENER.</p>
 
             <div class="controller-console" aria-label="Control de movimientos">
               <div class="console-topline"><span class="console-logo">WISH RIDE <span aria-hidden="true">✦</span></span><span class="console-model">REMOTE · 05</span></div>
@@ -76,13 +83,15 @@
                   <div class="direction-button-grid" id="drive-buttons" aria-label="Botones de desplazamiento">
                     <p class="subtle-message">Cargando direcciones…</p>
                   </div>
-                  <p class="extra-movements-label">Acciones adicionales</p>
+                </section>
+              </div>
+              <section class="extra-actions" aria-labelledby="extra-actions-title">
+                <div class="functions-heading"><div><p class="eyebrow">CATÁLOGO DEL VEHÍCULO</p><h3 id="extra-actions-title">Acciones adicionales</h3></div></div>
                   <div class="console-function-grid" id="auxiliary-controls" aria-live="polite">
                     <p class="subtle-message">Cargando movimientos…</p>
                   </div>
-                </section>
-              </div>
-              <button class="stop-button" id="stop-button" type="button" disabled aria-busy="false"><span aria-hidden="true">■</span> DETENER <small>prioridad</small></button>
+              </section>
+              <button class="stop-button" id="stop-button" type="button" disabled aria-busy="false" aria-label="DETENER, acción prioritaria"><span class="stop-glyph" aria-hidden="true">■</span><span class="stop-label">DETENER</span><small>prioridad</small></button>
             </div>
           </section>
 
@@ -110,6 +119,8 @@
           <div class="action-status-copy"><p class="eyebrow" id="action-status-title">ESTADO DE LA ACCIÓN</p><p id="action-message" aria-live="polite">Esperando tu primera indicación.</p></div>
           <span class="action-state" id="action-state">EN ESPERA</span>
         </section>
+          </div>
+        </div>
       </main>
 
       <footer class="app-footer container-xl">
