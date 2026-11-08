@@ -147,7 +147,9 @@ async function loadDemoPreview() {
   try {
     const steps = await getDemoSteps(demoId, controller.signal);
     if (sequence !== demoPreviewSequence) return;
-    if (!Array.isArray(steps)) throw new Error("La API devolvió una definición de DEMO no válida.");
+    if (!Array.isArray(steps) || !steps.every((step) => step && typeof step === "object")) {
+      throw new Error("La API devolvió una definición de DEMO no válida.");
+    }
     renderDemoSteps(demoPreview, steps);
   } catch (error) {
     if (sequence === demoPreviewSequence && error.name !== "AbortError") {
@@ -454,7 +456,12 @@ async function initialize() {
 
   try {
     const result = await getCommands();
-    commands.push(...(Array.isArray(result) ? result : []));
+    if (!Array.isArray(result) || !result.every((command) => command && typeof command === "object"
+      && Number.isInteger(Number(command.id_comando)) && typeof command.nombre === "string"
+      && Number.isFinite(Number(command.codigo)))) {
+      throw new Error("La API devolvió un catálogo de movimientos no válido.");
+    }
+    commands.push(...result);
     if (!commands.length) throw new Error("El catálogo no contiene comandos.");
     installCommandControls();
   } catch (error) {

@@ -5,7 +5,9 @@ export function renderDemos(select, demos) {
   prompt.textContent = "Elige una DEMO…";
   select.append(prompt);
 
-  const available = demos.filter((demo) => Number(demo.activo) === 1);
+  const available = demos.filter((demo) => demo && typeof demo === "object"
+    && Number.isInteger(Number(demo.id_demo)) && Number(demo.id_demo) > 0
+    && typeof demo.nombre === "string" && Number(demo.activo) === 1);
   for (const demo of available) {
     const option = document.createElement("option");
     option.value = String(demo.id_demo);
@@ -18,6 +20,9 @@ export function renderDemos(select, demos) {
 
 export function renderDemoSteps(container, steps) {
   container.replaceChildren();
+  if (!Array.isArray(steps) || !steps.every((step) => step && typeof step === "object")) {
+    throw new Error("La API devolvió una definición de DEMO no válida.");
+  }
   if (!steps.length) {
     const empty = document.createElement("p");
     empty.className = "demo-preview-empty";
