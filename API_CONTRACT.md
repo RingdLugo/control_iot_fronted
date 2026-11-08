@@ -14,6 +14,7 @@ Verificado el 8 de noviembre de 2026 contra `https://iotalis.duckdns.org/openapi
 
 | Uso | Método y ruta | Entrada | Respuestas documentadas |
 |---|---|---|---|
+| Ficha del vehículo | `GET /vehiculos/{vehiculo_id}` | `vehiculo_id` en ruta | 200, 404, 422 |
 | Comandos y máscaras | `GET /comandos/vehiculo/{vehiculo_id}/detalle` | `vehiculo_id` en ruta | 200, 422 |
 | DEMO disponibles | `GET /demos/vehiculo/{vehiculo_id}` | `vehiculo_id` en ruta | 200, 422 |
 | Movimientos de una DEMO, si se requiere mostrarlos | `GET /demos/{demo_id}/movimientos` | `demo_id` en ruta | 200, 422 |
@@ -45,11 +46,15 @@ El contrato OpenAPI no declara esquemas de autenticación ni encabezado `Authori
 
 El frontend envía el **ID** en `comando_id`; por ejemplo, AVANZAR es ID 14, código 1.
 
+Al cargar la página se consulta `GET /vehiculos/5` para mostrar el nombre, el modelo y el microcontrolador reales. Al elegir una DEMO se consulta `GET /demos/{demo_id}/movimientos` para enseñar sus pasos y tiempos; la API sigue ejecutando la secuencia.
+
 ## Respuestas y eventos WSS observados en el código del servidor
 
 Al conectar, el servidor envía `tipo: "conexion_establecida"`, `vehiculo_id`, marca temporal y `estado_inicial`. Para un comando aceptado, difunde `tipo: "movimiento_individual"` con `comando_id`, `codigo`, `origen`, `nombre` y `mascara`. El WebSocket del navegador recibe los mismos eventos que otros clientes suscritos al vehículo.
 
 Una DEMO emite `demo_inicio` con el total de pasos; después `demo_movimiento` por cada paso con orden, duración y pausa; termina con `demo_fin`, o informa `demo_cancelada`/`demo_error`. El backend respeta la secuencia y temporización. Sus pasos no se agregan al historial individual.
+
+La lectura GET de `GET /demos/2/movimientos` realizada el 8 de noviembre de 2026 devolvió siete pasos con `orden`, `comando`, `codigo`, `duracion_ms` y `pausa_ms`.
 
 ## Reglas relevantes para el cliente
 
@@ -59,6 +64,7 @@ Una DEMO emite `demo_inicio` con el total de pasos; después `demo_movimiento` p
 - El endpoint de movimiento escribe historial/estado y emite WSS. No prueba que el motor físico se haya movido.
 - No hay protección equivalente en el servicio que impida todos los movimientos individuales durante DEMO; la interfaz debe serializar y bloquear acciones incompatibles.
 - WSS del navegador indica conexión navegador-servidor, no presencia de ESP.
+- El evento de movimiento no lleva un ID único de solicitud; el cliente muestra vehículo, comando, código, origen y `marca_temporal` cuando vienen en el evento.
 
 ## Limitación de versión
 

@@ -28,11 +28,12 @@
         <section class="hero-panel" aria-labelledby="vehicle-title">
           <div class="hero-copy">
             <p class="eyebrow">TU COMPAÑERO DE AVENTURA <span>✧</span></p>
-            <h1 id="vehicle-title">Hola, <span>Excavadora</span><br class="d-none d-sm-block" /> ¿lista para rodar?</h1>
+            <h1 id="vehicle-title">Hola, <span id="vehicle-name">Excavadora IoT</span><br class="d-none d-sm-block" /> ¿lista para rodar?</h1>
             <p class="hero-subtitle">Control suave, misión bonita. Conduce con cuidado y disfruta el viaje.</p>
             <div class="vehicle-chips">
-              <span class="soft-chip"><span aria-hidden="true">✿</span> Vehículo 05</span>
-              <span class="soft-chip"><span aria-hidden="true">⌁</span> ESP8266</span>
+              <span class="soft-chip"><span aria-hidden="true">✿</span> <span id="vehicle-id">Vehículo 05</span></span>
+              <span class="soft-chip"><span aria-hidden="true">⌁</span> <span id="vehicle-controller">ESP8266</span></span>
+              <span class="soft-chip model-chip" id="vehicle-model-chip" hidden><span aria-hidden="true">♡</span> <span id="vehicle-model"></span></span>
             </div>
           </div>
           <div class="hero-art" aria-hidden="true">
@@ -119,6 +120,7 @@
               <div class="demo-title-row"><span class="demo-icon" aria-hidden="true">♫</span><div><p class="eyebrow">MODO SECUENCIA</p><h3>DEMO time!</h3></div></div>
               <label class="visually-hidden" for="demo-select">Selecciona una DEMO</label>
               <select id="demo-select" class="form-select demo-select" disabled><option value="">Cargando DEMO…</option></select>
+              <div class="demo-preview" id="demo-preview" hidden aria-live="polite"></div>
               <div class="demo-actions">
                 <button class="demo-start" id="demo-start" type="button" disabled><span aria-hidden="true">▶</span> Iniciar</button>
                 <button class="demo-cancel" id="demo-cancel" type="button" disabled>Cancelar</button>

@@ -94,6 +94,7 @@ h1, h2, h3 { font-family: Nunito, sans-serif; }
 .hero-subtitle { max-width: 450px; margin: 12px 0 14px; color: var(--muted); font-size: .84rem; line-height: 1.55; }
 .vehicle-chips { display: flex; flex-wrap: wrap; gap: 8px; }
 .soft-chip { display: inline-flex; min-height: 30px; align-items: center; gap: 6px; padding: 5px 11px; border: 1px solid #f4e6f1; border-radius: 999px; background: #fff; color: #806d91; font-size: .66rem; font-weight: 700; }
+.soft-chip[hidden] { display: none !important; }
 .soft-chip:first-child span { color: #e778a3; }
 .soft-chip:last-child span { color: #6ea9d4; }
 
@@ -218,6 +219,14 @@ h1, h2, h3 { font-family: Nunito, sans-serif; }
 .demo-title-row .eyebrow { margin-bottom: 0; font-size: .54rem; }
 .demo-title-row h3 { margin: 0; color: #59496e; font-size: 1rem; font-weight: 900; }
 .demo-select { min-height: 46px; border: 1px solid #e4d9eb; border-radius: 13px; background-color: #fff; color: #625773; font-size: .73rem; font-weight: 700; box-shadow: none !important; }
+.demo-preview { max-height: 245px; overflow-y: auto; margin-top: 9px; padding: 10px 11px; border: 1px solid #e8def0; border-radius: 13px; background: #ffffffc9; }
+.demo-preview-summary { margin: 0 0 7px; color: #706180; font-size: .65rem; font-weight: 900; }
+.demo-preview-list { display: grid; gap: 5px; margin: 0; padding-left: 1.5rem; color: #74687f; }
+.demo-preview-list li { padding-left: 2px; }
+.demo-preview-list li::marker { color: #c277a0; font-weight: 900; }
+.demo-step-name { display: block; color: #51465f; font-size: .68rem; font-weight: 800; }
+.demo-preview-list small { display: block; color: #73697f; font-size: .59rem; }
+.demo-preview-empty { margin: 0; color: #73697f; font-size: .67rem; }
 .demo-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 9px; }
 .demo-start, .demo-cancel { min-height: 46px; border-radius: 13px; font-family: Nunito, sans-serif; font-size: .77rem; font-weight: 900; transition: transform 100ms ease, filter 100ms ease; }
 .demo-start { border: 1px solid #75c5a6; background: linear-gradient(110deg, #8fdbb9, #87d8cf); color: #285f57; box-shadow: 0 4px 0 #67b59c; }

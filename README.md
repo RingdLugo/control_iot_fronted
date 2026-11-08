@@ -40,3 +40,16 @@ Inicializar Git en esta carpeta y conectar el repositorio individual del alumno.
 El navegador reporta estados WSS y HTTP de forma independiente. Una respuesta de `GET /` confirma que la ruta raíz de FastAPI contestó en ese momento; no valida las 21 operaciones ni RDS. La apertura del socket no confirma que el vehículo físico esté conectado ni que se haya ejecutado un movimiento.
 
 El stick de desplazamiento mapea avance, reversa e izquierda/derecha; el stick de brazo mapea subir, bajar e izquierda/derecha de pala. Los nombres visibles proceden del catálogo activo de la API. Las funciones no direccionales se representan como teclas debajo de los sticks. Cada cambio de dirección se envía una sola vez y se solicita `DETENER` al volver al centro o cancelar el gesto. Las solicitudes se serializan; `DETENER` toma prioridad. Una DEMO activa bloquea los demás movimientos y permite cancelar o detener. El backend ejecuta sus pasos y pausas.
+
+## Verificación independiente de WSS
+
+1. En Postman crea una solicitud **WebSocket** y conecta a `wss://iotalis.duckdns.org/ws/vehiculo/5`.
+2. Mantén esa sesión abierta. Es independiente de la sesión WSS que abre la página; ambas reciben los eventos publicados para el vehículo 5.
+3. Al conectar, espera `tipo: "conexion_establecida"`, `vehiculo_id` y `estado_inicial`. Luego envía un movimiento desde la página y compara el evento `movimiento_individual`: el contrato incluye `comando_id`, `codigo`, `origen`, `nombre`, `mascara` y `marca_temporal`.
+4. Para una DEMO, observa `demo_inicio`, los eventos `demo_movimiento` con `orden`, `duracion_ms` y `pausa_ms`, y `demo_fin`, `demo_cancelada` o `demo_error`.
+
+El backend no entrega un identificador único de solicitud; correlaciona los eventos con vehículo, comando, código, origen y marca temporal. Un evento confirma su publicación por el backend, no la ejecución física en los motores. No se enviaron movimientos ni se iniciaron DEMO durante esta implementación.
+
+## CORS y seguridad para GitHub Pages
+
+El endpoint AWS contestó OPTIONS con `Access-Control-Allow-Origin: *` el 8 de noviembre de 2026; el OpenAPI no declara autenticación. El repositorio todavía no tiene un remoto ni un origen Pages definido, así que el backend separado conserva la configuración actual. Antes de publicar, limita allí `CORS_ORIGINS` al origen exacto de Pages y restringe métodos a `GET`, `POST`, `OPTIONS` y encabezados a `Accept`, `Content-Type`, con credenciales desactivadas. CORS no autentica. El frontend solo se comunica con HTTPS/WSS, no guarda credenciales y trata texto de la API con `textContent`; no abre conexiones MySQL/RDS.

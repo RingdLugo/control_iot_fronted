@@ -1,8 +1,12 @@
 import { APP_CONFIG } from "../config.js";
 import { request } from "./client.js";
 
-export function getDemos() {
-  return request(`/demos/vehiculo/${APP_CONFIG.vehicleId}`);
+export function getDemos(signal) {
+  return request(`/demos/vehiculo/${APP_CONFIG.vehicleId}`, { signal });
+}
+
+export function getDemoSteps(demoId, signal) {
+  return request(`/demos/${Number(demoId)}/movimientos`, { signal });
 }
 
 export function startDemo(demoId, signal) {

@@ -1,10 +1,11 @@
 import { APP_CONFIG } from "./config.js";
 import { checkApi } from "./api/health.js";
+import { getVehicle } from "./api/vehicles.js";
 import { getCommands, postMovement } from "./api/commands.js";
-import { cancelDemo as cancelDemoRequest, getDemos, startDemo as startDemoRequest } from "./api/demos.js";
+import { cancelDemo as cancelDemoRequest, getDemoSteps, getDemos, startDemo as startDemoRequest } from "./api/demos.js";
 import { mountJoystick } from "./control/joystick.js";
 import { commandForDirection, renderAuxiliaryCommands, renderJoystickLegend, stopCommand } from "./control/movements.js";
-import { renderDemos } from "./control/demos.js";
+import { renderDemoSteps, renderDemos } from "./control/demos.js";
 import { connectWebSocket } from "./websocket/client.js";
 import { renderStatuses } from "./ui/status.js";
 import { errorMessage } from "./ui/errors.js";
@@ -24,6 +25,8 @@ let commandController = null;
 let pendingCommand = null;
 let currentActionCommandId = null;
 let demoEventRevision = 0;
+let demoPreviewController = null;
+let demoPreviewSequence = 0;
 
 const drawStatuses = () => renderStatuses(statusContainer, state);
 const actionMessage = $("#action-message");
@@ -32,6 +35,7 @@ const demoSelect = $("#demo-select");
 const demoStartButton = $("#demo-start");
 const demoCancelButton = $("#demo-cancel");
 const demoNote = $("#demo-note");
+const demoPreview = $("#demo-preview");
 const joystickPad = $("#joystick");
 const joystickHandle = $("#joystick-handle");
 const toolJoystickPad = $("#tool-joystick");
@@ -71,6 +75,87 @@ function setCommandState(commandId, value) {
 function userFacingError(error) {
   if (error?.name === "AbortError") return "La solicitud anterior se canceló para dar prioridad a la nueva acción.";
   return error?.message || errorMessage(error);
+}
+
+function eventFacts(event, keys) {
+  const labels = {
+    vehiculo_id: "vehículo",
+    comando_id: "comando",
+    codigo: "código",
+    origen: "origen",
+    marca_temporal: "marca temporal",
+    demo_id: "DEMO",
+    total_movimientos: "pasos",
+    orden: "paso",
+    duracion_ms: "duración ms",
+    pausa_ms: "pausa ms",
+  };
+  return keys
+    .filter((key) => event[key] !== undefined && event[key] !== null && event[key] !== "")
+    .map((key) => `${labels[key] || key} ${String(event[key])}`)
+    .join(" · ");
+}
+
+function renderVehicle(vehicle) {
+  if (!vehicle || Number(vehicle.id_vehiculo) !== APP_CONFIG.vehicleId) {
+    throw new Error("La API no devolvió la ficha del vehículo configurado.");
+  }
+  const name = typeof vehicle.nombre === "string" && vehicle.nombre.trim()
+    ? vehicle.nombre : `Vehículo ${APP_CONFIG.vehicleId}`;
+  $("#vehicle-name").textContent = name;
+  $("#vehicle-id").textContent = `Vehículo ${String(vehicle.id_vehiculo).padStart(2, "0")}`;
+  $("#vehicle-controller").textContent = typeof vehicle.microcontrolador === "string" && vehicle.microcontrolador.trim()
+    ? vehicle.microcontrolador : "Controlador IoT";
+  const model = typeof vehicle.modelo === "string" ? vehicle.modelo.trim() : "";
+  $("#vehicle-model").textContent = model;
+  $("#vehicle-model-chip").hidden = model.length === 0;
+}
+
+async function loadVehicle() {
+  try {
+    renderVehicle(await getVehicle());
+  } catch (error) {
+    if (actionState.dataset.state === "idle") {
+      showAction(`No se pudo cargar la ficha del vehículo: ${userFacingError(error)}`, "error");
+    }
+  }
+}
+
+function renderDemoPreviewError(message) {
+  demoPreview.replaceChildren();
+  const note = document.createElement("p");
+  note.className = "demo-preview-empty";
+  note.textContent = message;
+  demoPreview.append(note);
+}
+
+async function loadDemoPreview() {
+  demoPreviewController?.abort();
+  const demoId = Number(demoSelect.value);
+  const sequence = ++demoPreviewSequence;
+  if (!demoId) {
+    demoPreview.hidden = true;
+    demoPreview.replaceChildren();
+    demoPreviewController = null;
+    return;
+  }
+
+  const controller = new AbortController();
+  demoPreviewController = controller;
+  demoPreview.hidden = false;
+  renderDemoPreviewError("Consultando la secuencia guardada en la API…");
+  try {
+    const steps = await getDemoSteps(demoId, controller.signal);
+    if (sequence !== demoPreviewSequence) return;
+    if (!Array.isArray(steps)) throw new Error("La API devolvió una definición de DEMO no válida.");
+    renderDemoSteps(demoPreview, steps);
+  } catch (error) {
+    if (sequence === demoPreviewSequence && error.name !== "AbortError") {
+      renderDemoPreviewError(`No se pudo consultar la definición: ${userFacingError(error)}`);
+    }
+  } finally {
+    if (sequence === demoPreviewSequence) demoPreviewController = null;
+  }
 }
 
 function syncControlAvailability() {
@@ -255,27 +340,37 @@ function handleSocketMessage(raw) {
   if (Number(event.vehiculo_id) !== APP_CONFIG.vehicleId) return;
 
   if (event.tipo === "conexion_establecida") {
+    if (actionState.dataset.state === "idle") {
+      const initialState = event.estado_inicial !== undefined ? " · campo estado_inicial recibido" : "";
+      showAction(`Canal WSS listo · evento inicial recibido del servidor${initialState}.`, "idle");
+    }
     return;
   }
   if (event.tipo === "movimiento_individual") {
-    if (Number(event.comando_id) !== currentActionCommandId) return;
+    if (Number(event.comando_id) !== currentActionCommandId || event.origen !== "WEB_CONTROL") return;
     setCommandState(event.comando_id, "received");
-    showAction(`Evento WSS recibido: ${String(event.nombre || "movimiento").replaceAll("_", " ")}.`, "received");
+    const name = String(event.nombre || "movimiento").replaceAll("_", " ");
+    const facts = eventFacts(event, ["vehiculo_id", "comando_id", "codigo", "origen", "marca_temporal"]);
+    showAction(`Evento WSS · ${name} · ${facts}`, "received");
     return;
   }
   if (event.tipo === "demo_inicio") {
     demoEventRevision += 1;
     activeDemo = true;
     demoStarting = false;
-    updateDemoStatus(`DEMO en marcha · ${event.total_movimientos} pasos ejecutados por el servidor.`, true);
-    showAction("Evento WSS recibido: DEMO iniciada.", "received");
+    updateDemoStatus(`DEMO ${event.demo_id} en marcha · ${event.total_movimientos} pasos ejecutados por el servidor.`, true);
+    showAction(`Evento WSS · DEMO iniciada · ${eventFacts(event, ["demo_id", "total_movimientos", "marca_temporal"])}`, "received");
     return;
   }
   if (event.tipo === "demo_movimiento") {
     demoEventRevision += 1;
     activeDemo = true;
-    updateDemoStatus(`DEMO activa · paso ${event.orden} recibido por WSS.`, true);
-    showAction(`Evento WSS recibido: paso ${event.orden} de DEMO.`, "received");
+    const name = String(event.nombre || "comando").replaceAll("_", " ");
+    const duration = event.duracion_ms !== undefined ? `${event.duracion_ms} ms` : "duración no informada";
+    const pause = event.pausa_ms !== undefined ? `${event.pausa_ms} ms` : "pausa no informada";
+    const facts = eventFacts(event, ["demo_id", "orden", "comando_id", "codigo", "duracion_ms", "pausa_ms", "marca_temporal"]);
+    updateDemoStatus(`DEMO · ${name} · ${duration} + ${pause} pausa.`, true);
+    showAction(`Evento WSS · ${name} · ${facts}`, "received");
     return;
   }
   if (["demo_fin", "demo_cancelada", "demo_error"].includes(event.tipo)) {
@@ -284,7 +379,7 @@ function handleSocketMessage(raw) {
     demoStarting = false;
     const labels = { demo_fin: "DEMO finalizada", demo_cancelada: "DEMO cancelada", demo_error: "La DEMO reportó un error" };
     updateDemoStatus(`${labels[event.tipo]} · evento recibido por WSS.`, false);
-    showAction(`Evento WSS recibido: ${labels[event.tipo]}.`, event.tipo === "demo_error" ? "error" : "received");
+    showAction(`Evento WSS · ${labels[event.tipo]} · ${eventFacts(event, ["demo_id", "marca_temporal"])}`, event.tipo === "demo_error" ? "error" : "received");
   }
 }
 
@@ -355,6 +450,7 @@ async function initialize() {
   connectWebSocket((value) => { state.websocket = value; drawStatuses(); }, handleSocketMessage);
   void refreshApiStatus();
   setInterval(() => { void refreshApiStatus(); }, APP_CONFIG.apiCheckIntervalMs);
+  void loadVehicle();
 
   try {
     const result = await getCommands();
@@ -380,7 +476,10 @@ async function initialize() {
   }
   syncControlAvailability();
 
-  demoSelect.addEventListener("change", syncControlAvailability);
+  demoSelect.addEventListener("change", () => {
+    syncControlAvailability();
+    void loadDemoPreview();
+  });
   demoStartButton.addEventListener("click", () => { void beginDemo(); });
   demoCancelButton.addEventListener("click", () => { void cancelRunningDemo(); });
 }
