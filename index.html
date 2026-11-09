@@ -6,15 +6,16 @@
     <meta name="theme-color" content="#fff7fc" />
     <meta name="description" content="Control táctil para el vehículo IoT." />
     <title>Control IoT · Wish Ride</title>
-    <link rel="icon" type="image/svg+xml" href="./assets/favicon.svg" />
+    <link rel="icon" type="image/svg+xml" href="./assets/favicon.svg?v=20261109-3" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Nunito:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="./css/styles.css" />
+    <link rel="stylesheet" href="./css/styles.css?v=20261109-3" />
   </head>
   <body>
     <div class="page-shell">
+      <div class="bubble-sky" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
       <header class="topbar container-xl">
         <a class="brand" href="./" aria-label="Wish Ride, Control IoT">
           <span class="brand-orbit" aria-hidden="true">✦</span>
@@ -51,37 +52,37 @@
                 </div>
 
                 <div class="controller-main">
-                  <section class="stick-unit" aria-labelledby="drive-stick-title">
-                    <h2 class="stick-title" id="drive-stick-title">DESPLAZAMIENTO</h2>
+                  <section class="stick-unit drive-stick-unit" data-stick-group="drive" aria-labelledby="drive-stick-title">
+                    <h2 class="stick-title" id="drive-stick-title">AVANCE Y GIRO</h2>
                     <div class="joystick-wrap">
                       <span class="joy-label joy-up" aria-hidden="true">▲</span>
                       <span class="joy-label joy-left" aria-hidden="true">◀</span>
                       <span class="joy-label joy-right" aria-hidden="true">▶</span>
                       <span class="joy-label joy-down" aria-hidden="true">▼</span>
-                      <div class="joystick" id="joystick" role="group" tabindex="0" aria-disabled="true" aria-label="Joystick de desplazamiento. Usa flechas o WASD; suelta para solicitar DETENER.">
+                      <div class="joystick" id="joystick" role="group" tabindex="0" aria-disabled="true" aria-label="Joystick de desplazamiento. Usa flechas o WASD; al soltar se solicita DETENER.">
                         <span class="joy-ring" aria-hidden="true"></span>
                         <span class="joy-handle" id="joystick-handle" aria-hidden="true"><span>✦</span></span>
                       </div>
                     </div>
                     <div class="direction-readout" aria-live="polite"><span class="direction-dot"></span><span id="drive-direction-label">En pausa</span></div>
-                    <div class="stick-mapping" id="drive-mapping" aria-label="Comandos del joystick"></div>
+                    <div class="stick-mapping direction-button-grid" id="drive-mapping" role="group" aria-label="Botones de desplazamiento"></div>
                   </section>
 
-                  <section class="console-functions" aria-labelledby="movement-title">
-                    <div class="functions-heading"><div><p class="eyebrow">CATÁLOGO REAL</p><h2 id="movement-title">Movimientos</h2></div><span aria-hidden="true">✧</span></div>
-                    <div class="direction-button-grid" id="drive-buttons" aria-label="Botones de desplazamiento">
-                      <p class="subtle-message">Cargando direcciones…</p>
+                  <section class="center-controls" aria-label="Acciones centrales">
+                    <div class="center-stop" id="center-stop"></div>
+                  </section>
+
+                  <section class="stick-unit aux-controls-unit" aria-labelledby="aux-controls-title">
+                    <h2 class="stick-title" id="aux-controls-title">ACCIONES DEL CATÁLOGO</h2>
+                    <div class="console-function-grid" id="auxiliary-controls" aria-live="polite">
+                      <p class="subtle-message">Cargando acciones del vehículo…</p>
                     </div>
                   </section>
                 </div>
 
-                <section class="extra-actions" aria-labelledby="extra-actions-title">
-                  <div class="functions-heading"><div><p class="eyebrow">DEL CATÁLOGO DEL VEHÍCULO</p><h2 id="extra-actions-title">Acciones</h2></div></div>
-                  <div class="console-function-grid" id="auxiliary-controls" aria-live="polite">
-                    <p class="subtle-message">Cargando acciones…</p>
-                  </div>
-                </section>
-
+                <div class="mobile-command-bar" id="mobile-command-bar">
+                  <button class="demo-shortcut" id="demo-quick" type="button"><span aria-hidden="true">▶</span> DEMO</button>
+                </div>
                 <button class="stop-button" id="stop-button" type="button" disabled aria-busy="false" aria-label="DETENER, acción prioritaria"><span class="stop-glyph" aria-hidden="true">■</span><span class="stop-label">DETENER</span><small>prioridad</small></button>
               </div>
 
@@ -114,9 +115,9 @@
       </main>
 
       <footer class="app-footer container-xl">
-        <p>Desarrollado por <strong>[nombre completo del alumno]</strong> · 2026</p>
+        <p>Desarrollado por <strong>Ingrid Alison Porras Lugo</strong> · 2026</p>
       </footer>
     </div>
-    <script type="module" src="./js/main.js"></script>
+    <script type="module" src="./js/main.js?v=20261109-3"></script>
   </body>
 </html>

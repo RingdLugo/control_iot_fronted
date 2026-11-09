@@ -1,4 +1,4 @@
-# Contrato real de la API para Control IoT
+# API para Control IoT
 
 Verificado el 8 de noviembre de 2026 contra `https://iotalis.duckdns.org/openapi.json` y con consultas GET. No se enviaron comandos de movimiento.
 
