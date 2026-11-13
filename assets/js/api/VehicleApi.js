@@ -8,6 +8,8 @@ export class VehicleApi {
   }
   getHealth(signal) { return this.http.request(APP_CONFIG.apiHealthPath, { signal }); }
   getVehicle(signal) { return this.http.request(`/vehiculos/${this.vehicleId}`, { signal }); }
+  getLatestState(signal) { return this.http.request(`/vehiculos/${this.vehicleId}/estado`, { signal }); }
+  getRecentHistory(signal) { return this.http.request(`/vehiculos/${this.vehicleId}/historial`, { signal }); }
   getCommands(signal) { return this.http.request(`/comandos/vehiculo/${this.vehicleId}/detalle`, { signal }); }
   postMovement(commandId, signal) {
     return this.http.request(`/vehiculos/${this.vehicleId}/movimiento`, {

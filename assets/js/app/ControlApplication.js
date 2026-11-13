@@ -1,5 +1,5 @@
 import { APP_CONFIG } from "../config.js?v=20261109-3";
-import { VehicleApi } from "../api/VehicleApi.js?v=20261109-3";
+import { VehicleApi } from "../api/VehicleApi.js?v=20261112-2";
 import { JoystickController } from "../control/JoystickController.js?v=20261109-3";
 import { MovementCatalog } from "../control/MovementCatalog.js?v=20261109-3";
 import { DemoView } from "../control/DemoView.js?v=20261109-3";
@@ -8,12 +8,16 @@ import { StatusView } from "../ui/StatusView.js?v=20261109-3";
 import { ErrorPresenter } from "../ui/ErrorPresenter.js?v=20261109-3";
 import { BubbleEffects } from "../ui/BubbleEffects.js?v=20261109-3";
 import { ControlView } from "../ui/ControlView.js?v=20261109-3";
+import { MonitoringView } from "../monitoring/MonitoringView.js?v=20261112-1";
+import { MonitorSynchronizer } from "../monitoring/MonitorSynchronizer.js?v=20261112-1";
 
 
 export class ControlApplication {
   constructor() {
     this.api = new VehicleApi(); this.view = new ControlView(); this.demoView = new DemoView();
     this.statusView = new StatusView(); this.bubbleEffects = new BubbleEffects(); this.vehicleSocket = new VehicleSocket();
+    this.monitoringView = new MonitoringView();
+    this.monitor = new MonitorSynchronizer({ api: this.api, view: this.monitoringView, vehicleId: APP_CONFIG.vehicleId });
     this.statusContainer = this.$("#connection-status");
     this.state = { websocket: "Conectando", api: "Comprobando", database: "Sin verificar" };
     this.commands = [];
@@ -300,7 +304,8 @@ export class ControlApplication {
     let event;
     try { event = JSON.parse(raw); }
     catch { return; }
-    if (Number(event.vehiculo_id) !== APP_CONFIG.vehicleId) return;
+    if (!event || typeof event !== "object" || Number(event.vehiculo_id) !== APP_CONFIG.vehicleId) return;
+    this.monitor.handleEvent(event);
 
     if (event.tipo === "conexion_establecida") {
       if (this.actionState.dataset.state === "idle") {
@@ -396,12 +401,15 @@ export class ControlApplication {
 
   async initialize() {
     this.drawStatuses();
-    const setActiveView = (view, scroll = true) => {
+    const setActiveView = (view) => {
       const showDemo = view === "demo";
+      const showMonitor = view === "monitoring";
       const controlView = this.$("#control-view");
       const demoView = this.$("#demo-view");
-      controlView.hidden = showDemo;
+      const monitorView = this.$("#monitor-view");
+      controlView.hidden = showDemo || showMonitor;
       demoView.hidden = !showDemo;
+      monitorView.hidden = !showMonitor;
       this.controlNavigation.querySelectorAll("[data-view-target]").forEach((button) => {
         const active = button.dataset.viewTarget === view;
         button.classList.toggle("is-current", active);
@@ -411,11 +419,13 @@ export class ControlApplication {
       this.menuToggle.setAttribute("aria-expanded", "false");
       this.menuToggle.setAttribute("aria-label", "Abrir menú");
       this.controlNavigation.dataset.open = "false";
-      if (scroll) (showDemo ? demoView : controlView).scrollIntoView({ behavior: "smooth", block: "start" });
+      if (showMonitor) void this.monitor.enter();
+      else this.monitor.leave();
     };
-    setActiveView("control", false);
+    setActiveView("control");
 
     this.$("#demo-quick").addEventListener("click", () => setActiveView("demo"));
+    this.$("#monitor-refresh").addEventListener("click", () => { void this.monitor.resynchronize(); });
     this.placeStopButton();
 
     this.menuToggle.addEventListener("click", () => {
@@ -433,7 +443,11 @@ export class ControlApplication {
       }
     });
     this.demoSelect.addEventListener("change", () => this.bubbleBurstFromElement(this.demoSelect));
-    this.vehicleSocket.connect((value) => { this.state.websocket = value; this.drawStatuses(); }, this.handleSocketMessage.bind(this));
+    this.vehicleSocket.connect((value) => {
+      this.state.websocket = value;
+      this.drawStatuses();
+      this.monitor.onSocketState(value);
+    }, this.handleSocketMessage.bind(this));
     void this.refreshApiStatus();
     setInterval(() => { void this.refreshApiStatus(); }, APP_CONFIG.apiCheckIntervalMs);
     void this.loadVehicle();
