@@ -18,6 +18,16 @@ export class ControlView {
     if (Number(stop?.id_comando) === Number(id)) { this.stopButton.dataset.state = value; this.stopButton.setAttribute("aria-busy", String(value === "sending")); }
     else { delete this.stopButton.dataset.state; this.stopButton.setAttribute("aria-busy", "false"); }
   }
+  setOutputState(command, enabled) {
+    const button = this.root.querySelector(`.command-toggle[data-command-id="${Number(command.id_comando)}"]`);
+    if (!button) return;
+    const state = Boolean(enabled);
+    button.dataset.outputState = state ? "on" : "off";
+    button.setAttribute("aria-pressed", String(state));
+    button.setAttribute("aria-label", `${String(command.nombre).replaceAll("_", " ")}: ${state ? "encendido" : "apagado"}. Activar o cambiar estado.`);
+    const meta = button.querySelector(".command-meta");
+    if (meta) meta.textContent = `${state ? "ENCENDIDO" : "APAGADO"} · código ${command.codigo}`;
+  }
   renderVehicle(vehicle, vehicleId) {
     if (!vehicle || Number(vehicle.id_vehiculo) !== Number(vehicleId)) throw new Error("La API no devolvió la ficha del vehículo configurado.");
     this.root.querySelector("#vehicle-name").textContent = vehicle.nombre?.trim() || `Vehículo ${vehicleId}`;

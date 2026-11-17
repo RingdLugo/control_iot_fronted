@@ -1119,6 +1119,41 @@ body {
 .monitor-empty { padding: 14px !important; color: #70677e; text-align: center; }
 .monitor-time-note { margin: 0; color: #81768b; font-size: .49rem; line-height: 1.2; }
 
+.command-toggle {
+  position: relative;
+  transition: transform .2s ease, box-shadow .25s ease, background .25s ease, border-color .25s ease;
+}
+.command-toggle[aria-pressed="true"] {
+  border-color: #48aa70;
+  background: linear-gradient(135deg, #e8ffec, #cff3dc 58%, #e2f8eb);
+  color: #245f3b;
+  box-shadow: 0 0 0 2px #69c98a44, 0 7px 18px #4baf7130;
+}
+.command-toggle[aria-pressed="true"] .command-glyph {
+  background: linear-gradient(145deg, #c7f2d3, #a7e6bd);
+  color: #247545;
+  animation: toggle-glow 1.8s ease-in-out infinite alternate;
+}
+.command-toggle[data-output-state="off"] {
+  border-color: #d96778;
+  background: linear-gradient(135deg, #fff0f1, #ffdadd 58%, #ffe9e9);
+  color: #873742;
+  box-shadow: 0 0 0 2px #e9889540, 0 6px 15px #ca58641f;
+}
+.command-toggle[data-output-state="off"] .command-glyph {
+  background: linear-gradient(145deg, #ffd4d9, #ffc0c8);
+  color: #ad3f4c;
+}
+.command-toggle[data-output-state="off"] .command-meta { color: #983f49; font-weight: 900; }
+.command-toggle[data-output-state="on"] .command-meta { color: #286b42; font-weight: 900; }
+@keyframes toggle-glow {
+  from { filter: drop-shadow(0 0 1px #f7b5d6); transform: scale(1); }
+  to { filter: drop-shadow(0 0 6px #77d899); transform: scale(1.08); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .command-toggle, .command-toggle[aria-pressed="true"] .command-glyph { animation: none; transition: none; }
+}
+
 @media (min-width: 1200px) {
   .monitor-table th, .monitor-table td { padding-block: 7px; }
 }
@@ -1158,6 +1193,314 @@ body {
   .monitor-refresh { min-height: 30px; }
   .monitor-latest { display: none; }
   .monitor-history { gap: 2px; padding: 4px; }
+  .monitor-table th, .monitor-table td { padding-block: 2px; }
+  .monitor-time-note { display: none; }
+}
+
+/* Ajuste final para que la interfaz quepa en viewports bajos y estrechos. */
+html, body, .page-shell, .app-main, .workspace-grid, .workspace-content,
+.control-view:not([hidden]), .controller-console, .controller-main,
+.stick-unit, .demo-view:not([hidden]), .monitor-view:not([hidden]) {
+  min-width: 0;
+  min-height: 0;
+}
+body { min-width: 0; }
+.page-shell { height: 100svh; height: 100dvh; }
+.app-main { overflow: hidden; }
+.status-top > span:last-child, .status-value,
+.command-name, .command-meta, .demo-note, .monitor-feedback { min-width: 0; overflow-wrap: anywhere; }
+
+@media (max-height: 700px) {
+  .app-main { gap: 4px; padding-top: 3px; padding-bottom: 3px; }
+  .connection-strip .status-footnote { display: none; }
+  .workspace-grid { gap: 4px; }
+  .joystick-wrap { width: min(100%, clamp(112px, 27vh, 190px)); }
+  .stick-unit { padding: 4px; }
+  .controller-main { gap: 5px; }
+  .direction-readout { min-height: 18px; height: 18px; flex-basis: 18px; }
+  .aux-controls-unit .console-function-grid { grid-auto-rows: minmax(clamp(34px, 6vh, 44px), 1fr); gap: 4px; }
+  .aux-controls-unit .command-button { min-height: clamp(34px, 6vh, 44px); }
+  .center-stop, .center-stop .stop-button { min-height: 42px; }
+  .action-status { min-height: 38px; max-height: 48px; padding-block: 4px; }
+  .app-footer { min-height: 20px; padding-top: 1px; padding-bottom: max(2px, env(safe-area-inset-bottom)); }
+}
+
+@media (orientation: landscape) and (max-height: 600px) {
+  .topbar { min-height: 36px; padding-block: 2px; }
+  .brand-orbit { width: 27px; height: 27px; flex-basis: 27px; }
+  .app-main { gap: 3px; padding: 2px 6px; }
+  .connection-strip { padding: 2px 5px; }
+  .connection-strip .status-item { min-height: 25px; padding: 2px 4px; }
+  .connection-strip .status-symbol { width: 16px; height: 16px; flex-basis: 16px; }
+  .workspace-grid { grid-template-rows: auto minmax(0, 1fr) !important; gap: 3px; }
+  .control-sidebar { gap: 3px; padding: 2px; }
+  .sidebar-link { min-height: 32px; padding-block: 2px; }
+  .controller-console { gap: 2px; padding: 4px; }
+  .console-topline { min-height: 17px; }
+  .controller-main {
+    grid-template-columns: minmax(0, .95fr) clamp(64px, 12vw, 112px) minmax(0, 1.25fr);
+    grid-template-rows: minmax(0, 1fr);
+    grid-template-areas: "drive center arm";
+    gap: 4px;
+  }
+  .joystick-wrap { width: min(100%, clamp(92px, 25vh, 150px)); }
+  .stick-title { font-size: clamp(.42rem, 1.1vw, .55rem); }
+  .drive-stick-unit { justify-content: center; gap: 1px; }
+  #drive-mapping { display: none; }
+  .direction-readout { min-height: 15px; height: 15px; flex-basis: 15px; font-size: .46rem; }
+  .center-controls { width: 100%; align-self: center; }
+  .center-stop, .center-stop .stop-button { min-height: 38px; }
+  .stop-button { gap: 3px; padding: 2px; font-size: clamp(.48rem, 1.3vw, .62rem); }
+  .stop-button small { display: none; }
+  .aux-controls-unit .console-function-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); grid-auto-rows: minmax(30px, 1fr); gap: 2px; }
+  .aux-controls-unit .command-button { min-height: 30px; flex-direction: row; justify-content: center; gap: 2px; padding: 1px; }
+  .aux-controls-unit .command-glyph { width: 14px; height: 14px; flex-basis: 14px; border-radius: 5px; font-size: .55rem; }
+  .aux-controls-unit .command-name { min-width: 0; font-size: clamp(.31rem, .72vw, .43rem); line-height: 1; text-align: left; }
+  .aux-controls-unit .command-meta { display: none; }
+  .mobile-command-bar { display: none; }
+  .action-status { min-height: 28px; max-height: 32px; gap: 4px; padding: 2px 5px; }
+  .action-status-icon { width: 19px; height: 19px; flex-basis: 19px; }
+  .action-status-copy .eyebrow { display: none; }
+  .action-status-copy p:last-child { -webkit-line-clamp: 1; font-size: .46rem; }
+  .action-state { padding: 2px 5px; font-size: .35rem; }
+  .app-footer { min-height: 14px; padding: 0; }
+  .app-footer p { font-size: .39rem; }
+  .monitor-view:not([hidden]) { grid-template-rows: auto minmax(0, 1fr); gap: 3px; }
+  .monitor-latest { display: none; }
+  .monitor-history { gap: 2px; padding: 4px; }
+  .monitor-table th, .monitor-table td { padding-block: 2px; }
+  .monitor-time-note { display: none; }
+  .demo-preview { overflow: auto; scrollbar-width: none; }
+  .demo-preview::-webkit-scrollbar, .monitor-table-wrap::-webkit-scrollbar { display: none; }
+}
+
+/* Catálogo uniforme en teléfono horizontal: dos columnas y cuatro filas. */
+@media (orientation: landscape) and (max-height: 600px) and (max-width: 950px) {
+  .controller-main {
+    grid-template-columns: minmax(0, .85fr) clamp(58px, 11vw, 96px) minmax(0, 1.4fr);
+  }
+  .aux-controls-unit { justify-content: stretch; gap: 2px; padding: 3px; }
+  .aux-controls-unit .stick-title { flex: 0 0 auto; min-height: 11px; font-size: clamp(.38rem, 1.1vw, .5rem); line-height: 1; }
+  .aux-controls-unit .console-function-grid {
+    flex: 1 1 0;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-rows: repeat(4, minmax(0, 1fr));
+    grid-auto-rows: unset;
+    align-content: stretch;
+    gap: 3px;
+  }
+  .aux-controls-unit .command-button {
+    width: 100%;
+    min-width: 0;
+    min-height: 0;
+    height: 100%;
+    flex-direction: row;
+    justify-content: flex-start;
+    gap: 3px;
+    padding: 2px 4px;
+    border-radius: 7px;
+  }
+  .aux-controls-unit .command-button:last-child:nth-child(odd) {
+    grid-column: 1 / -1;
+    width: 50%;
+    justify-self: center;
+  }
+  .aux-controls-unit .command-glyph { width: 17px; height: 17px; flex: 0 0 17px; font-size: .6rem; }
+  .aux-controls-unit .command-name {
+    display: block;
+    min-width: 0;
+    overflow-wrap: anywhere;
+    font-size: clamp(.38rem, 1vw, .49rem);
+    line-height: 1.05;
+    text-align: left;
+  }
+}
+
+@media (max-width: 370px) and (orientation: portrait) {
+  .connection-strip .status-grid { gap: 2px; }
+  .connection-strip .status-item { gap: 2px; padding-inline: 3px; }
+  .connection-strip .status-top { gap: 2px; font-size: .36rem; }
+  .connection-strip .status-value { font-size: .38rem; }
+  .workspace-grid { gap: 3px; }
+  .sidebar-link { min-height: 36px; gap: 3px; padding-inline: 2px; font-size: .54rem; }
+  .joystick-wrap { width: min(100%, clamp(102px, 26vh, 145px)); }
+  .center-stop, .center-stop .stop-button { min-height: 40px; }
+}
+
+/* Viewport and safe-area fallbacks for mobile browsers and unusual screen sizes. */
+html {
+  width: 100%;
+  height: 100%;
+  min-width: 320px;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+body {
+  width: 100%;
+  height: 100vh;
+  height: 100svh;
+  height: 100dvh;
+  min-height: 0;
+  overflow: hidden;
+  overscroll-behavior: none;
+}
+.page-shell {
+  width: 100%;
+  height: 100vh;
+  height: 100svh;
+  height: 100dvh;
+  min-height: 0;
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  grid-template-rows: auto minmax(0, 1fr) auto;
+}
+@supports not (height: 100dvh) {
+  body, .page-shell { height: 100vh; }
+}
+@supports (height: 100svh) and (not (height: 100dvh)) {
+  body, .page-shell { height: 100svh; }
+}
+.topbar, .app-main, .app-footer, .connection-strip, .status-grid,
+.workspace-content, .controller-console, .controller-main, .stick-unit,
+.demo-view, .demo-box, .monitor-view, .monitor-history, .monitor-table-wrap {
+  min-width: 0;
+}
+.app-main { min-height: 0; }
+.controller-console, .demo-view, .monitor-view, .monitor-history { max-width: 100%; }
+.monitor-table-wrap { overflow-x: auto; overscroll-behavior-inline: contain; }
+.monitor-table { width: 100%; table-layout: fixed; }
+.monitor-table th, .monitor-table td { overflow-wrap: anywhere; }
+
+/* Keep the action catalog aligned in a phone held horizontally. */
+@media (orientation: landscape) and (max-height: 600px) and (max-width: 950px) {
+  .aux-controls-unit .console-function-grid { grid-template-rows: repeat(4, minmax(34px, 1fr)); }
+  .aux-controls-unit .command-button { min-height: 34px; }
+  .aux-controls-unit .command-name { font-size: clamp(.4rem, 1.15vw, .52rem); }
+}
+
+/* Preserve access if a very short window cannot fit the full control panel. */
+@media (max-height: 420px) {
+  body { height: auto; min-height: 100vh; overflow-y: auto; }
+  .page-shell { height: auto; min-height: 100vh; grid-template-rows: auto minmax(420px, 1fr) auto; overflow: visible; }
+  .app-main { min-height: 420px; }
+}
+
+@media (forced-colors: active) {
+  :focus-visible { outline: 2px solid Highlight !important; }
+  .status-item, .command-button, .sidebar-link, .monitor-refresh { border: 1px solid ButtonText; }
+}
+
+/* Correcciones de proporción: cuadrícula compacta y d-pad completo visible. */
+@media (min-width: 768px) {
+  .drive-stick-unit { justify-content: center; gap: 3px; }
+  .drive-stick-unit .joystick-wrap {
+    width: min(100%, clamp(140px, min(24vh, 18vw), 220px));
+    flex: 0 1 auto;
+  }
+  .drive-stick-unit .direction-button-grid {
+    width: min(100%, 420px);
+    max-width: 420px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-rows: repeat(2, minmax(44px, auto));
+    grid-template-areas: none;
+    gap: 5px;
+    flex: 0 0 auto;
+  }
+  .drive-stick-unit .direction-button { min-height: 44px; grid-area: auto; }
+  .aux-controls-unit .console-function-grid {
+    flex: 1 1 auto;
+    grid-template-rows: none;
+    grid-auto-rows: minmax(52px, 1fr);
+    align-content: stretch;
+    gap: 7px;
+  }
+  .aux-controls-unit .command-button { min-height: 52px; height: 100%; }
+}
+
+/* Teléfono/tableta táctil en horizontal: redistribuye todo el mando en una vista. */
+@media (orientation: landscape) and (pointer: coarse) and (max-height: 850px) {
+  body, .page-shell { height: 100svh; }
+  .topbar { min-height: 34px; padding: 2px 8px; }
+  .brand-orbit { width: 27px; height: 27px; flex-basis: 27px; }
+  .brand strong { font-size: .68rem; }
+  .brand small { margin-top: 1px; font-size: .37rem; }
+  .app-main { gap: 3px; padding: 2px 5px; }
+  .connection-strip { padding: 3px 4px; }
+  .connection-strip .status-grid { gap: 3px; }
+  .connection-strip .status-item { min-height: 28px; padding: 2px 4px; }
+  .connection-strip .status-top { gap: 3px; font-size: clamp(.37rem, 1.4vw, .54rem); }
+  .connection-strip .status-value { font-size: clamp(.38rem, 1.45vw, .55rem); }
+  .connection-strip .status-symbol { width: 16px; height: 16px; flex-basis: 16px; }
+  .connection-strip .status-footnote { display: none; }
+  .workspace-grid { grid-template-rows: auto minmax(0, 1fr) !important; gap: 3px; }
+  .control-sidebar { gap: 2px; padding: 2px; }
+  .sidebar-link { min-height: 30px; padding: 2px 5px; font-size: .57rem; }
+  .sidebar-link span { width: 19px; height: 19px; flex-basis: 19px; }
+  .controller-console { grid-template-rows: auto minmax(0, 1fr) auto; gap: 2px; padding: 4px; border-radius: 13px; }
+  .console-topline { min-height: 17px; margin: 0 2px; }
+  .console-logo { font-size: .55rem; }
+  .console-model { padding: 2px 5px; font-size: .37rem; }
+  .controller-main {
+    grid-template-columns: minmax(0, .9fr) clamp(54px, 10vw, 90px) minmax(0, 1.2fr);
+    grid-template-rows: minmax(0, 1fr);
+    grid-template-areas: "drive center arm";
+    gap: 4px;
+    min-height: 0;
+  }
+  .stick-unit { min-height: 0; padding: 3px; border-radius: 10px; }
+  .drive-stick-unit { justify-content: center; gap: 1px; }
+  .stick-title { min-height: 0; font-size: clamp(.37rem, 1.2vw, .49rem); line-height: 1; }
+  .drive-stick-unit .joystick-wrap { width: min(100%, clamp(92px, 29vh, 160px)); margin: 0 auto; }
+  .joy-label { width: 21px; height: 21px; border-radius: 7px; font-size: .52rem; }
+  .joy-handle { width: 36%; border-width: 2px; }
+  .direction-readout { min-height: 15px; height: 15px; flex: 0 0 15px; font-size: .43rem; }
+  #drive-mapping { display: none; }
+  .center-controls { width: 100%; min-width: 0; align-self: center; }
+  .center-stop, .center-stop .stop-button { min-height: 36px; }
+  .stop-button { gap: 3px; padding: 2px; font-size: clamp(.46rem, 1.3vw, .62rem); }
+  .stop-glyph { width: 16px; height: 16px; flex-basis: 16px; }
+  .stop-button small { display: none; }
+  .aux-controls-unit { justify-content: stretch; gap: 2px; padding: 3px; }
+  .aux-controls-unit .stick-title { flex: 0 0 auto; min-height: 11px; font-size: clamp(.38rem, 1.15vw, .5rem); }
+  .aux-controls-unit .console-function-grid {
+    flex: 1 1 0;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-rows: repeat(3, minmax(32px, 1fr));
+    grid-auto-rows: unset;
+    align-content: stretch;
+    gap: 3px;
+  }
+  .aux-controls-unit .command-button {
+    width: 100%;
+    min-width: 0;
+    min-height: 32px;
+    height: 100%;
+    flex-direction: row;
+    justify-content: flex-start;
+    gap: 3px;
+    padding: 2px 4px;
+    border-radius: 7px;
+  }
+  .aux-controls-unit .command-button:last-child:nth-child(odd) {
+    grid-column: 1 / -1;
+    width: 50%;
+    justify-self: center;
+  }
+  .aux-controls-unit .command-glyph { width: 17px; height: 17px; flex: 0 0 17px; border-radius: 6px; font-size: .58rem; }
+  .aux-controls-unit .command-name { min-width: 0; overflow-wrap: anywhere; font-size: clamp(.37rem, .95vw, .48rem); line-height: 1.03; text-align: left; }
+  .aux-controls-unit .command-meta { display: none; }
+  .mobile-command-bar { display: flex; min-height: 0; justify-content: flex-end; }
+  .demo-shortcut { min-width: 84px; min-height: 27px; padding: 2px 8px; font-size: .54rem; }
+  .action-status { min-height: 30px; max-height: 34px; gap: 4px; padding: 2px 5px; }
+  .action-status-icon { width: 20px; height: 20px; flex-basis: 20px; }
+  .action-status-copy .eyebrow { display: none; }
+  .action-status-copy p:last-child { -webkit-line-clamp: 1; font-size: .43rem; }
+  .action-state { padding: 2px 5px; font-size: .35rem; }
+  .app-footer { min-height: 13px; padding: 0 3px; }
+  .app-footer p { font-size: .38rem; }
+  .monitor-view:not([hidden]) { grid-template-rows: auto minmax(0, 1fr); gap: 3px; }
+  .monitor-latest { display: none; }
+  .monitor-history { gap: 2px; padding: 3px; }
   .monitor-table th, .monitor-table td { padding-block: 2px; }
   .monitor-time-note { display: none; }
 }

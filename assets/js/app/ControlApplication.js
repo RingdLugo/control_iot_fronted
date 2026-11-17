@@ -1,13 +1,13 @@
 import { APP_CONFIG } from "../config.js?v=20261109-3";
-import { VehicleApi } from "../api/VehicleApi.js?v=20261112-2";
+import { VehicleApi } from "../api/VehicleApi.js?v=20261116-1";
 import { JoystickController } from "../control/JoystickController.js?v=20261109-3";
-import { MovementCatalog } from "../control/MovementCatalog.js?v=20261109-3";
+import { MovementCatalog } from "../control/MovementCatalog.js?v=20261116-2";
 import { DemoView } from "../control/DemoView.js?v=20261109-3";
 import { VehicleSocket } from "../websocket/VehicleSocket.js?v=20261109-3";
 import { StatusView } from "../ui/StatusView.js?v=20261109-3";
 import { ErrorPresenter } from "../ui/ErrorPresenter.js?v=20261109-3";
 import { BubbleEffects } from "../ui/BubbleEffects.js?v=20261109-3";
-import { ControlView } from "../ui/ControlView.js?v=20261109-3";
+import { ControlView } from "../ui/ControlView.js?v=20261116-1";
 import { MonitoringView } from "../monitoring/MonitoringView.js?v=20261112-1";
 import { MonitorSynchronizer } from "../monitoring/MonitorSynchronizer.js?v=20261112-1";
 
@@ -21,6 +21,7 @@ export class ControlApplication {
     this.statusContainer = this.$("#connection-status");
     this.state = { websocket: "Conectando", api: "Comprobando", database: "Sin verificar" };
     this.commands = [];
+    this.outputStates = this.readOutputStates();
     this.activeDemo = false; this.demoStarting = false; this.demoController = null; this.demoRequestController = null;
     this.actionSequence = 0; this.userActionRevision = 0; this.commandBusy = false; this.commandController = null;
     this.pendingCommand = null; this.currentActionCommandId = null; this.demoEventRevision = 0;
@@ -140,8 +141,36 @@ export class ControlApplication {
     this.syncControlAvailability();
   }
 
-  commandName(command) {
-    return String(command.nombre).replaceAll("_", " ");
+  commandName(command, outputState = undefined) {
+    const outputKey = MovementCatalog.outputKey(command);
+    if (outputKey) {
+      const enabled = typeof outputState === "boolean" ? outputState : this.outputStates[outputKey];
+      return `${outputKey === "led" ? "Luz" : "Sonido"} ${enabled ? "encendida" : "apagada"}`;
+    }
+    const words = String(command?.nombre || "Movimiento").replaceAll("_", " ").toLocaleLowerCase("es-MX");
+    return words.replace(/(^|\s)\S/g, (letter) => letter.toLocaleUpperCase("es-MX"));
+  }
+
+  readOutputStates() {
+    const fallback = { led: false, sound: false };
+    try {
+      const stored = JSON.parse(localStorage.getItem(`control-iot:${APP_CONFIG.vehicleId}:outputs`) || "null");
+      if (!stored || typeof stored !== "object") return fallback;
+      return { led: stored.led === true, sound: stored.sound === true };
+    } catch { return fallback; }
+  }
+
+  saveOutputStates() {
+    try { localStorage.setItem(`control-iot:${APP_CONFIG.vehicleId}:outputs`, JSON.stringify(this.outputStates)); }
+    catch { /* El control sigue funcionando aunque el navegador bloquee el almacenamiento local. */ }
+  }
+
+  updateOutputState(command, enabled) {
+    const key = MovementCatalog.outputKey(command);
+    if (!key) return;
+    this.outputStates[key] = Boolean(enabled);
+    this.saveOutputStates();
+    this.view.setOutputState(command, enabled);
   }
 
   queueCommand(command) {
@@ -159,17 +188,22 @@ export class ControlApplication {
       return;
     }
 
+    const outputKey = MovementCatalog.outputKey(command);
+    const outputState = outputKey ? !this.outputStates[outputKey] : null;
+    if (outputKey) this.updateOutputState(command, outputState);
+
     this.userActionRevision += 1;
     this.currentActionCommandId = Number(command.id_comando);
     this.setCommandState(command.id_comando, "sending");
-    this.pendingCommand = command;
-    this.showAction(`Solicitado: ${this.commandName(command)}.`, "sending");
+    this.pendingCommand = { command, outputState };
+    this.showAction(this.commandName(command, outputState), "sending");
     void this.dispatchNextCommand();
   }
 
   async dispatchNextCommand() {
     if (this.commandBusy || !this.pendingCommand || this.activeDemo || this.demoStarting) return;
-    const command = this.pendingCommand;
+    const pending = this.pendingCommand;
+    const command = pending.command;
     this.pendingCommand = null;
     this.commandBusy = true;
     this.syncControlAvailability();
@@ -177,13 +211,15 @@ export class ControlApplication {
     const revision = this.userActionRevision;
     this.commandController = new AbortController();
     try {
-      await this.api.postMovement(command.id_comando, this.commandController.signal);
+      await this.api.postMovement(command.id_comando, this.commandController.signal, pending.outputState);
       if (sequence === this.actionSequence && revision === this.userActionRevision && this.actionState.dataset.state !== "received") {
         this.setCommandState(command.id_comando, "accepted");
-        this.showAction(`Aceptado por la API: ${this.commandName(command)}. El movimiento físico no se confirma desde esta respuesta.`, "accepted");
+        this.showAction(this.commandName(command, pending.outputState), "accepted");
       }
     } catch (error) {
       if (sequence === this.actionSequence && error.name !== "AbortError" && this.actionState.dataset.state !== "received") {
+        const outputKey = MovementCatalog.outputKey(command);
+        if (outputKey && this.outputStates[outputKey] === pending.outputState) this.updateOutputState(command, !pending.outputState);
         this.setCommandState(command.id_comando, "error");
         this.showAction(this.userFacingError(error), "error");
       }
@@ -211,7 +247,7 @@ export class ControlApplication {
     this.syncControlAvailability();
     this.currentActionCommandId = Number(command.id_comando);
     this.setCommandState(command.id_comando, "sending");
-    this.showAction("DETENER solicitado con prioridad.", "sending");
+    this.showAction(this.commandName(command), "sending");
 
     if (this.activeDemo || this.demoStarting) {
       try {
@@ -221,14 +257,14 @@ export class ControlApplication {
       }
     }
 
-    this.showAction("DETENER solicitado con prioridad.", "sending");
+    this.showAction(this.commandName(command), "sending");
     const controller = new AbortController();
     this.commandController = controller;
     try {
       await this.api.postMovement(command.id_comando, controller.signal);
       if (sequence === this.actionSequence && this.actionState.dataset.state !== "received") {
         this.setCommandState(command.id_comando, "accepted");
-        this.showAction("DETENER aceptado por la API. Esperando el evento WSS correspondiente.", "accepted");
+        this.showAction(this.commandName(command), "accepted");
       }
     } catch (error) {
       if (sequence === this.actionSequence && error.name !== "AbortError" && this.actionState.dataset.state !== "received") {
@@ -315,11 +351,11 @@ export class ControlApplication {
       return;
     }
     if (event.tipo === "movimiento_individual") {
+      const command = this.commands.find((item) => Number(item.id_comando) === Number(event.comando_id));
+      this.syncOutputStateFromEvent(event, command);
       if (Number(event.comando_id) !== this.currentActionCommandId || event.origen !== "WEB_CONTROL") return;
       this.setCommandState(event.comando_id, "received");
-      const name = String(event.nombre || "movimiento").replaceAll("_", " ");
-      const facts = this.eventFacts(event, ["vehiculo_id", "comando_id", "codigo", "origen", "marca_temporal"]);
-      this.showAction(`Evento WSS · ${name} · ${facts}`, "received");
+      this.showAction(this.commandName(command || { nombre: event.nombre }, event.estado_salida), "received");
       return;
     }
     if (event.tipo === "demo_inicio") {
@@ -327,27 +363,53 @@ export class ControlApplication {
       this.activeDemo = true;
       this.demoStarting = false;
       this.updateDemoStatus(`DEMO ${event.demo_id} en marcha · ${event.total_movimientos} pasos ejecutados por el servidor.`, true);
-      this.showAction(`Evento WSS · DEMO iniciada · ${this.eventFacts(event, ["demo_id", "total_movimientos", "marca_temporal"])}`, "received");
+      this.showAction("Demo iniciada", "received");
       return;
     }
     if (event.tipo === "demo_movimiento") {
       this.demoEventRevision += 1;
       this.activeDemo = true;
-      const name = String(event.nombre || "comando").replaceAll("_", " ");
-      const duration = event.duracion_ms !== undefined ? `${event.duracion_ms} ms` : "duración no informada";
-      const pause = event.pausa_ms !== undefined ? `${event.pausa_ms} ms` : "pausa no informada";
-      const facts = this.eventFacts(event, ["demo_id", "orden", "comando_id", "codigo", "duracion_ms", "pausa_ms", "marca_temporal"]);
-      this.updateDemoStatus(`DEMO · ${name} · ${duration} + ${pause} pausa.`, true);
-      this.showAction(`Evento WSS · ${name} · ${facts}`, "received");
+      const command = this.commands.find((item) => Number(item.id_comando) === Number(event.comando_id));
+      this.syncOutputStateFromEvent(event, command);
+      const name = this.commandName(command || { nombre: event.nombre }, event.estado_salida);
+      this.updateDemoStatus(`DEMO · ${name}.`, true);
+      this.showAction(name, "received");
       return;
     }
     if (["demo_fin", "demo_cancelada", "demo_error"].includes(event.tipo)) {
+      this.outputStates = { led: false, sound: false };
+      this.saveOutputStates();
+      this.commands.forEach((command) => { if (MovementCatalog.outputKey(command)) this.view.setOutputState(command, false); });
       this.demoEventRevision += 1;
       this.activeDemo = false;
       this.demoStarting = false;
       const labels = { demo_fin: "DEMO finalizada", demo_cancelada: "DEMO cancelada", demo_error: "La DEMO reportó un error" };
       this.updateDemoStatus(`${labels[event.tipo]} · evento recibido por WSS.`, false);
-      this.showAction(`Evento WSS · ${labels[event.tipo]} · ${this.eventFacts(event, ["demo_id", "marca_temporal"])}`, event.tipo === "demo_error" ? "error" : "received");
+      this.showAction(labels[event.tipo].replace("DEMO", "Demo"), event.tipo === "demo_error" ? "error" : "received");
+    }
+  }
+
+  syncOutputStateFromEvent(event, command) {
+    const key = MovementCatalog.outputKey(command);
+    if (key) {
+      if (typeof event.estado_salida === "boolean") {
+        this.updateOutputState(command, event.estado_salida);
+      } else if (event.tipo === "demo_movimiento") {
+        const mask = Number(event.mascara);
+        const bit = key === "led" ? 0x0400 : 0x0100;
+        this.updateOutputState(command, (mask & bit) !== 0);
+      }
+      // Una API anterior omite estado_salida. No dejes que su máscara de
+      // activación sobrescriba el estado solicitado por el interruptor web.
+      return;
+    }
+    if (event.mascara === undefined || event.mascara === null) return;
+    const mask = Number(event.mascara);
+    for (const item of this.commands) {
+      const outputKey = MovementCatalog.outputKey(item);
+      if (!outputKey) continue;
+      const bit = outputKey === "led" ? 0x0400 : 0x0100;
+      this.updateOutputState(item, (mask & bit) !== 0);
     }
   }
 
@@ -377,7 +439,7 @@ export class ControlApplication {
 
   installCommandControls() {
     this.placeStopButton();
-    MovementCatalog.renderAuxiliary(this.$("#auxiliary-controls"), this.commands, this.queueCommand.bind(this));
+    MovementCatalog.renderAuxiliary(this.$("#auxiliary-controls"), this.commands, this.queueCommand.bind(this), this.outputStates);
     MovementCatalog.renderDirectionButtons(this.$("#drive-mapping"), this.commands, "drive", this.queueCommand.bind(this));
     this.stopButton.addEventListener("click", () => {
       this.joysticks.forEach((stick) => stick.release(false));

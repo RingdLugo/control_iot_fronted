@@ -14,6 +14,12 @@ export class MovementCatalog {
   static findStop(commands) {
     return commands.find((command) => clean(command.nombre) === "DETENER" && Number(command.activo) === 1) ?? null;
   }
+  static outputKey(command) {
+    const name = clean(command?.nombre);
+    if (name === "ENCENDERLED") return "led";
+    if (name === "ACTIVARSONIDO") return "sound";
+    return null;
+  }
   static isJoystickCommand(command) {
     return ["AVANZAR", "ADELANTE", "RETROCEDER", "ATRAS", "GIRARIZQUIERDA", "IZQUIERDA", "GIRARDERECHA", "DERECHA", "DETENER"].includes(clean(command?.nombre));
   }
@@ -54,17 +60,32 @@ export class MovementCatalog {
       container.append(empty);
     }
   }
-  static renderAuxiliary(container, commands, onCommand) {
+  static renderAuxiliary(container, commands, onCommand, outputStates = {}) {
     container.replaceChildren();
-    const available = commands.filter((command) => Number(command.activo) === 1 && !this.isJoystickCommand(command));
-    const glyphs = { SUBIRPALA: "↑", BAJARPALA: "↓", PALAIZQUIERDA: "↶", PALADERECHA: "↷", ACTIVARSONIDO: "♫", ACTIVARMODO: "✦", ENCENDERLED: "☼" };
+    const available = commands.filter((command) =>
+      Number(command.activo) === 1 &&
+      !this.isJoystickCommand(command) &&
+      clean(command.nombre) !== "ACTIVARMODO"
+    );
+    const glyphs = { SUBIRPALA: "↑", BAJARPALA: "↓", PALAIZQUIERDA: "↶", PALADERECHA: "↷", ACTIVARSONIDO: "♫", ENCENDERLED: "☼" };
     for (const command of available) {
       const button = document.createElement("button"); button.type = "button"; button.className = "command-button";
       button.dataset.commandId = String(command.id_comando); button.dataset.state = "idle"; button.setAttribute("aria-busy", "false");
-      button.setAttribute("aria-label", `${command.nombre}, código ${command.codigo}`);
+      const outputKey = this.outputKey(command);
+      const isOn = outputKey ? outputStates[outputKey] === true : false;
+      if (outputKey) {
+        button.classList.add("command-toggle");
+        button.dataset.outputKey = outputKey;
+        button.dataset.outputState = isOn ? "on" : "off";
+        button.setAttribute("aria-pressed", String(isOn));
+      }
+      button.setAttribute("aria-label", outputKey
+        ? `${command.nombre.replaceAll("_", " ")}: ${isOn ? "encendido" : "apagado"}. Activar o cambiar estado.`
+        : `${command.nombre}, código ${command.codigo}`);
       const icon = document.createElement("span"); icon.className = "command-glyph"; icon.setAttribute("aria-hidden", "true"); icon.textContent = glyphs[clean(command.nombre)] ?? "✧";
       const text = document.createElement("span"); text.className = "command-name"; text.textContent = command.nombre.replaceAll("_", " ");
-      const code = document.createElement("span"); code.className = "command-meta"; code.textContent = `código ${command.codigo}`;
+      const code = document.createElement("span"); code.className = "command-meta";
+      code.textContent = outputKey ? `${isOn ? "ENCENDIDO" : "APAGADO"} · código ${command.codigo}` : `código ${command.codigo}`;
       text.append(code); button.append(icon, text); button.addEventListener("click", () => onCommand(command)); container.append(button);
     }
     if (!available.length) { const empty = document.createElement("p"); empty.className = "subtle-message"; empty.textContent = "No hay acciones extra activas para este vehículo."; container.append(empty); }

@@ -18,7 +18,7 @@ Estos contratos se consultaron de forma de solo lectura el 12 de noviembre de 20
 | Catálogo de comandos | `GET /comandos/vehiculo/{vehiculo_id}/detalle` | ID entero en ruta | 200, 422 |
 | DEMO disponibles | `GET /demos/vehiculo/{vehiculo_id}` | ID entero en ruta | 200, 422 |
 | Pasos de DEMO | `GET /demos/{demo_id}/movimientos` | ID entero en ruta | 200, 422 |
-| Enviar movimiento | `POST /vehiculos/{vehiculo_id}/movimiento` | `{"comando_id": 14, "origen": "WEB_CONTROL"}` | 201, 400, 500, 422 |
+| Enviar movimiento | `POST /vehiculos/{vehiculo_id}/movimiento` | `{"comando_id": 14, "origen": "WEB_CONTROL"}`; para Luz/Sonido también `"estado_salida": true/false` | 201, 400, 500, 422 |
 | Iniciar DEMO | `POST /vehiculos/{vehiculo_id}/demo/iniciar` | `{"demo_id": 2}` | 200, 400, 409, 422 |
 | Cancelar DEMO | `POST /vehiculos/{vehiculo_id}/demo/detener` | Sin cuerpo | 200, 400, 422 |
 
@@ -30,7 +30,9 @@ Las fechas recibidas no incluyen sufijo de zona horaria en los ejemplos comproba
 
 ## WSS
 
-El contrato del servidor previamente observado documenta `conexion_establecida` con `vehiculo_id`, marca temporal y `estado_inicial`; `movimiento_individual` con `comando_id`, `codigo`, `origen`, `nombre`, `mascara` y marca temporal; y eventos DEMO `demo_inicio`, `demo_movimiento`, `demo_fin`, `demo_cancelada` y `demo_error`. Los pasos DEMO no se agregan al historial individual.
+El contrato base documenta `conexion_establecida` con `vehiculo_id`, marca temporal y `estado_inicial`; `movimiento_individual` con `comando_id`, `codigo`, `origen`, `nombre`, `mascara` y marca temporal; y eventos DEMO `demo_inicio`, `demo_movimiento`, `demo_fin`, `demo_cancelada` y `demo_error`. La ampliación local agrega `estado_salida` (booleano o `null`) a `movimiento_individual`; solo se usa con `ENCENDER_LED` y `ACTIVAR_SONIDO`. También agrega `accion_salida`, que indica la acción efectiva (`ENCENDER_LED`, `APAGAR_LED`, `ACTIVAR_SONIDO` o `DESACTIVAR_SONIDO`) sin cambiar el ID/código del comando del catálogo. Los pasos DEMO no se agregan al historial individual.
+
+La ampliación del interruptor requiere desplegar la versión correspondiente de FastAPI y cargar en el ESP8266 el firmware actualizado. El campo adicional puede ser ignorado por un backend antiguo, por lo que actualizar solo la página no basta.
 
 El evento individual no incluye un identificador único de solicitud según el contrato revisado. El cliente filtra por vehículo y reconcilia la tabla mediante REST usando `id_historial`, evitando basar la persistencia únicamente en el evento.
 

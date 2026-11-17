@@ -11,9 +11,11 @@ export class VehicleApi {
   getLatestState(signal) { return this.http.request(`/vehiculos/${this.vehicleId}/estado`, { signal }); }
   getRecentHistory(signal) { return this.http.request(`/vehiculos/${this.vehicleId}/historial`, { signal }); }
   getCommands(signal) { return this.http.request(`/comandos/vehiculo/${this.vehicleId}/detalle`, { signal }); }
-  postMovement(commandId, signal) {
+  postMovement(commandId, signal, outputState = null) {
+    const body = { comando_id: Number(commandId), origen: "WEB_CONTROL" };
+    if (typeof outputState === "boolean") body.estado_salida = outputState;
     return this.http.request(`/vehiculos/${this.vehicleId}/movimiento`, {
-      method: "POST", body: { comando_id: Number(commandId), origen: "WEB_CONTROL" }, signal,
+      method: "POST", body, signal,
     });
   }
   getDemos(signal) { return this.http.request(`/demos/vehiculo/${this.vehicleId}`, { signal }); }

@@ -14,6 +14,7 @@ Frontend web de la práctica 4.1 y 4.2 para operar y consultar el vehículo IoT.
 ## Qué incluye
 
 - **CONTROL:** joystick, comandos cargados desde el catálogo real, DETENER prioritario y consulta/inicio/cancelación de DEMO.
+- Los controles `ENCENDER_LED` y `ACTIVAR_SONIDO` alternan el estado solicitado en cada pulsación. Para que también conmuten las salidas físicas de manera independiente, el backend debe aceptar `estado_salida` y el ESP8266 debe ejecutar el firmware actualizado; subir solo el frontend no cambia el comportamiento de una API antigua.
 - **MONITOREO:** estado más reciente y tabla con hasta diez movimientos individuales persistidos.
 - Indicadores independientes para WSS del navegador, respuesta de la API y diagnóstico RDS. RDS muestra **Sin verificar** mientras no haya una ruta segura documentada para diagnosticarla.
 - Diseño adaptable, navegación entre Control, Monitoreo y DEMO, favicon y créditos.
@@ -25,6 +26,12 @@ Al abrir Monitoreo se consultan `GET /vehiculos/5/estado` y `GET /vehiculos/5/hi
 La misma conexión WSS se comparte con Control. Un evento individual válido del vehículo actualiza el panel y desencadena una resincronización REST del historial. Los eventos de DEMO pueden reflejarse en el panel; sus pasos no se insertan en la tabla individual. Un evento WSS acredita que el backend publicó el evento, no que el motor físico se haya movido.
 
 Los timestamps observados llegan sin zona horaria explícita. La interfaz conserva la fecha y hora que proporciona la API; no realiza una conversión local que pudiera cambiar su significado. El campo `conectado` del estado tampoco se interpreta como prueba de movimiento físico.
+
+## Interruptores de Luz y Sonido
+
+Los botones del catálogo `ENCENDER_LED` (ID 37, código 12) y `ACTIVAR_SONIDO` (ID 35, código 10) alternan el estado en cada pulsación. El frontend envía el mismo ID de catálogo y agrega `estado_salida: true` para encender o `false` para apagar. La API conserva el registro individual y publica ese estado y `accion_salida` en el evento WSS; el firmware cambia solo la salida indicada, sin apagar las demás. En el evento, `accion_salida` muestra `APAGAR_LED` o `DESACTIVAR_SONIDO` al segundo clic, sin crear IDs ni códigos nuevos en el catálogo. Los otros comandos conservan su comportamiento de máscara completa.
+
+Esta función requiere actualizar en conjunto los cuatro archivos Python modificados y volver a cargar en la placa el archivo `vehiculocodigoarduino/vehiculocodigoarduino.ino`. El ZIP de frontend por sí solo no cambia el contrato del servidor ni el comportamiento del ESP8266. La interfaz refleja el estado solicitado/recibido del servidor; sin una confirmación de retorno de la placa, no lo presenta como una medición eléctrica de la salida.
 
 ## Arquitectura frontend (POO y módulos ES)
 
