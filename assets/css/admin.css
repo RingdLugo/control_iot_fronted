@@ -1,0 +1,1996 @@
+/* Tercera vista: administración integrada con el mismo tema y con formularios accesibles. */
+.admin-view[hidden], .admin-dashboard[hidden], .admin-create-form[hidden] { display: none !important; }
+#control-navigation [hidden] { display: none !important; }
+.admin-view:not([hidden]) {
+  display: grid;
+  align-content: start;
+  gap: clamp(8px, 1.3vh, 16px);
+  max-height: 100%;
+  min-height: 0;
+  overflow: auto;
+  overscroll-behavior: contain;
+  padding: clamp(2px, .5vw, 8px);
+  scrollbar-width: thin;
+}
+.admin-heading { margin-bottom: 0; }
+.admin-login-card, .admin-dashboard {
+  min-width: 0;
+  padding: clamp(14px, 2vw, 24px);
+  border: 1px solid #e7d8ed;
+  border-radius: 22px;
+  background: linear-gradient(135deg, #fffafd, #f7f8ff 72%, #f1f8ff);
+  box-shadow: 0 14px 32px #44316a14;
+}
+.admin-login-card { width: min(100%, 760px); margin-inline: auto; }
+.access-tabs { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; margin-bottom: 18px; padding: 5px; border: 1px solid #e8deef; border-radius: 15px; background: #f8f3fb; }
+.access-tabs button { min-width: 0; min-height: 42px; padding: 7px 10px; border: 1px solid transparent; border-radius: 11px; color: #655775; background: transparent; font: inherit; font-size: .82rem; font-weight: 850; cursor: pointer; }
+.access-tabs button.is-active { border-color: #e5d6ed; color: #514067; background: linear-gradient(110deg,#ffe7f1,#e4f2ff); box-shadow: 0 3px 10px #725d9620; }
+.access-tabs button:focus-visible { outline: 3px solid #8460bd; outline-offset: 2px; }
+.access-panel[hidden] { display: none !important; }
+.access-panel > .guest-login-box:first-child { margin-top: 0; }
+.access-panel .buyer-register-box { margin-top: 22px; }
+.access-panel .admin-login-intro { margin-bottom: 14px; }
+.access-panel .admin-login-form { grid-template-columns: minmax(0, 1fr); }
+.access-panel .admin-login-form .admin-primary-button { justify-self: start; min-width: 150px; }
+.admin-login-intro { display: flex; align-items: center; gap: 12px; margin-bottom: 18px; }
+.admin-card-icon { display: grid; width: 46px; height: 46px; flex: 0 0 46px; place-items: center; border-radius: 15px; background: #f7e6f6; color: #a447a0; font-size: 1.45rem; }
+.admin-login-intro h2 { margin: 0; color: #263b62; font-size: clamp(1.05rem, 2vw, 1.35rem); font-weight: 900; }
+.admin-login-intro p { margin: 3px 0 0; color: #6e6681; font-size: .88rem; }
+.admin-login-form { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: end; gap: 12px; }
+.admin-field { display: grid; min-width: 0; gap: 5px; }
+.admin-field label { color: #514768; font-size: .78rem; font-weight: 800; }
+.admin-field .form-control, .admin-field .form-select { min-height: 42px; border-color: #ded3e9; border-radius: 12px; color: #2e3154; background-color: #fff; box-shadow: none; }
+.admin-field .form-control:focus, .admin-field .form-select:focus { border-color: #a974c6; box-shadow: 0 0 0 .22rem #bd8bd333; }
+.admin-primary-button, .admin-secondary-button, .admin-row-action {
+  display: inline-flex; min-height: 40px; align-items: center; justify-content: center; gap: 6px;
+  padding: 8px 14px; border: 1px solid transparent; border-radius: 12px; font: inherit; font-size: .82rem; font-weight: 900; cursor: pointer;
+  transition: transform .18s ease, box-shadow .18s ease, background-color .18s ease;
+}
+.admin-primary-button { color: #fff; background: linear-gradient(110deg, #b64c9f, #737fc2); box-shadow: 0 4px 0 #6c5794; }
+.admin-secondary-button { border-color: #e1d6e9; color: #514768; background: #fff; }
+.admin-primary-button:hover, .admin-secondary-button:hover, .admin-row-action:hover { transform: translateY(-1px); }
+.admin-primary-button:focus-visible, .admin-secondary-button:focus-visible, .admin-row-action:focus-visible { outline: 3px solid #8460bd; outline-offset: 3px; }
+.admin-primary-button:disabled, .admin-secondary-button:disabled, .admin-row-action:disabled { opacity: .58; cursor: wait; transform: none; }
+.google-login-option { display: grid; justify-items: center; gap: 8px; width: 100%; margin-top: 12px; color: #756b83; font-size: .82rem; }
+.google-login-option > div { min-height: 40px; }
+.admin-feedback { min-height: 1.4em; margin: 10px 0 0; color: #69617c; font-size: .83rem; }
+.admin-feedback[data-state="error"] { color: #a72850; }
+.admin-feedback[data-state="success"] { color: #217956; }
+.guest-login-box { display: grid; gap: 10px; margin-top: 18px; padding-top: 16px; border-top: 1px solid #e8deef; }
+.guest-login-box h3 { margin: 0; color: #3b4168; font-size: .92rem; font-weight: 900; }
+.guest-login-box p { margin: 3px 0 0; color: #706781; font-size: .78rem; }
+.guest-login-form { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: end; gap: 10px; }
+.admin-token-result { display: grid; gap: 8px; margin: 10px 0; padding: 12px; border: 1px solid #e5d8ec; border-radius: 12px; background: #fff8e8; }
+.admin-token-result code { display: block; overflow-wrap: anywhere; color: #4c3b61; user-select: all; }
+.admin-subheading { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.admin-subheading .eyebrow { margin: 0 0 2px; }
+.admin-subheading h2 { margin: 0; color: #35466e; font-size: 1rem; font-weight: 900; }
+.admin-vehicles-panel { display: grid; gap: 10px; margin: 14px 0; }
+.admin-vehicles-panel[hidden] { display: none !important; }
+.admin-vehicles-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 250px), 1fr)); gap: 10px; }
+.admin-vehicle-card { display: flex; align-items: center; justify-content: space-between; gap: 10px; min-width: 0; padding: 12px; border: 1px solid #e3d9ec; border-radius: 14px; background: linear-gradient(125deg,#fff,#f5f8ff); }
+.admin-vehicle-card h3 { margin: 0; color: #32446c; font-size: .88rem; font-weight: 900; }
+.admin-vehicle-card p { margin: 4px 0 0; color: #716a82; font-size: .72rem; overflow-wrap: anywhere; }
+.admin-user-bar { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding-bottom: 14px; border-bottom: 1px solid #e8deef; }
+.admin-user-bar > div { display: flex; min-width: 0; align-items: center; flex-wrap: wrap; gap: 8px; }
+.admin-user-label { color: #8a6696; font-size: .7rem; font-weight: 900; letter-spacing: .12em; text-transform: uppercase; }
+.admin-user-bar strong { max-width: 100%; overflow-wrap: anywhere; color: #2d3e66; }
+.admin-role-chip { display: inline-flex; padding: 4px 9px; border: 1px solid #ded3f1; border-radius: 999px; color: #684b8c; background: #f6efff; font-size: .66rem; font-weight: 900; }
+.admin-role-notice { margin: 12px 0; padding: 10px 12px; border-left: 4px solid #83d4b6; border-radius: 10px; color: #5a5571; background: #f5fff9; font-size: .8rem; }
+.admin-toolbar { display: flex; align-items: end; justify-content: space-between; gap: 12px; margin: 14px 0 8px; }
+.admin-resource-field { width: min(100%, 340px); }
+.admin-toolbar-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.admin-create-form { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); align-items: end; gap: 10px; margin: 12px 0; padding: 14px; border: 1px solid #e7d8ed; border-radius: 16px; background: #fff; }
+.admin-create-form .admin-form-title { grid-column: 1 / -1; margin: 0; color: #3b4168; font-size: .92rem; font-weight: 900; }
+.admin-create-form .admin-form-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.admin-table-shell { min-width: 0; border: 1px solid #e6dceb; border-radius: 16px; background: #fff; }
+.admin-table-scroll { max-width: 100%; overflow: auto; border-radius: inherit; overscroll-behavior-inline: contain; }
+.admin-table { min-width: 680px; margin: 0; color: #3c3b5a; font-size: .8rem; }
+.admin-table caption { padding: 11px 14px; color: #756b85; font-size: .75rem; }
+.admin-table thead th { position: sticky; top: 0; color: #514768; background: #f6f0fb; white-space: nowrap; }
+.admin-table th, .admin-table td { padding: 9px 11px; vertical-align: middle; }
+.admin-table td { max-width: 280px; overflow-wrap: anywhere; }
+.admin-table .admin-actions-cell { display: flex; flex-wrap: wrap; gap: 5px; }
+.admin-row-action { min-height: 30px; padding: 4px 8px; border-color: #e2d5ec; color: #5e5076; background: #fff; font-size: .68rem; }
+.admin-row-action[data-action="revoke"], .admin-row-action[data-action="delete"] { border-color: #f3cbd5; color: #9f3652; background: #fff5f6; }
+.admin-empty { padding: 20px !important; color: #746b80; text-align: center; }
+
+/* Admin dashboard: una sola sección visible a la vez dentro del viewport. */
+.admin-view.is-authenticated { display: grid; height: 100%; max-height: 100%; min-height: 0; grid-template-rows: minmax(0, 1fr); gap: 0; overflow: hidden; }
+.admin-view.is-authenticated > .admin-heading,
+.admin-view.is-authenticated > .section-hint { display: none; }
+.admin-dashboard:not([hidden]) { display: grid; height: 100%; max-height: 100%; min-height: 0; grid-template-rows: auto auto auto minmax(0, 1fr); gap: clamp(5px, .8vh, 9px); padding: clamp(8px, 1.1vw, 14px); overflow: hidden; }
+.admin-dashboard-tabs { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 5px; padding: 4px; border: 1px solid #e8deef; border-radius: 13px; background: #f8f3fb; }
+.admin-dashboard-tabs[hidden], .admin-tab-panel[hidden] { display: none !important; }
+.admin-dashboard-tabs button { min-width: 0; min-height: 38px; padding: 5px 9px; border: 1px solid transparent; border-radius: 9px; color: #655775; background: transparent; font: inherit; font-size: .78rem; font-weight: 850; }
+.admin-dashboard-tabs button.is-active { border-color: #e5d6ed; color: #514067; background: linear-gradient(110deg,#ffe7f1,#e4f2ff); }
+.admin-tab-panel:not([hidden]) { min-width: 0; min-height: 0; height: 100%; overflow: hidden; }
+.admin-metrics-panel:not([hidden]) { grid-template-rows: auto auto minmax(0, 1fr) auto auto; gap: 6px; padding: clamp(8px, 1vw, 12px); }
+.admin-metrics-grid { min-height: 0; grid-template-columns: repeat(4, minmax(0, 1fr)); grid-auto-rows: minmax(0, 1fr); gap: 6px; }
+.admin-metric-card { padding: 8px 10px; }
+.admin-metric-card strong { font-size: clamp(1rem, 2vw, 1.45rem); }
+.admin-metrics-panel .admin-dashboard-shortcuts { gap: 5px; }
+.admin-vehicles-panel:not([hidden]) { grid-template-rows: auto minmax(0, 1fr); gap: 6px; margin: 0; padding: 10px; overflow: auto; scrollbar-width: none; }
+.admin-vehicles-panel::-webkit-scrollbar { display: none; }
+.admin-vehicles-list { align-content: start; gap: 7px; }
+.admin-vehicle-card { padding: 8px 10px; }
+#admin-tools:not([hidden]) { display: grid; grid-template-rows: auto auto auto auto minmax(0, 1fr); gap: 5px; padding: 8px; overflow: hidden; }
+#admin-tools .admin-toolbar { min-width: 0; margin: 0; }
+#admin-tools .admin-toolbar-actions { flex-wrap: nowrap; }
+#admin-tools .admin-filter-form { min-width: 0; margin: 0; padding: 7px; gap: 6px; }
+#admin-tools .admin-create-form:not([hidden]) { max-height: 28vh; margin: 0; padding: 8px; overflow: auto; scrollbar-width: none; }
+#admin-tools .admin-create-form::-webkit-scrollbar { display: none; }
+#admin-tools #admin-resource-status { min-height: 1.2em; margin: 0; font-size: .72rem; }
+#admin-tools .admin-table-shell { min-height: 0; height: 100%; overflow: hidden; }
+#admin-tools .admin-table-scroll { height: 100%; overflow: auto; scrollbar-width: none; }
+#admin-tools .admin-table-scroll::-webkit-scrollbar { display: none; }
+#admin-tools .admin-table { min-width: 680px; font-size: .68rem; }
+#admin-tools .admin-table th, #admin-tools .admin-table td { padding: 5px 7px; }
+@media (max-width: 767.98px) {
+  .admin-dashboard:not([hidden]) { gap: 5px; padding: 6px; }
+  .admin-dashboard-tabs button { min-height: 36px; padding: 4px; font-size: .68rem; }
+  .admin-user-bar { flex-direction: row; gap: 6px; padding-bottom: 6px; }
+  .admin-user-bar > div { gap: 4px; font-size: .72rem; }
+  .admin-user-bar .admin-secondary-button { min-height: 34px; padding: 4px 7px; font-size: .65rem; }
+  .admin-role-notice { display: -webkit-box; overflow: hidden; margin: 0; padding: 6px 8px; font-size: .66rem; -webkit-box-orient: vertical; -webkit-line-clamp: 2; }
+  .admin-metrics-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .admin-metric-card { padding: 6px; }
+  .admin-metric-card span { font-size: .6rem; }
+  .admin-metric-card strong { font-size: 1rem; }
+  #admin-tools:not([hidden]) { grid-template-rows: auto auto auto auto minmax(0, 1fr); padding: 5px; }
+  #admin-tools .admin-toolbar { align-items: end; flex-direction: row; gap: 5px; }
+  #admin-tools .admin-resource-field { width: min(62%, 280px); }
+  #admin-tools .admin-toolbar-actions { gap: 4px; }
+  #admin-tools .admin-toolbar-actions button { min-height: 34px; padding: 4px 6px; font-size: .62rem; }
+  #admin-tools .admin-filter-form { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  #admin-tools .admin-filter-form .admin-field label { font-size: .62rem; }
+  #admin-tools .admin-filter-form .form-control, #admin-tools .admin-filter-form .form-select { min-height: 34px; height: 34px; font-size: .68rem; }
+  #admin-tools .admin-filter-form > button { min-height: 34px; padding: 3px; font-size: .62rem; }
+  #admin-tools .admin-pagination { grid-column: 1 / -1; justify-content: space-between; }
+  #admin-tools .admin-table { min-width: 640px; font-size: .6rem; }
+  #admin-tools .admin-table th, #admin-tools .admin-table td { padding: 4px; }
+}
+
+@media (max-width: 480px) {
+  .access-tabs { gap: 3px; margin-bottom: 14px; padding: 4px; }
+  .access-tabs button { min-height: 38px; padding: 4px 3px; font-size: clamp(.64rem, 2.8vw, .76rem); line-height: 1.15; }
+  .access-panel .admin-login-form .admin-primary-button { width: 100%; }
+}
+
+/* Métricas legibles: reserva alto real para las tarjetas y no superpone los valores. */
+.admin-metrics-panel:not([hidden]) {
+  grid-template-rows: auto auto minmax(132px, 1fr) auto auto !important;
+  align-content: stretch;
+  overflow: auto !important;
+  scrollbar-width: none;
+}
+.admin-metrics-panel:not([hidden])::-webkit-scrollbar { display: none; }
+.admin-metrics-panel .admin-metrics-grid {
+  grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  grid-auto-rows: minmax(60px, 1fr) !important;
+  align-content: stretch;
+}
+.admin-metrics-panel .admin-metric-card {
+  display: flex;
+  min-height: 60px;
+  flex-direction: column;
+  justify-content: center;
+  gap: 2px;
+  overflow: hidden;
+}
+.admin-metrics-panel .admin-metric-card strong {
+  margin: 0;
+  font-size: clamp(1.05rem, 2vw, 1.45rem);
+  line-height: 1.05;
+}
+.admin-metrics-panel .admin-metrics-note { line-height: 1.35; overflow-wrap: anywhere; }
+@media (max-width: 767.98px) {
+  .admin-metrics-panel:not([hidden]) { grid-template-rows: auto auto minmax(132px, 1fr) auto auto !important; padding: 7px !important; }
+  .admin-metrics-panel .admin-metrics-grid { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; grid-auto-rows: minmax(56px, auto) !important; }
+  .admin-metrics-panel .admin-metric-card { min-height: 56px; padding: 5px 7px; }
+  .admin-metrics-panel .admin-metric-card span { font-size: .61rem; }
+}
+
+/* Override final de tarjetas: evita que las reglas heredadas superpongan cifras. */
+.admin-metrics-panel:not([hidden]) {
+  grid-template-rows: auto auto auto auto auto !important;
+  align-content: start !important;
+  overflow: auto !important;
+  scrollbar-width: none !important;
+}
+.admin-metrics-panel:not([hidden])::-webkit-scrollbar { display: none !important; }
+.admin-metrics-panel .admin-metrics-grid {
+  grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  grid-auto-rows: minmax(70px, auto) !important;
+  align-content: start !important;
+}
+.admin-metrics-panel .admin-metric-card {
+  min-height: 70px !important;
+  overflow: visible !important;
+  gap: 5px !important;
+}
+.admin-metrics-panel .admin-metric-card span { line-height: 1.25 !important; }
+.admin-metrics-panel .admin-metric-card strong { line-height: 1.1 !important; }
+@media (max-width: 767.98px) {
+  .admin-metrics-panel .admin-metrics-grid { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; grid-auto-rows: minmax(64px, auto) !important; }
+  .admin-metrics-panel .admin-metric-card { min-height: 64px !important; padding: 7px !important; }
+  .admin-metrics-panel .admin-metric-card span { font-size: .66rem !important; }
+}
+.public-session-exit:not([hidden]) {
+  display: inline-flex;
+  min-height: 34px;
+  align-items: center;
+  justify-content: center;
+  margin-left: auto;
+  padding: 5px 10px;
+  border: 1px solid #e2d5ec;
+  border-radius: 10px;
+  color: #58476f;
+  background: #fff;
+  font: inherit;
+  font-size: .72rem;
+  font-weight: 800;
+}
+
+.admin-metrics-panel { display: grid; gap: 10px; padding: 14px; border: 1px solid #e7d8ed; border-radius: 18px; background: linear-gradient(135deg,#fff,#f5f8ff); }
+.admin-metrics-panel[hidden] { display: none !important; }
+.admin-metrics-grid { display: grid; grid-template-columns: repeat(auto-fit,minmax(min(100%,165px),1fr)); gap: 9px; }
+.admin-metric-card { min-width: 0; padding: 12px; border: 1px solid #e4d9ef; border-radius: 14px; background: #fff; }
+.admin-metric-card span { display: block; color: #756b85; font-size: .7rem; font-weight: 800; }
+.admin-metric-card strong { display: block; margin-top: 4px; color: #35466e; font-size: clamp(1.2rem,2.5vw,1.7rem); font-weight: 1000; overflow-wrap: anywhere; }
+.admin-metrics-note { margin: 0; color: #706781; font-size: .72rem; }
+.admin-dashboard-shortcuts { display: flex; flex-wrap: wrap; gap: 7px; }
+.admin-dashboard-shortcuts button { min-height: 34px; padding: 6px 10px; border: 1px solid #e2d5ec; border-radius: 10px; color: #55466e; background: #fff; font: inherit; font-size: .75rem; font-weight: 800; }
+.admin-dashboard-shortcuts button:focus-visible { outline: 3px solid #8460bd; outline-offset: 2px; }
+
+/* Métricas: reglas históricas no deben colapsar las filas y montar las cifras. */
+.admin-metrics-panel:not([hidden]) {
+  display: grid !important;
+  grid-template-rows: auto auto minmax(0, auto) auto auto !important;
+  align-content: start !important;
+  gap: 8px !important;
+  overflow: auto !important;
+  scrollbar-width: thin;
+}
+.admin-metrics-panel .admin-metrics-grid {
+  display: grid !important;
+  grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  grid-auto-rows: minmax(72px, auto) !important;
+  align-content: start !important;
+  gap: 8px !important;
+}
+.admin-metrics-panel .admin-metric-card {
+  display: flex !important;
+  min-width: 0;
+  min-height: 72px;
+  flex-direction: column;
+  justify-content: center;
+  gap: 5px;
+  overflow: visible;
+}
+.admin-metrics-panel .admin-metric-card span { line-height: 1.25; overflow-wrap: anywhere; }
+.admin-metrics-panel .admin-metric-card strong { margin: 0 !important; line-height: 1.1 !important; }
+.admin-metrics-panel .admin-metrics-note { line-height: 1.35; overflow-wrap: anywhere; }
+@media (max-width: 767.98px) {
+  .admin-metrics-panel .admin-metrics-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    grid-auto-rows: minmax(64px, auto) !important;
+  }
+  .admin-metrics-panel .admin-metric-card { min-height: 64px; padding: 7px; }
+  .admin-metrics-panel .admin-metric-card span { font-size: .66rem; }
+}
+
+/* Acceso inicial compacto: cada pestaña muestra solo su acción principal. */
+#admin-view:not([hidden]):not(.is-authenticated) {
+  height: 100% !important;
+  max-height: 100% !important;
+  min-height: 0 !important;
+  align-content: center !important;
+  gap: clamp(3px, .7vh, 8px) !important;
+  overflow: hidden !important;
+  scrollbar-width: none !important;
+}
+#admin-view:not([hidden]):not(.is-authenticated)::-webkit-scrollbar { display: none !important; }
+#admin-view:not([hidden]):not(.is-authenticated) .section-hint { margin: 0; }
+#admin-view:not([hidden]):not(.is-authenticated) .admin-login-card {
+  width: min(100%, 560px);
+  max-height: 100%;
+  margin-inline: auto;
+  padding: clamp(10px, 1.5vw, 18px);
+  overflow: hidden;
+}
+#admin-view:not([hidden]):not(.is-authenticated) .access-tabs { margin-bottom: 10px; }
+#admin-view:not([hidden]):not(.is-authenticated) .admin-login-intro { margin-bottom: 8px; }
+#admin-view:not([hidden]):not(.is-authenticated) .admin-feedback { margin-top: 6px; }
+.guest-access-card {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+  border: 1px solid #e7d8ed;
+  border-radius: 16px;
+  background: #fff;
+}
+.guest-access-card h2 { margin: 0; color: #3b4168; font-size: 1rem; font-weight: 900; }
+.guest-access-card p { margin: 4px 0 0; color: #706781; font-size: .82rem; }
+.guest-catalog-actions { grid-column: 1 / -1; display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: end; gap: 8px; }
+.guest-catalog-actions label { grid-column: 1 / -1; color: #514664; font-size: .8rem; font-weight: 800; }
+.guest-catalog-actions .form-select { min-width: 0; }
+.guest-catalog-actions button { min-height: 42px; }
+.guest-catalog-list { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr)); gap: 8px; }
+.guest-model-card { min-width: 0; padding: 11px; border: 1px solid #e7d8ed; border-radius: 12px; background: linear-gradient(135deg, #fffafd, #f4f8ff); }
+.guest-model-card h3 { margin: 0; color: #3b4168; font-size: .9rem; }
+.guest-model-card p { overflow-wrap: anywhere; }
+.guest-model-card strong { display: block; color: #28785c; font-size: .78rem; }
+#guest-access-status { grid-column: 1 / -1; }
+@media (max-width: 767.98px) {
+  #admin-view:not([hidden]):not(.is-authenticated) .admin-heading .eyebrow { font-size: .55rem; }
+  #admin-view:not([hidden]):not(.is-authenticated) .admin-heading h1 { font-size: clamp(.9rem, 4vw, 1.15rem); }
+  #admin-view:not([hidden]):not(.is-authenticated) .section-hint { font-size: .68rem; }
+  .guest-access-card { grid-template-columns: auto minmax(0, 1fr); gap: 8px; padding: 10px; }
+  .guest-catalog-actions { grid-template-columns: minmax(0, 1fr); }
+  .guest-catalog-actions button { width: 100%; }
+}
+.admin-filter-form { display: grid; grid-template-columns: minmax(150px,1fr) minmax(150px,.7fr) auto minmax(220px,auto); align-items: end; gap: 9px; margin: 10px 0; padding: 11px; border: 1px solid #e8deef; border-radius: 14px; background: #fff; }
+.admin-filter-form[hidden], .admin-filter-form .admin-field[hidden] { display: none !important; }
+.admin-pagination { display: flex; align-items: center; justify-content: flex-end; flex-wrap: wrap; gap: 7px; color: #625874; font-size: .75rem; font-weight: 800; }
+
+.buyer-register-box { margin-top: 18px; border-color: #d9c6eb; background: linear-gradient(140deg, #fff9fd, #f4f8ff); }
+.buyer-register-box > div p { max-width: 70ch; }
+.buyer-demo-tools { display: grid; gap: 12px; margin-top: 18px; padding: 16px; border: 1px solid #e3d9ec; border-radius: 16px; background: #fff9fd; }
+.buyer-demo-tools[hidden] { display: none !important; }
+.buyer-demo-editor[hidden] { display: none !important; }
+.buyer-demo-editor { display: grid; gap: 12px; padding: 14px; border: 1px solid #e3d9ec; border-radius: 14px; background: linear-gradient(135deg,#fffafd,#f6f5ff); }
+.buyer-demo-editor h3 { margin: 0; color: #55466e; }
+.buyer-demo-meta { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 12px; }
+.buyer-demo-draft { display: grid; gap: 8px; padding-left: 28px; }
+.buyer-demo-draft li { display: flex; flex-wrap: wrap; align-items: center; gap: 7px; padding: 9px; border: 1px solid #e7d9f0; border-radius: 10px; background: #fff; }
+.buyer-demo-draft li span { flex: 1 1 230px; }
+.buyer-demo-draft button { min-height: 36px; border: 1px solid #d9c9e5; border-radius: 8px; padding: 5px 9px; background: #fff; color: #59456f; }
+.buyer-demo-editor-actions { display: flex; flex-wrap: wrap; gap: 9px; }
+.public-showcase { display: grid; gap: 12px; margin-bottom: 22px; padding: 18px; border-radius: 16px; background: linear-gradient(135deg,#f8e8fb,#eaf3ff); }
+.public-showcase h2 { margin: 0; color: #4b3b67; }
+.public-showcase p { margin: 6px 0 0; }
+.public-catalog-cards { display: grid; grid-template-columns: repeat(auto-fit,minmax(min(100%,220px),1fr)); gap: 12px; }
+.public-model-card { display: grid; align-content: start; gap: 8px; padding: 14px; border: 1px solid #e3d8ed; border-radius: 13px; background: #fff; }
+.public-model-card h3,.public-model-card p { margin: 0; }
+.public-model-image { display: grid; place-items: center; min-height: 90px; border-radius: 10px; background: #f4eff9; color: #6b5a80; font-size: .85rem; }
+.buyer-demo-tools h2 { margin: 0; color: #55466e; font-size: 1rem; font-weight: 900; }
+.buyer-demo-tools .admin-login-form { padding: 12px; border: 1px solid #eee3f1; border-radius: 12px; background: #fff; }
+.buyer-demo-tools .admin-login-form button { align-self: end; }
+@media (max-width: 767.98px) {
+  .buyer-demo-tools { padding: 11px; }
+  .buyer-demo-meta { grid-template-columns: minmax(0,1fr); }
+  .buyer-demo-tools .admin-login-form { grid-template-columns: minmax(0, 1fr); }
+}
+
+@media (max-width: 767.98px) {
+  .admin-view:not([hidden]) { gap: 9px; }
+  .admin-login-form { grid-template-columns: minmax(0, 1fr); }
+  .guest-login-form { grid-template-columns: minmax(0, 1fr); }
+  .admin-toolbar { align-items: stretch; flex-direction: column; }
+  .admin-resource-field { width: 100%; }
+  .admin-toolbar-actions { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .admin-toolbar-actions > * { width: 100%; }
+  .admin-filter-form { grid-template-columns: minmax(0,1fr) minmax(0,1fr); }
+  .admin-filter-form > button { width: 100%; }
+  .admin-pagination { grid-column: 1 / -1; justify-content: space-between; }
+  .admin-create-form { grid-template-columns: repeat(2, minmax(0, 1fr)); padding: 11px; }
+  .admin-create-form .admin-form-actions { grid-column: 1 / -1; }
+  .admin-user-bar { align-items: flex-start; }
+}
+@media (max-width: 420px) {
+  .admin-login-card, .admin-dashboard { padding: 12px; border-radius: 17px; }
+  .admin-create-form { grid-template-columns: minmax(0, 1fr); }
+  .admin-create-form .admin-form-title, .admin-create-form .admin-form-actions { grid-column: 1; }
+  .admin-filter-form { grid-template-columns: minmax(0,1fr); }
+  .admin-pagination { grid-column: 1; }
+  .admin-user-bar { flex-direction: column; }
+  .admin-user-bar .admin-secondary-button { align-self: stretch; }
+  .admin-vehicle-card { align-items: stretch; flex-direction: column; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .admin-primary-button, .admin-secondary-button, .admin-row-action { transition: none; }
+}
+.demo-page-active .buyer-demo-tools { margin-top: 0; gap: 16px; padding: clamp(14px,2vw,22px); }
+.demo-page-active .buyer-demo-tools > h2, .demo-page-active .buyer-demo-editor h3 { padding-bottom: 8px; border-bottom: 1px solid #e8deef; }
+.demo-page-active .buyer-demo-tools > h2 { font-size: 1.15rem; }
+.demo-page-active .buyer-demo-tools .admin-login-form { grid-template-columns: repeat(2,minmax(0,1fr)); gap: 14px; padding: 16px; }
+.demo-page-active #buyer-demo-create-form button { grid-column: 1 / -1; justify-self: start; min-width: min(100%,240px); }
+.demo-page-active .buyer-demo-editor { gap: 16px; padding: clamp(14px,2vw,20px); }
+.demo-page-active .buyer-demo-draft, .demo-page-active #buyer-demo-total { margin-top: 0; margin-bottom: 0; }
+@media (max-width: 767.98px) {
+  .demo-page-active .buyer-demo-tools .admin-login-form { grid-template-columns: minmax(0,1fr); }
+  .demo-page-active #buyer-demo-create-form button { grid-column: auto; width: 100%; }
+}
+
+/* Compact, non-scrolling DEMO step editor. All up to 20 steps stay in view. */
+.page-shell.demo-page-active .demo-editor-panel:not([hidden]),
+.page-shell.demo-page-active .demo-editor-panel:not([hidden]) .buyer-demo-editor:not([hidden]) {
+  display: grid !important;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden !important;
+}
+.page-shell.demo-page-active .demo-editor-panel .buyer-demo-editor {
+  grid-template-rows: auto auto auto minmax(0, 1fr) auto auto !important;
+  gap: 4px !important;
+  margin: 0;
+  padding: 6px !important;
+}
+.page-shell.demo-page-active .demo-editor-panel .demo-panel-heading { gap: 5px; }
+.page-shell.demo-page-active .demo-editor-panel .demo-panel-heading .eyebrow { margin-bottom: 1px; font-size: .48rem; }
+.page-shell.demo-page-active .demo-editor-panel .demo-panel-heading h2 { font-size: clamp(.72rem, 1vw, .9rem); }
+.page-shell.demo-page-active .demo-editor-panel .demo-panel-heading > p { font-size: .5rem; line-height: 1.1; }
+.page-shell.demo-page-active .demo-editor-panel .buyer-demo-meta,
+.page-shell.demo-page-active .demo-editor-panel #buyer-demo-step-form {
+  display: grid !important;
+  min-width: 0;
+  min-height: 0;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  gap: 4px !important;
+  padding: 5px !important;
+}
+.page-shell.demo-page-active .demo-editor-panel .buyer-demo-meta .admin-field { display: grid; grid-template-columns: max-content minmax(0, 1fr); align-items: center; gap: 4px; }
+.page-shell.demo-page-active .demo-editor-panel .admin-field { min-width: 0; gap: 2px; }
+.page-shell.demo-page-active .demo-editor-panel .admin-field label { min-width: 0; margin: 0; font-size: .49rem; line-height: 1.05; }
+.page-shell.demo-page-active .demo-editor-panel .form-control,
+.page-shell.demo-page-active .demo-editor-panel .form-select { min-width: 0; min-height: 27px; height: 27px; padding: 2px 5px; font-size: .58rem; }
+.page-shell.demo-page-active .demo-editor-panel #buyer-demo-step-form button { align-self: stretch; min-width: 0; min-height: 27px; padding: 2px 5px; font-size: .56rem; }
+.page-shell.demo-page-active .demo-editor-panel .buyer-demo-draft {
+  display: grid !important;
+  min-width: 0;
+  min-height: 0;
+  max-height: none !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-rows: repeat(var(--draft-rows, 1), minmax(0, 1fr));
+  grid-auto-flow: row;
+  align-content: stretch;
+  gap: 3px;
+  margin: 0;
+  padding: 0;
+  overflow: hidden !important;
+  list-style: none;
+}
+.page-shell.demo-page-active .demo-editor-panel .buyer-demo-draft li {
+  display: grid;
+  min-width: 0;
+  min-height: 0;
+  grid-template-columns: minmax(0, 1fr) 19px 19px 19px;
+  align-items: center;
+  gap: 2px;
+  padding: 2px 3px;
+  overflow: hidden;
+  font-size: .48rem;
+  line-height: 1;
+}
+.page-shell.demo-page-active .demo-editor-panel .buyer-demo-step-copy { display: grid; min-width: 0; gap: 1px; overflow: hidden; }
+.page-shell.demo-page-active .demo-editor-panel .buyer-demo-step-label { min-width: 0; overflow: hidden; font-size: .49rem; font-weight: 800; text-overflow: ellipsis; white-space: nowrap; }
+.page-shell.demo-page-active .demo-editor-panel .buyer-demo-step-copy small { overflow: hidden; font-size: .43rem; text-overflow: ellipsis; white-space: nowrap; }
+.page-shell.demo-page-active .demo-editor-panel .buyer-demo-draft button { width: 19px; min-width: 19px; min-height: 19px; height: 19px; padding: 0; border-radius: 6px; font-size: .72rem; line-height: 1; }
+.page-shell.demo-page-active .demo-editor-panel .buyer-demo-draft button.is-remove { color: #a2375e; }
+.page-shell.demo-page-active .demo-editor-panel #buyer-demo-total { min-height: 14px; margin: 0; font-size: .49rem; line-height: 1.1; }
+.page-shell.demo-page-active .demo-editor-panel .buyer-demo-editor-actions { display: flex; min-height: 27px; gap: 5px; }
+.page-shell.demo-page-active .demo-editor-panel .buyer-demo-editor-actions button { min-height: 27px; padding: 3px 8px; font-size: .54rem; }
+@media (max-width: 520px) {
+  .page-shell.demo-page-active .demo-editor-panel .buyer-demo-editor { gap: 3px !important; padding: 4px !important; }
+  .page-shell.demo-page-active .demo-editor-panel .buyer-demo-meta,
+  .page-shell.demo-page-active .demo-editor-panel #buyer-demo-step-form { gap: 3px !important; padding: 3px !important; }
+  .page-shell.demo-page-active .demo-editor-panel .buyer-demo-meta .admin-field { grid-template-columns: 1fr; gap: 1px; }
+  .page-shell.demo-page-active .demo-editor-panel .buyer-demo-draft li { grid-template-columns: minmax(0, 1fr) 16px 16px 16px; gap: 1px; padding: 1px; }
+  .page-shell.demo-page-active .demo-editor-panel .buyer-demo-draft button { width: 16px; min-width: 16px; min-height: 16px; height: 16px; }
+  .page-shell.demo-page-active .demo-editor-panel .buyer-demo-step-label { font-size: .43rem; }
+  .page-shell.demo-page-active .demo-editor-panel .buyer-demo-step-copy small { font-size: .39rem; }
+}
+
+/* Final bounded layouts: reserve a real row for the DEMO sequence and keep
+   joystick titles, pads, stop and auxiliary commands inside their own cards. */
+.page-shell.demo-page-active .demo-box,
+.page-shell.demo-page-active .demo-tab-panels,
+.page-shell.demo-page-active #buyer-demo-tools,
+.page-shell.demo-page-active #demo-editor-panel,
+.page-shell.demo-page-active .buyer-demo-editor {
+  box-sizing: border-box !important;
+  width: 100% !important;
+  height: 100% !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+}
+.page-shell.demo-page-active .demo-tab-panels { grid-template: minmax(0, 1fr) / minmax(0, 1fr) !important; }
+.page-shell.demo-page-active #buyer-demo-tools:not([hidden]) { display: grid !important; grid-template: minmax(0, 1fr) / minmax(0, 1fr) !important; }
+.page-shell.demo-page-active #demo-editor-panel:not([hidden]) { display: grid !important; grid-template: minmax(0, 1fr) / minmax(0, 1fr) !important; }
+.page-shell.demo-page-active .buyer-demo-editor {
+  display: grid !important;
+  grid-template-rows: auto auto auto minmax(0, 1fr) auto auto !important;
+  align-content: stretch !important;
+  gap: clamp(3px, .45vh, 6px) !important;
+  padding: clamp(4px, .55vw, 8px) !important;
+  overflow: hidden !important;
+}
+.page-shell.demo-page-active .buyer-demo-editor > * { min-width: 0 !important; min-height: 0 !important; }
+.page-shell.demo-page-active .buyer-demo-editor .buyer-demo-draft {
+  height: 100% !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  grid-template-rows: repeat(var(--draft-rows, 1), minmax(0, 1fr)) !important;
+}
+.page-shell.demo-page-active .buyer-demo-editor .buyer-demo-draft li { height: 100%; }
+
+.control-view:not([hidden]) .controller-console {
+  box-sizing: border-box;
+  grid-template-rows: auto minmax(0, 1fr) auto !important;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden !important;
+  gap: clamp(5px, .8vh, 10px) !important;
+}
+.control-view:not([hidden]) .controller-main {
+  box-sizing: border-box;
+  width: 100%;
+  height: auto !important;
+  min-width: 0;
+  min-height: 0;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  grid-template-rows: minmax(0, 1fr) auto auto !important;
+  grid-template-areas: "drive arm" "stop stop" "actions actions" !important;
+  align-items: stretch;
+  gap: clamp(5px, .8vh, 10px) !important;
+  overflow: hidden;
+}
+.control-view:not([hidden]) .stick-unit {
+  box-sizing: border-box;
+  width: 100%;
+  height: auto !important;
+  min-width: 0;
+  min-height: 0;
+  align-self: stretch;
+  justify-content: center;
+  gap: clamp(3px, .5vh, 7px);
+  padding: clamp(5px, .8vw, 10px) !important;
+  overflow: hidden !important;
+}
+.control-view:not([hidden]) .stick-title {
+  position: static !important;
+  inset: auto !important;
+  display: block;
+  width: 100%;
+  min-height: 1.2em;
+  margin: 0 !important;
+  transform: none !important;
+  line-height: 1.2;
+  text-align: center;
+}
+.control-view:not([hidden]) .joystick-wrap {
+  width: min(100%, clamp(112px, min(21vh, 15vw), 190px)) !important;
+  max-width: 100%;
+  flex: 0 1 auto;
+  margin: 0 auto !important;
+}
+.control-view:not([hidden]) .direction-readout { min-height: 20px; height: auto; flex: 0 0 auto; }
+.control-view:not([hidden]) .center-controls { min-width: 0; min-height: 0; align-self: stretch; }
+.control-view:not([hidden]) .center-stop,
+.control-view:not([hidden]) .center-stop .stop-button { width: min(100%, 300px); min-width: 0; min-height: 42px; }
+.control-view:not([hidden]) .aux-controls-unit {
+  display: grid;
+  min-width: 0;
+  min-height: 0;
+  grid-template-columns: minmax(100px, .28fr) minmax(0, 1fr) !important;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 10px !important;
+}
+.control-view:not([hidden]) .aux-controls-unit .stick-title { text-align: left; }
+.control-view:not([hidden]) .aux-controls-unit .console-function-grid { min-width: 0; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; }
+.control-view:not([hidden]) .aux-controls-unit .command-button { min-width: 0; min-height: 42px; height: auto; }
+.control-view:not([hidden]) .mobile-command-bar { min-height: 0; justify-content: flex-end; }
+
+@media (max-width: 700px) {
+  .page-shell.demo-page-active .buyer-demo-editor { gap: 3px !important; padding: 4px !important; }
+  .page-shell.demo-page-active .demo-editor-panel .demo-panel-heading > p { display: none; }
+  .page-shell.demo-page-active .demo-editor-panel .buyer-demo-meta .admin-field { grid-template-columns: 1fr; }
+  .control-view:not([hidden]) .controller-main { gap: 4px !important; }
+  .control-view:not([hidden]) .stick-unit { padding: 4px !important; }
+  .control-view:not([hidden]) .joystick-wrap { width: min(100%, clamp(96px, min(19vh, 30vw), 145px)) !important; }
+  .control-view:not([hidden]) .stick-title { font-size: clamp(.48rem, 2vw, .66rem); letter-spacing: .035em; }
+  .control-view:not([hidden]) .aux-controls-unit { grid-template-columns: minmax(75px, .24fr) minmax(0, 1fr) !important; gap: 5px; padding: 4px !important; }
+  .control-view:not([hidden]) .aux-controls-unit .command-button { min-height: 34px; padding: 3px; }
+}
+@media (max-width: 420px) {
+  .control-view:not([hidden]) .aux-controls-unit { grid-template-columns: 1fr !important; gap: 3px; }
+  .control-view:not([hidden]) .aux-controls-unit .stick-title { text-align: center; }
+  .control-view:not([hidden]) .aux-controls-unit .command-button { min-height: 31px; }
+}
+
+/* DEMO editor: separate the step form from its ordered sequence. */
+.page-shell.demo-page-active .demo-editor-panel:not([hidden]) .buyer-demo-editor {
+  display: grid !important;
+  grid-template-columns: minmax(0, .95fr) minmax(0, 1.05fr) !important;
+  grid-template-rows: minmax(0, 1fr) !important;
+  gap: clamp(6px, .8vw, 12px) !important;
+  padding: clamp(6px, .8vw, 12px) !important;
+}
+.page-shell.demo-page-active .demo-editor-form-pane,
+.page-shell.demo-page-active .demo-editor-steps-pane {
+  display: grid;
+  box-sizing: border-box;
+  min-width: 0;
+  min-height: 0;
+  padding: clamp(6px, .7vw, 10px);
+  border: 1px solid #e6d9ef;
+  border-radius: 12px;
+  background: linear-gradient(145deg, #fff, #fbf8ff);
+  overflow: hidden;
+}
+.page-shell.demo-page-active .demo-editor-form-pane {
+  grid-template-rows: auto auto minmax(0, 1fr) auto auto;
+  align-content: stretch;
+  gap: clamp(5px, .7vh, 9px);
+}
+.page-shell.demo-page-active .demo-editor-form-pane .demo-panel-heading { min-width: 0; }
+.page-shell.demo-page-active .demo-editor-form-pane .buyer-demo-meta,
+.page-shell.demo-page-active .demo-editor-form-pane #buyer-demo-step-form {
+  display: grid !important;
+  min-width: 0;
+  min-height: 0;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  align-content: start;
+  gap: 5px !important;
+  padding: 6px !important;
+}
+.page-shell.demo-page-active .demo-editor-form-pane .admin-field { min-width: 0; gap: 3px; }
+.page-shell.demo-page-active .demo-editor-form-pane .admin-field label { min-width: 0; font-size: clamp(.52rem, .65vw, .68rem); line-height: 1.12; }
+.page-shell.demo-page-active .demo-editor-form-pane .form-control,
+.page-shell.demo-page-active .demo-editor-form-pane .form-select { min-width: 0; min-height: 32px; height: 32px; padding: 3px 6px; font-size: clamp(.58rem, .72vw, .74rem); }
+.page-shell.demo-page-active .demo-editor-form-pane #buyer-demo-step-form button { min-width: 0; min-height: 32px; padding: 4px 6px; font-size: clamp(.54rem, .68vw, .68rem); }
+.page-shell.demo-page-active .demo-editor-form-pane #buyer-demo-total { min-height: 1.2em; margin: 0; font-size: clamp(.5rem, .62vw, .64rem); }
+.page-shell.demo-page-active .demo-editor-form-pane .buyer-demo-editor-actions { display: flex; min-width: 0; flex-wrap: wrap; gap: 5px; }
+.page-shell.demo-page-active .demo-editor-form-pane .buyer-demo-editor-actions button { min-height: 30px; padding: 4px 8px; font-size: clamp(.52rem, .66vw, .68rem); }
+.page-shell.demo-page-active .demo-editor-steps-pane { grid-template-rows: auto minmax(0, 1fr); gap: 5px; }
+.page-shell.demo-page-active .demo-editor-steps-heading { display: flex; min-width: 0; align-items: baseline; justify-content: space-between; gap: 8px; padding-bottom: 4px; border-bottom: 1px solid #eadff1; }
+.page-shell.demo-page-active .demo-editor-steps-heading .eyebrow { margin: 0; font-size: clamp(.48rem, .62vw, .62rem); }
+.page-shell.demo-page-active .demo-editor-steps-heading h3 { margin: 0; color: #514568; font-size: clamp(.7rem, .95vw, .9rem); font-weight: 900; }
+.page-shell.demo-page-active .demo-editor-steps-pane .buyer-demo-draft {
+  display: grid !important;
+  min-width: 0;
+  min-height: 0;
+  height: 100% !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  grid-template-rows: repeat(var(--draft-rows, 1), minmax(0, 1fr)) !important;
+  align-content: stretch;
+  gap: 4px;
+  margin: 0;
+  padding: 0;
+  overflow: hidden !important;
+  list-style: none;
+}
+.page-shell.demo-page-active .demo-editor-steps-pane .buyer-demo-draft li {
+  display: grid;
+  min-width: 0;
+  min-height: 0;
+  grid-template-columns: minmax(0, 1fr) 22px 22px 22px;
+  align-items: center;
+  gap: 3px;
+  height: 100%;
+  padding: 3px 5px;
+  overflow: hidden;
+  border: 1px solid #e8deef;
+  border-radius: 8px;
+  background: #fff;
+}
+.page-shell.demo-page-active .demo-editor-steps-pane .buyer-demo-step-copy { display: grid; min-width: 0; gap: 2px; overflow: hidden; }
+.page-shell.demo-page-active .demo-editor-steps-pane .buyer-demo-step-label { min-width: 0; overflow: hidden; font-size: clamp(.52rem, .68vw, .7rem); font-weight: 850; text-overflow: ellipsis; white-space: nowrap; }
+.page-shell.demo-page-active .demo-editor-steps-pane .buyer-demo-step-copy small { overflow: hidden; font-size: clamp(.45rem, .58vw, .6rem); text-overflow: ellipsis; white-space: nowrap; }
+.page-shell.demo-page-active .demo-editor-steps-pane .buyer-demo-draft button { width: 22px; min-width: 22px; min-height: 22px; height: 22px; padding: 0; border: 1px solid #ded1e8; border-radius: 6px; font-size: .68rem; line-height: 1; }
+
+/* Keep each stick status beside its joystick, inside the card. */
+.control-view:not([hidden]) .drive-stick-unit,
+.control-view:not([hidden]) .arm-stick-unit {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) minmax(112px, .38fr) !important;
+  grid-template-rows: auto minmax(0, 1fr) !important;
+  grid-template-areas: "heading heading" "joystick status" !important;
+  align-items: center;
+  justify-items: stretch;
+  gap: 5px 8px !important;
+}
+.control-view:not([hidden]) .drive-stick-unit > .stick-title,
+.control-view:not([hidden]) .arm-stick-unit > .stick-title { grid-area: heading; }
+.control-view:not([hidden]) .drive-stick-unit > .joystick-wrap,
+.control-view:not([hidden]) .arm-stick-unit > .joystick-wrap { grid-area: joystick; justify-self: center; }
+.control-view:not([hidden]) .drive-stick-unit > .direction-readout,
+.control-view:not([hidden]) .arm-stick-unit > .direction-readout {
+  grid-area: status;
+  justify-content: flex-start;
+  min-width: 0;
+  padding: 8px;
+  border-left: 1px solid #e8deef;
+  color: #5d5368;
+  font-size: clamp(.58rem, .82vw, .74rem);
+  line-height: 1.3;
+  text-align: left;
+}
+@media (max-width: 700px) {
+  .page-shell.demo-page-active .demo-editor-panel:not([hidden]) .buyer-demo-editor { grid-template-columns: minmax(0, 1fr) !important; grid-template-rows: minmax(0, .9fr) minmax(0, 1.1fr) !important; }
+  .page-shell.demo-page-active .demo-editor-form-pane { gap: 3px; padding: 4px; }
+  .page-shell.demo-page-active .demo-editor-form-pane .buyer-demo-meta,
+  .page-shell.demo-page-active .demo-editor-form-pane #buyer-demo-step-form { gap: 3px !important; padding: 4px !important; }
+  .page-shell.demo-page-active .demo-editor-steps-pane { gap: 3px; padding: 4px; }
+  .page-shell.demo-page-active .demo-editor-steps-pane .buyer-demo-draft { gap: 2px; }
+  .page-shell.demo-page-active .demo-editor-steps-pane .buyer-demo-draft li { grid-template-columns: minmax(0, 1fr) 18px 18px 18px; gap: 2px; padding: 2px; }
+  .page-shell.demo-page-active .demo-editor-steps-pane .buyer-demo-draft button { width: 18px; min-width: 18px; min-height: 18px; height: 18px; }
+  .control-view:not([hidden]) .drive-stick-unit,
+  .control-view:not([hidden]) .arm-stick-unit { grid-template-columns: minmax(0, 1fr) minmax(86px, .35fr) !important; gap: 4px !important; }
+  .control-view:not([hidden]) .drive-stick-unit > .direction-readout,
+  .control-view:not([hidden]) .arm-stick-unit > .direction-readout { padding: 4px; font-size: clamp(.48rem, 1.8vw, .62rem); }
+}
+@media (max-width: 460px) {
+  .control-view:not([hidden]) .drive-stick-unit,
+  .control-view:not([hidden]) .arm-stick-unit { grid-template-columns: minmax(0, 1fr) minmax(74px, .42fr) !important; grid-template-rows: minmax(0, 1fr) !important; grid-template-areas: "pad info" !important; }
+  .control-view:not([hidden]) .drive-stick-unit > .joystick-wrap,
+  .control-view:not([hidden]) .arm-stick-unit > .joystick-wrap { width: min(100%, 128px) !important; }
+  .control-view:not([hidden]) .stick-side-status { gap: 3px; padding: 2px; }
+  .control-view:not([hidden]) .stick-side-status .stick-title { font-size: .46rem; letter-spacing: .015em; }
+  .control-view:not([hidden]) .stick-side-status .direction-readout { font-size: .44rem; }
+}
+
+/* Keep sequence rows compact and legible; scrolling is limited to the step list. */
+.page-shell.demo-page-active .demo-editor-steps-pane .buyer-demo-draft {
+  grid-template-rows: none !important;
+  grid-auto-rows: minmax(38px, auto) !important;
+  align-content: start !important;
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  scrollbar-color: #a58abd #f1ebf7;
+}
+.page-shell.demo-page-active .demo-editor-steps-pane .buyer-demo-draft::-webkit-scrollbar { width: 9px; }
+.page-shell.demo-page-active .demo-editor-steps-pane .buyer-demo-draft::-webkit-scrollbar-track { border-radius: 8px; background: #f1ebf7; }
+.page-shell.demo-page-active .demo-editor-steps-pane .buyer-demo-draft::-webkit-scrollbar-thumb { border: 2px solid #f1ebf7; border-radius: 8px; background: #a58abd; }
+.page-shell.demo-page-active .demo-editor-steps-pane .buyer-demo-draft li {
+  height: auto !important;
+  min-height: 38px !important;
+  background: #fff !important;
+  color: #514568 !important;
+  opacity: 1 !important;
+}
+.page-shell.demo-page-active .demo-editor-steps-pane .buyer-demo-step-label { color: #514568 !important; }
+.page-shell.demo-page-active .demo-editor-steps-pane .buyer-demo-step-copy small { color: #756b85 !important; }
+.page-shell.demo-page-active .demo-editor-steps-pane .buyer-demo-draft button { color: #5e5076 !important; background: #fff !important; }
+
+/* Larger centered joysticks with their heading and state aligned together at the side. */
+.control-view:not([hidden]) .drive-stick-unit,
+.control-view:not([hidden]) .arm-stick-unit {
+  grid-template-columns: minmax(0, 1fr) minmax(145px, .42fr) !important;
+  grid-template-rows: minmax(0, 1fr) !important;
+  grid-template-areas: "pad info" !important;
+  align-items: center !important;
+  justify-items: stretch !important;
+  gap: clamp(8px, 1vw, 16px) !important;
+}
+.control-view:not([hidden]) .drive-stick-unit > .joystick-wrap,
+.control-view:not([hidden]) .arm-stick-unit > .joystick-wrap {
+  grid-area: pad !important;
+  width: min(100%, clamp(190px, min(34vh, 23vw), 260px)) !important;
+  justify-self: center;
+  align-self: center;
+}
+.control-view:not([hidden]) .stick-side-status {
+  grid-area: info;
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 10px;
+  align-self: center;
+  padding: 8px 10px;
+  border-left: 1px solid #e8deef;
+}
+.control-view:not([hidden]) .stick-side-status .stick-title {
+  width: 100%;
+  min-height: 0;
+  color: #76658e;
+  font-size: clamp(.62rem, 1vw, .85rem);
+  letter-spacing: .08em;
+  line-height: 1.2;
+  text-align: left;
+}
+.control-view:not([hidden]) .stick-side-status .direction-readout {
+  display: flex;
+  min-width: 0;
+  min-height: 0;
+  height: auto;
+  flex: 0 0 auto;
+  justify-content: flex-start;
+  padding: 0;
+  border: 0;
+  font-size: clamp(.58rem, .85vw, .76rem);
+  line-height: 1.35;
+  text-align: left;
+}
+@media (max-width: 700px) {
+  .control-view:not([hidden]) .drive-stick-unit,
+  .control-view:not([hidden]) .arm-stick-unit { grid-template-columns: minmax(0, 1fr) minmax(105px, .4fr) !important; gap: 5px !important; }
+  .control-view:not([hidden]) .drive-stick-unit > .joystick-wrap,
+  .control-view:not([hidden]) .arm-stick-unit > .joystick-wrap { width: min(100%, clamp(145px, min(30vh, 32vw), 210px)) !important; }
+  .control-view:not([hidden]) .stick-side-status { gap: 6px; padding: 5px; }
+}
+@media (max-width: 460px) {
+  .control-view:not([hidden]) .drive-stick-unit,
+  .control-view:not([hidden]) .arm-stick-unit { grid-template-columns: minmax(0, 1fr) minmax(86px, .42fr) !important; gap: 3px !important; }
+  .control-view:not([hidden]) .drive-stick-unit > .joystick-wrap,
+  .control-view:not([hidden]) .arm-stick-unit > .joystick-wrap { width: min(100%, 145px) !important; }
+  .control-view:not([hidden]) .stick-side-status { gap: 4px; padding: 3px; }
+  .control-view:not([hidden]) .stick-side-status .stick-title { font-size: .5rem; letter-spacing: .025em; }
+  .control-view:not([hidden]) .stick-side-status .direction-readout { font-size: .48rem; }
+}
+
+/* Final fit pass: the form has natural rows; the list owns the only scrollbar. */
+.page-shell.demo-page-active .demo-editor-form-pane {
+  grid-template-rows: auto auto auto auto auto !important;
+  align-content: start !important;
+  gap: 5px !important;
+  overflow: hidden !important;
+}
+.page-shell.demo-page-active .demo-editor-form-pane #buyer-demo-step-form {
+  height: auto !important;
+  min-height: max-content !important;
+  align-self: start !important;
+  grid-auto-rows: max-content !important;
+  overflow: visible !important;
+}
+.page-shell.demo-page-active .demo-editor-form-pane #buyer-demo-total {
+  position: static !important;
+  display: block !important;
+  min-height: 1.25em !important;
+  height: auto !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow: visible !important;
+  color: #514568 !important;
+  line-height: 1.25 !important;
+}
+.page-shell.demo-page-active .demo-editor-form-pane .buyer-demo-editor-actions {
+  position: static !important;
+  display: flex !important;
+  min-height: 30px !important;
+  height: auto !important;
+  align-self: start !important;
+  overflow: visible !important;
+}
+.page-shell.demo-page-active .demo-editor-steps-pane .buyer-demo-draft li,
+.page-shell.demo-page-active .demo-editor-steps-pane .buyer-demo-step-copy,
+.page-shell.demo-page-active .demo-editor-steps-pane .buyer-demo-step-label,
+.page-shell.demo-page-active .demo-editor-steps-pane .buyer-demo-step-copy small {
+  opacity: 1 !important;
+  visibility: visible !important;
+  color: #443952 !important;
+  text-shadow: none !important;
+}
+.control-view:not([hidden]) .drive-stick-unit > .joystick-wrap,
+.control-view:not([hidden]) .arm-stick-unit > .joystick-wrap {
+  width: min(100%, 160px) !important;
+  max-width: 100% !important;
+  max-height: calc(100% - 8px) !important;
+  aspect-ratio: 1 / 1 !important;
+}
+@media (max-width: 700px) {
+  .control-view:not([hidden]) .drive-stick-unit > .joystick-wrap,
+  .control-view:not([hidden]) .arm-stick-unit > .joystick-wrap { width: min(100%, 148px) !important; }
+}
+@media (max-width: 460px) {
+  .control-view:not([hidden]) .drive-stick-unit > .joystick-wrap,
+  .control-view:not([hidden]) .arm-stick-unit > .joystick-wrap { width: min(100%, 120px) !important; }
+}
+
+/* Highlight the server-reported DEMO step with a soft Wish Ride glow. */
+.demo-page-active .demo-preview-list li {
+  position: relative;
+  scroll-margin-block: 8px;
+  border: 1px solid transparent;
+  border-radius: 9px;
+  transition: background-color .2s ease, border-color .2s ease, box-shadow .2s ease, transform .2s ease;
+}
+.demo-page-active .demo-preview-list li.is-complete {
+  padding: 5px 7px;
+  border-color: #d8eee4;
+  background: linear-gradient(105deg, #f5fcf8, #f8fbff);
+}
+.demo-page-active .demo-preview-list li.is-active {
+  z-index: 1;
+  padding: 7px 9px;
+  border-color: #cb8ad7;
+  background: linear-gradient(105deg, #fff0f7, #f4eaff 58%, #edf7ff);
+  box-shadow: 0 0 0 2px #d9b5f05c, 0 5px 16px #bd7acb45;
+  transform: translateX(3px);
+  animation: demo-step-glow 1.5s ease-in-out infinite;
+}
+.demo-page-active .demo-preview-list li.is-active::marker { color: #a34bb0; }
+.demo-page-active .demo-preview-list li.is-active .demo-step-name { color: #75418e; }
+@keyframes demo-step-glow {
+  0%, 100% { box-shadow: 0 0 0 2px #d9b5f05c, 0 5px 16px #bd7acb45; }
+  50% { box-shadow: 0 0 0 4px #ecc7ec70, 0 7px 22px #ba72d35e; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .demo-page-active .demo-preview-list li { transition: none; }
+  .demo-page-active .demo-preview-list li.is-active { animation: none; }
+}
+
+/* The left editor pane scrolls on short/narrow layouts instead of letting
+   the metadata, step form, duration and action buttons collide. */
+.page-shell.demo-page-active .demo-editor-form-pane {
+  grid-template-rows: max-content max-content max-content max-content max-content !important;
+  align-content: start !important;
+  gap: 8px !important;
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  scrollbar-color: #a58abd #f1ebf7;
+}
+.page-shell.demo-page-active .demo-editor-form-pane .buyer-demo-meta,
+.page-shell.demo-page-active .demo-editor-form-pane #buyer-demo-step-form {
+  box-sizing: border-box !important;
+  width: 100% !important;
+  height: max-content !important;
+  min-height: max-content !important;
+  align-self: start !important;
+  align-content: start !important;
+  overflow: visible !important;
+}
+.page-shell.demo-page-active .demo-editor-form-pane .admin-field {
+  align-content: start;
+  overflow: visible;
+}
+.page-shell.demo-page-active .demo-editor-form-pane .buyer-demo-meta { grid-auto-rows: max-content; }
+.page-shell.demo-page-active .demo-editor-form-pane #buyer-demo-step-form { grid-auto-rows: max-content; }
+.page-shell.demo-page-active .demo-editor-form-pane #buyer-demo-total,
+.page-shell.demo-page-active .demo-editor-form-pane .buyer-demo-editor-actions { position: static !important; }
+@media (max-width: 700px) {
+  .page-shell.demo-page-active .demo-editor-form-pane { padding: 8px !important; }
+  .page-shell.demo-page-active .demo-editor-form-pane .buyer-demo-meta,
+  .page-shell.demo-page-active .demo-editor-form-pane #buyer-demo-step-form {
+    grid-template-columns: minmax(0, 1fr) !important;
+    gap: 7px !important;
+    padding: 6px !important;
+  }
+}
+
+/* No scrollbar in the editor: compact two-column form with explicit rows. */
+.page-shell.demo-page-active .demo-editor-panel:not([hidden]) .buyer-demo-editor {
+  grid-template-columns: minmax(0, .95fr) minmax(0, 1.05fr) !important;
+  grid-template-rows: minmax(0, 1fr) !important;
+}
+.page-shell.demo-page-active .demo-editor-form-pane {
+  display: grid !important;
+  grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr) !important;
+  grid-template-rows: auto minmax(0, 1fr) auto auto !important;
+  grid-template-areas: "heading heading" "meta form" "total form" "actions actions" !important;
+  align-content: stretch !important;
+  gap: 5px 7px !important;
+  padding: 6px !important;
+  overflow: hidden !important;
+  scrollbar-width: none !important;
+}
+.page-shell.demo-page-active .demo-editor-form-pane::-webkit-scrollbar { display: none !important; }
+.page-shell.demo-page-active .demo-editor-form-pane > .demo-panel-heading { grid-area: heading; min-width: 0; }
+.page-shell.demo-page-active .demo-editor-form-pane > .buyer-demo-meta {
+  grid-area: meta;
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) !important;
+  align-content: start !important;
+  gap: 4px !important;
+  min-width: 0;
+  min-height: 0;
+  height: auto !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+}
+.page-shell.demo-page-active .demo-editor-form-pane > #buyer-demo-step-form {
+  grid-area: form;
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  grid-auto-rows: max-content !important;
+  align-content: start !important;
+  gap: 4px !important;
+  min-width: 0;
+  min-height: 0;
+  height: auto !important;
+  padding: 5px !important;
+  overflow: hidden !important;
+}
+.page-shell.demo-page-active .demo-editor-form-pane > #buyer-demo-total { grid-area: total; align-self: start; min-width: 0; }
+.page-shell.demo-page-active .demo-editor-form-pane > .buyer-demo-editor-actions { grid-area: actions; align-self: start; }
+.page-shell.demo-page-active .demo-editor-form-pane .admin-field { min-width: 0; gap: 2px !important; }
+.page-shell.demo-page-active .demo-editor-form-pane .admin-field label {
+  min-width: 0;
+  margin: 0;
+  font-size: clamp(.43rem, .58vw, .62rem) !important;
+  line-height: 1.08 !important;
+  overflow-wrap: anywhere;
+}
+.page-shell.demo-page-active .demo-editor-form-pane .form-control,
+.page-shell.demo-page-active .demo-editor-form-pane .form-select {
+  min-width: 0;
+  min-height: 27px !important;
+  height: 27px !important;
+  padding: 2px 5px !important;
+  font-size: clamp(.5rem, .65vw, .66rem) !important;
+}
+.page-shell.demo-page-active .demo-editor-form-pane #buyer-demo-step-form button {
+  min-width: 0;
+  min-height: 27px !important;
+  height: auto;
+  align-self: end;
+  padding: 2px 4px !important;
+  font-size: clamp(.47rem, .6vw, .62rem) !important;
+}
+.page-shell.demo-page-active .demo-editor-form-pane #buyer-demo-total {
+  min-height: 1.2em !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  font-size: clamp(.43rem, .55vw, .58rem) !important;
+  line-height: 1.15 !important;
+}
+.page-shell.demo-page-active .demo-editor-form-pane .buyer-demo-editor-actions { min-height: 27px !important; gap: 4px !important; }
+.page-shell.demo-page-active .demo-editor-form-pane .buyer-demo-editor-actions button {
+  min-height: 27px !important;
+  padding: 3px 7px !important;
+  font-size: clamp(.46rem, .58vw, .6rem) !important;
+}
+@media (max-width: 700px) {
+  .page-shell.demo-page-active .demo-editor-panel:not([hidden]) .buyer-demo-editor {
+    grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr) !important;
+    grid-template-rows: minmax(0, 1fr) !important;
+  }
+  .page-shell.demo-page-active .demo-editor-form-pane { padding: 4px !important; gap: 3px 4px !important; }
+  .page-shell.demo-page-active .demo-editor-form-pane .demo-panel-heading > p { display: none; }
+  .page-shell.demo-page-active .demo-editor-form-pane > #buyer-demo-step-form { gap: 3px !important; padding: 3px !important; }
+  .page-shell.demo-page-active .demo-editor-form-pane .form-control,
+  .page-shell.demo-page-active .demo-editor-form-pane .form-select { min-height: 24px !important; height: 24px !important; }
+  .page-shell.demo-page-active .demo-editor-form-pane #buyer-demo-step-form button,
+  .page-shell.demo-page-active .demo-editor-form-pane .buyer-demo-editor-actions button { min-height: 24px !important; }
+}
+
+/* Stable form geometry: no inner scrollbar, no overlapping grid rows. */
+.page-shell.demo-page-active .demo-editor-panel:not([hidden]) .buyer-demo-editor {
+  align-items: stretch !important;
+  grid-template-columns: minmax(0, .95fr) minmax(0, 1.05fr) !important;
+  grid-template-rows: minmax(260px, 1fr) !important;
+  min-height: 0 !important;
+  overflow: visible !important;
+}
+.page-shell.demo-page-active .demo-editor-form-pane {
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  grid-template-rows: auto auto auto auto auto !important;
+  grid-template-areas:
+    "heading heading"
+    "meta meta"
+    "form form"
+    "total total"
+    "actions actions" !important;
+  align-content: start !important;
+  align-items: start !important;
+  gap: 6px !important;
+  height: auto !important;
+  min-height: 0 !important;
+  overflow: visible !important;
+  scrollbar-width: none !important;
+}
+.page-shell.demo-page-active .demo-editor-form-pane > .buyer-demo-meta,
+.page-shell.demo-page-active .demo-editor-form-pane > #buyer-demo-step-form {
+  grid-column: 1 / -1 !important;
+  width: 100% !important;
+  height: auto !important;
+  min-height: 0 !important;
+  overflow: visible !important;
+}
+.page-shell.demo-page-active .demo-editor-form-pane > .buyer-demo-meta {
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  padding: 0 !important;
+}
+.page-shell.demo-page-active .demo-editor-form-pane > #buyer-demo-step-form {
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  grid-template-rows: auto auto !important;
+  padding: 6px !important;
+}
+.page-shell.demo-page-active .demo-editor-form-pane > #buyer-demo-step-form button {
+  grid-column: 2 !important;
+  width: 100% !important;
+}
+.page-shell.demo-page-active .demo-editor-form-pane > #buyer-demo-total,
+.page-shell.demo-page-active .demo-editor-form-pane > .buyer-demo-editor-actions {
+  grid-column: 1 / -1 !important;
+}
+@media (max-width: 700px) {
+  .page-shell.demo-page-active .demo-editor-panel:not([hidden]) .buyer-demo-editor {
+    grid-template-columns: minmax(0, 1fr) !important;
+    grid-template-rows: auto auto !important;
+    gap: 6px !important;
+  }
+  .page-shell.demo-page-active .demo-editor-form-pane {
+    grid-template-columns: minmax(0, 1fr) !important;
+    grid-template-rows: auto auto auto auto auto !important;
+    gap: 5px !important;
+  }
+  .page-shell.demo-page-active .demo-editor-form-pane > .buyer-demo-meta,
+  .page-shell.demo-page-active .demo-editor-form-pane > #buyer-demo-step-form {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+  .page-shell.demo-page-active .demo-editor-form-pane > #buyer-demo-step-form button {
+    grid-column: 1 !important;
+  }
+}
+
+/* Header stays the same size while switching views; only device width changes it. */
+.topbar {
+  box-sizing: border-box !important;
+  height: 64px !important;
+  min-height: 64px !important;
+  max-height: 64px !important;
+  flex: 0 0 64px !important;
+  padding-block: 8px !important;
+}
+.topbar .brand-orbit { width: 40px !important; height: 40px !important; flex-basis: 40px !important; }
+@media (max-width: 700px) {
+  .topbar {
+    height: 58px !important;
+    min-height: 58px !important;
+    max-height: 58px !important;
+    flex-basis: 58px !important;
+    padding: 6px 10px !important;
+  }
+  .topbar .brand-orbit { width: 36px !important; height: 36px !important; flex-basis: 36px !important; }
+}
+
+/* DEMO create/edit panels: compact fields and all steps visible without a scrollbar. */
+.page-shell.demo-page-active .demo-create-panel:not([hidden]),
+.page-shell.demo-page-active .demo-editor-panel:not([hidden]) {
+  min-width: 0 !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
+}
+.page-shell.demo-page-active .demo-create-panel .admin-login-form {
+  grid-template-columns: repeat(2, minmax(0, min(260px, 1fr))) !important;
+  justify-content: start !important;
+  align-content: start !important;
+  gap: 6px 10px !important;
+  padding: 6px !important;
+}
+.page-shell.demo-page-active .demo-create-panel .admin-field,
+.page-shell.demo-page-active .demo-create-panel .form-control {
+  width: 100% !important;
+  max-width: 260px !important;
+  min-width: 0 !important;
+}
+.page-shell.demo-page-active .demo-create-panel .admin-login-form button {
+  grid-column: 1 / -1 !important;
+  justify-self: start !important;
+  width: min(100%, 200px) !important;
+  min-width: 0 !important;
+  min-height: 32px !important;
+}
+.page-shell.demo-page-active .demo-editor-form-pane > .buyer-demo-meta .form-control {
+  max-width: 230px !important;
+}
+.page-shell.demo-page-active .demo-editor-form-pane > #buyer-demo-step-form .form-control,
+.page-shell.demo-page-active .demo-editor-form-pane > #buyer-demo-step-form .form-select {
+  max-width: 250px !important;
+}
+.page-shell.demo-page-active .demo-editor-steps-pane .buyer-demo-draft {
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  grid-template-rows: repeat(var(--draft-rows, 1), minmax(0, 1fr)) !important;
+  grid-auto-rows: unset !important;
+  align-content: stretch !important;
+  overflow: hidden !important;
+  scrollbar-width: none !important;
+}
+.page-shell.demo-page-active .demo-editor-steps-pane .buyer-demo-draft::-webkit-scrollbar { display: none !important; }
+.page-shell.demo-page-active .demo-editor-steps-pane .buyer-demo-draft li {
+  box-sizing: border-box !important;
+  min-height: 0 !important;
+  height: 100% !important;
+  grid-template-columns: minmax(0, 1fr) 20px 20px 20px !important;
+  gap: 2px !important;
+  padding: 2px 4px !important;
+}
+.page-shell.demo-page-active .demo-editor-steps-pane .buyer-demo-draft button {
+  width: 20px !important;
+  min-width: 20px !important;
+  min-height: 20px !important;
+  height: 20px !important;
+}
+@media (max-width: 700px) {
+  .page-shell.demo-page-active .demo-editor-panel:not([hidden]) .buyer-demo-editor {
+    grid-template-columns: minmax(0, 1fr) !important;
+    grid-template-rows: minmax(0, .95fr) minmax(0, 1.05fr) !important;
+  }
+  .page-shell.demo-page-active .demo-editor-form-pane { padding: 5px !important; gap: 4px !important; }
+  .page-shell.demo-page-active .demo-editor-form-pane > .buyer-demo-meta,
+  .page-shell.demo-page-active .demo-editor-form-pane > #buyer-demo-step-form {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 4px !important;
+    padding: 4px !important;
+  }
+  .page-shell.demo-page-active .demo-editor-form-pane > .buyer-demo-meta .admin-field { grid-template-columns: minmax(0, 1fr) !important; }
+  .page-shell.demo-page-active .demo-editor-form-pane > .buyer-demo-meta .form-control,
+  .page-shell.demo-page-active .demo-editor-form-pane > #buyer-demo-step-form .form-control,
+  .page-shell.demo-page-active .demo-editor-form-pane > #buyer-demo-step-form .form-select { max-width: 100% !important; }
+  .page-shell.demo-page-active .demo-editor-steps-pane { padding: 4px !important; gap: 3px !important; }
+  .page-shell.demo-page-active .demo-editor-steps-pane .buyer-demo-draft li {
+    grid-template-columns: minmax(0, 1fr) 16px 16px 16px !important;
+    gap: 1px !important;
+    padding: 1px !important;
+  }
+  .page-shell.demo-page-active .demo-editor-steps-pane .buyer-demo-draft button {
+    width: 16px !important;
+    min-width: 16px !important;
+    min-height: 16px !important;
+    height: 16px !important;
+  }
+  .page-shell.demo-page-active .demo-editor-steps-pane .buyer-demo-step-copy small { display: none !important; }
+}
+
+/* Four navigation actions should form a complete grid, never leave one orphaned. */
+.page-shell .control-sidebar {
+  grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  grid-template-areas: "control monitoring demo admin" !important;
+  grid-auto-flow: row !important;
+  grid-auto-rows: minmax(38px, auto) !important;
+}
+.page-shell .control-sidebar > [data-view-target="control"] { grid-area: control !important; }
+.page-shell .control-sidebar > [data-view-target="monitoring"] { grid-area: monitoring !important; }
+.page-shell .control-sidebar > [data-view-target="demo"] { grid-area: demo !important; }
+.page-shell .control-sidebar > [data-view-target="admin"] { grid-area: admin !important; }
+@media (max-width: 700px) {
+  .page-shell .control-sidebar {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    grid-template-areas: "control monitoring" "demo admin" !important;
+    grid-auto-flow: row !important;
+  }
+}
+
+/* Mobile portrait: keep both editor panes visible and give every field its own row. */
+@media (max-width: 700px) and (orientation: portrait) {
+  .page-shell.demo-page-active .demo-editor-panel:not([hidden]) .buyer-demo-editor {
+    grid-template-columns: minmax(0, .92fr) minmax(0, 1.08fr) !important;
+    grid-template-rows: minmax(0, 1fr) !important;
+    gap: 5px !important;
+    padding: 4px !important;
+  }
+  .page-shell.demo-page-active .demo-editor-form-pane {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) !important;
+    grid-template-rows: max-content max-content max-content max-content max-content !important;
+    grid-template-areas: "heading" "meta" "form" "total" "actions" !important;
+    align-content: start !important;
+    gap: 4px !important;
+    padding: 5px !important;
+    overflow: hidden !important;
+  }
+  .page-shell.demo-page-active .demo-editor-form-pane > .buyer-demo-meta,
+  .page-shell.demo-page-active .demo-editor-form-pane > #buyer-demo-step-form {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) !important;
+    grid-auto-rows: max-content !important;
+    gap: 4px !important;
+    padding: 4px !important;
+    overflow: hidden !important;
+  }
+  .page-shell.demo-page-active .demo-editor-form-pane .admin-field { gap: 2px !important; }
+  .page-shell.demo-page-active .demo-editor-form-pane .admin-field label {
+    font-size: clamp(.55rem, 2.2vw, .68rem) !important;
+    line-height: 1.05 !important;
+  }
+  .page-shell.demo-page-active .demo-editor-form-pane .form-control,
+  .page-shell.demo-page-active .demo-editor-form-pane .form-select {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-height: 25px !important;
+    height: 25px !important;
+    padding: 2px 5px !important;
+    font-size: clamp(.58rem, 2.3vw, .7rem) !important;
+  }
+  .page-shell.demo-page-active .demo-editor-form-pane #buyer-demo-total { font-size: .53rem !important; }
+  .page-shell.demo-page-active .demo-editor-form-pane .buyer-demo-editor-actions { flex-wrap: nowrap !important; gap: 3px !important; }
+  .page-shell.demo-page-active .demo-editor-form-pane .buyer-demo-editor-actions button {
+    min-width: 0 !important;
+    min-height: 25px !important;
+    padding: 2px 4px !important;
+    font-size: clamp(.48rem, 1.9vw, .6rem) !important;
+  }
+  .page-shell.demo-page-active .demo-editor-steps-pane {
+    grid-template-rows: max-content minmax(0, 1fr) !important;
+    padding: 4px !important;
+    gap: 3px !important;
+  }
+  .page-shell.demo-page-active .demo-editor-steps-heading { align-items: flex-start !important; flex-direction: column !important; gap: 2px !important; }
+  .page-shell.demo-page-active .demo-editor-steps-heading h3 { font-size: .65rem !important; }
+  .page-shell.demo-page-active .demo-editor-steps-pane .buyer-demo-draft {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    grid-template-rows: repeat(var(--draft-rows, 1), minmax(0, 1fr)) !important;
+    gap: 2px !important;
+  }
+  .page-shell.demo-page-active .demo-editor-steps-pane .buyer-demo-draft li {
+    grid-template-columns: minmax(0, 1fr) 16px 16px 16px !important;
+    gap: 2px !important;
+    padding: 1px 3px !important;
+  }
+  .page-shell.demo-page-active .demo-editor-steps-pane .buyer-demo-draft button {
+    width: 16px !important; min-width: 16px !important; min-height: 16px !important; height: 16px !important;
+  }
+  .page-shell.demo-page-active .demo-editor-steps-pane .buyer-demo-step-copy small { display: none !important; }
+  .page-shell.demo-page-active .demo-create-panel .admin-login-form {
+    grid-template-columns: minmax(0, 1fr) !important;
+    gap: 5px !important;
+    padding: 5px !important;
+  }
+  .page-shell.demo-page-active .demo-create-panel .admin-field,
+  .page-shell.demo-page-active .demo-create-panel .form-control { max-width: 100% !important; }
+  .page-shell.demo-page-active .demo-create-panel .form-control { min-height: 30px !important; height: 30px !important; }
+}
+
+/* Landscape phones: compact the editor form into a dense two-column worksheet. */
+@media (orientation: landscape) and (max-height: 600px) {
+  .page-shell.demo-page-active .demo-view:not([hidden]) { gap: 3px !important; padding: 4px !important; }
+  .page-shell.demo-page-active .demo-view > .section-heading { min-height: 20px !important; }
+  .page-shell.demo-page-active .demo-view > .section-heading .eyebrow { display: none !important; }
+  .page-shell.demo-page-active .demo-view > .section-hint { display: none !important; }
+  .page-shell.demo-page-active .demo-box { grid-template-rows: 30px 30px minmax(0, 1fr) !important; gap: 3px !important; padding: 4px !important; }
+  .page-shell.demo-page-active .demo-select { min-height: 28px !important; height: 28px !important; }
+  .page-shell.demo-page-active .demo-tabs { min-height: 28px !important; gap: 2px !important; padding: 2px !important; }
+  .page-shell.demo-page-active .demo-tab { min-height: 24px !important; padding: 2px !important; font-size: .53rem !important; }
+  .page-shell.demo-page-active .demo-editor-panel:not([hidden]) .buyer-demo-editor {
+    grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr) !important;
+    grid-template-rows: minmax(0, 1fr) !important;
+    gap: 3px !important;
+    padding: 3px !important;
+  }
+  .page-shell.demo-page-active .demo-editor-form-pane {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) !important;
+    grid-template-rows: max-content max-content minmax(0, 1fr) max-content max-content !important;
+    gap: 2px !important;
+    padding: 3px !important;
+  }
+  .page-shell.demo-page-active .demo-editor-form-pane .demo-panel-heading { grid-column: 1 / -1 !important; }
+  .page-shell.demo-page-active .demo-editor-form-pane .demo-panel-heading .eyebrow { font-size: .38rem !important; }
+  .page-shell.demo-page-active .demo-editor-form-pane .demo-panel-heading h2 { font-size: .62rem !important; }
+  .page-shell.demo-page-active .demo-editor-form-pane .demo-panel-heading > p { display: none !important; }
+  .page-shell.demo-page-active .demo-editor-form-pane > .buyer-demo-meta {
+    grid-column: 1 / -1 !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 3px !important;
+  }
+  .page-shell.demo-page-active .demo-editor-form-pane > .buyer-demo-meta .admin-field { display: grid !important; grid-template-columns: minmax(0, 1fr) !important; }
+  .page-shell.demo-page-active .demo-editor-form-pane > #buyer-demo-step-form {
+    grid-column: 1 / -1 !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    grid-template-rows: repeat(2, max-content) !important;
+    gap: 3px !important;
+    padding: 3px !important;
+  }
+  .page-shell.demo-page-active .demo-editor-form-pane .admin-field label { font-size: .43rem !important; line-height: 1 !important; }
+  .page-shell.demo-page-active .demo-editor-form-pane .form-control,
+  .page-shell.demo-page-active .demo-editor-form-pane .form-select { min-height: 19px !important; height: 19px !important; padding: 1px 3px !important; font-size: .48rem !important; }
+  .page-shell.demo-page-active .demo-editor-form-pane #buyer-demo-step-form button,
+  .page-shell.demo-page-active .demo-editor-form-pane .buyer-demo-editor-actions button { min-height: 19px !important; padding: 1px 4px !important; font-size: .43rem !important; }
+  .page-shell.demo-page-active .demo-editor-form-pane > #buyer-demo-step-form button { grid-column: 2 !important; }
+  .page-shell.demo-page-active .demo-editor-form-pane #buyer-demo-total { grid-column: 1 / -1 !important; font-size: .4rem !important; }
+  .page-shell.demo-page-active .demo-editor-form-pane .buyer-demo-editor-actions { grid-column: 1 / -1 !important; gap: 2px !important; }
+  .page-shell.demo-page-active .demo-editor-steps-pane { gap: 2px !important; padding: 3px !important; }
+  .page-shell.demo-page-active .demo-editor-steps-heading { padding-bottom: 2px !important; }
+  .page-shell.demo-page-active .demo-editor-steps-heading .eyebrow { font-size: .38rem !important; }
+  .page-shell.demo-page-active .demo-editor-steps-heading h3 { font-size: .58rem !important; }
+  .page-shell.demo-page-active .demo-editor-steps-pane .buyer-demo-draft { gap: 1px !important; }
+  .page-shell.demo-page-active .demo-editor-steps-pane .buyer-demo-draft li { grid-template-columns: minmax(0, 1fr) 12px 12px 12px !important; padding: 0 2px !important; }
+  .page-shell.demo-page-active .demo-editor-steps-pane .buyer-demo-draft button { width: 12px !important; min-width: 12px !important; min-height: 12px !important; height: 12px !important; font-size: .45rem !important; }
+  .page-shell.demo-page-active .demo-editor-steps-pane .buyer-demo-step-label { font-size: .38rem !important; }
+}
+
+/* Phone portrait joysticks: reserve a title row and keep the pads inside each card. */
+@media (max-width: 460px) and (orientation: portrait) {
+  .control-view:not([hidden]) .drive-stick-unit,
+  .control-view:not([hidden]) .arm-stick-unit {
+    grid-template-columns: minmax(0, 1fr) minmax(54px, .42fr) !important;
+    grid-template-rows: auto minmax(0, 1fr) !important;
+    grid-template-areas: "heading heading" "pad info" !important;
+    gap: 3px !important;
+    padding: 4px 2px !important;
+  }
+  .control-view:not([hidden]) .drive-stick-unit > .stick-title,
+  .control-view:not([hidden]) .arm-stick-unit > .stick-title { grid-area: heading !important; }
+  .control-view:not([hidden]) .drive-stick-unit > .joystick-wrap,
+  .control-view:not([hidden]) .arm-stick-unit > .joystick-wrap {
+    grid-area: pad !important;
+    width: min(100%, 112px) !important;
+    max-width: 100% !important;
+    margin: 0 auto !important;
+  }
+  .control-view:not([hidden]) .drive-stick-unit > .direction-readout,
+  .control-view:not([hidden]) .arm-stick-unit > .direction-readout {
+    grid-area: info !important;
+    min-height: 0 !important;
+    height: auto !important;
+    padding: 3px !important;
+    border-left: 1px solid #e8deef !important;
+    font-size: clamp(.46rem, 1.8vw, .58rem) !important;
+    line-height: 1.15 !important;
+    overflow-wrap: anywhere;
+  }
+}
+
+/* Phone landscape: put the two sticks side by side, then stop and auxiliary actions below. */
+@media (max-width: 950px) and (orientation: landscape) and (max-height: 600px) {
+  .page-shell:not(.demo-page-active) .topbar { height: 58px !important; min-height: 58px !important; max-height: 58px !important; }
+  .page-shell:not(.demo-page-active) .app-main { gap: 3px !important; padding-block: 2px !important; }
+  .page-shell:not(.demo-page-active) .connection-strip { padding: 2px 4px !important; }
+  .page-shell:not(.demo-page-active) .connection-strip .status-footnote { display: none !important; }
+  .page-shell:not(.demo-page-active) .connection-strip .status-item { min-height: 25px !important; padding: 2px 4px !important; }
+  .page-shell:not(.demo-page-active) .workspace-grid { grid-template-rows: auto minmax(0, 1fr) !important; gap: 3px !important; }
+  .page-shell:not(.demo-page-active) .control-sidebar { grid-template-areas: "control monitoring demo admin" !important; grid-template-columns: repeat(4, minmax(0, 1fr)) !important; }
+  .page-shell:not(.demo-page-active) .sidebar-link { min-height: 32px !important; padding: 2px !important; font-size: .52rem !important; }
+  .control-view:not([hidden]) .controller-main {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) !important;
+    grid-template-rows: minmax(0, 1fr) auto auto !important;
+    grid-template-areas: "drive arm" "stop stop" "actions actions" !important;
+    gap: 3px !important;
+    overflow: hidden !important;
+  }
+  .control-view:not([hidden]) .drive-stick-unit,
+  .control-view:not([hidden]) .arm-stick-unit {
+    grid-template-columns: minmax(0, 1fr) minmax(58px, .38fr) !important;
+    grid-template-rows: auto minmax(0, 1fr) !important;
+    grid-template-areas: "heading heading" "pad info" !important;
+    gap: 2px !important;
+    padding: 3px !important;
+  }
+  .control-view:not([hidden]) .drive-stick-unit > .stick-title,
+  .control-view:not([hidden]) .arm-stick-unit > .stick-title { grid-area: heading !important; }
+  .control-view:not([hidden]) .drive-stick-unit > .joystick-wrap,
+  .control-view:not([hidden]) .arm-stick-unit > .joystick-wrap { grid-area: pad !important; width: min(100%, 96px) !important; margin: 0 auto !important; }
+  .control-view:not([hidden]) .drive-stick-unit > .direction-readout,
+  .control-view:not([hidden]) .arm-stick-unit > .direction-readout { grid-area: info !important; min-height: 0 !important; height: auto !important; padding: 2px !important; font-size: .44rem !important; }
+  .control-view:not([hidden]) .center-stop,
+  .control-view:not([hidden]) .center-stop .stop-button { min-height: 31px !important; height: 31px !important; }
+  .control-view:not([hidden]) .aux-controls-unit { grid-template-columns: 70px minmax(0, 1fr) !important; gap: 3px !important; padding: 3px !important; }
+  .control-view:not([hidden]) .aux-controls-unit .console-function-grid { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; grid-template-rows: repeat(1, minmax(0, 1fr)) !important; gap: 3px !important; }
+  .control-view:not([hidden]) .aux-controls-unit .command-button { min-height: 28px !important; height: 28px !important; padding: 2px !important; }
+  .control-view:not([hidden]) .mobile-command-bar { display: none !important; }
+  .control-view:not([hidden]) .action-status { min-height: 28px !important; max-height: 30px !important; }
+  .page-shell:not(.demo-page-active) .app-footer { min-height: 14px !important; }
+}
+
+/* Phones and tablets: let the document grow so no view is trapped in a clipped viewport. */
+@media (max-width: 1024px) {
+  html,
+  html.demo-page-active,
+  body,
+  body.demo-page-active {
+    width: 100% !important;
+    height: auto !important;
+    min-height: 100vh !important;
+    min-height: 100dvh !important;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+    overscroll-behavior-y: auto !important;
+    scrollbar-width: none !important;
+  }
+  html::-webkit-scrollbar,
+  body::-webkit-scrollbar { display: none !important; }
+  .page-shell,
+  .page-shell.demo-page-active {
+    display: grid !important;
+    width: 100% !important;
+    height: auto !important;
+    min-height: 100vh !important;
+    min-height: 100dvh !important;
+    grid-template-rows: auto 1fr auto !important;
+    overflow: visible !important;
+  }
+  .topbar {
+    position: relative !important;
+    inset: auto !important;
+    flex: 0 0 58px !important;
+    height: 58px !important;
+    min-height: 58px !important;
+    max-height: 58px !important;
+  }
+  .app-main,
+  .page-shell.demo-page-active .app-main {
+    display: grid !important;
+    width: 100% !important;
+    height: auto !important;
+    min-height: 0 !important;
+    grid-template-rows: auto auto !important;
+    gap: 6px !important;
+    overflow: visible !important;
+    padding: 5px 8px 10px !important;
+  }
+  .connection-strip { min-height: 0 !important; }
+  .workspace-grid,
+  .page-shell.demo-page-active .workspace-grid {
+    display: grid !important;
+    width: 100% !important;
+    height: auto !important;
+    min-height: 0 !important;
+    grid-template-columns: minmax(0, 1fr) !important;
+    grid-template-rows: auto auto !important;
+    gap: 6px !important;
+    overflow: visible !important;
+  }
+  .control-sidebar,
+  .page-shell.demo-page-active .control-sidebar {
+    position: relative !important;
+    inset: auto !important;
+    display: grid !important;
+    grid-column: 1 !important;
+    grid-row: 1 !important;
+    width: 100% !important;
+    min-height: 0 !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    grid-template-areas: "control monitoring" "demo admin" !important;
+    grid-auto-rows: minmax(40px, auto) !important;
+    gap: 4px !important;
+    padding: 4px !important;
+    overflow: visible !important;
+  }
+  .sidebar-link,
+  .page-shell.demo-page-active .sidebar-link {
+    display: flex !important;
+    min-width: 0 !important;
+    min-height: 40px !important;
+    justify-content: center !important;
+    gap: 4px !important;
+    padding: 4px !important;
+    font-size: clamp(.58rem, 2.2vw, .72rem) !important;
+    line-height: 1.1 !important;
+    text-align: center !important;
+    overflow-wrap: anywhere !important;
+  }
+  .workspace-content,
+  .page-shell.demo-page-active .workspace-content {
+    grid-column: 1 !important;
+    grid-row: 2 !important;
+    width: 100% !important;
+    height: auto !important;
+    min-height: 0 !important;
+    overflow: visible !important;
+  }
+  .control-view:not([hidden]),
+  .demo-view:not([hidden]),
+  .monitor-view:not([hidden]),
+  .admin-view:not([hidden]) {
+    display: grid !important;
+    width: 100% !important;
+    height: auto !important;
+    min-height: 0 !important;
+    align-content: start !important;
+    overflow: visible !important;
+  }
+  .control-view:not([hidden]) { grid-template-rows: auto auto !important; gap: 6px !important; }
+  .controller-console {
+    display: grid !important;
+    width: 100% !important;
+    height: auto !important;
+    min-height: 0 !important;
+    grid-template-rows: auto auto !important;
+    gap: 6px !important;
+    padding: 8px !important;
+    overflow: visible !important;
+  }
+  .controller-main {
+    display: grid !important;
+    width: 100% !important;
+    height: auto !important;
+    min-height: 0 !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    grid-template-rows: auto auto auto !important;
+    grid-template-areas: "drive arm" "stop stop" "actions actions" !important;
+    gap: 6px !important;
+    overflow: visible !important;
+  }
+  .drive-stick-unit,
+  .arm-stick-unit {
+    min-width: 0 !important;
+    min-height: 190px !important;
+    height: auto !important;
+    overflow: hidden !important;
+  }
+  .center-controls { grid-area: stop !important; min-width: 0 !important; }
+  .aux-controls-unit { grid-area: actions !important; min-width: 0 !important; }
+  .demo-view:not([hidden]) {
+    grid-template-rows: auto auto !important;
+    gap: 6px !important;
+    padding: 6px !important;
+  }
+  .demo-view > .section-heading { min-height: 0 !important; }
+  .demo-view > .section-hint { margin: 0 !important; }
+  .demo-box {
+    display: grid !important;
+    width: 100% !important;
+    height: auto !important;
+    min-height: 0 !important;
+    grid-template-rows: auto auto auto !important;
+    gap: 6px !important;
+    padding: 6px !important;
+    overflow: visible !important;
+  }
+  .demo-select { width: 100% !important; min-height: 40px !important; }
+  .demo-tabs { grid-template-columns: repeat(3, minmax(0, 1fr)) !important; }
+  .demo-tab-panels,
+  .demo-tab-panel:not([hidden]),
+  .demo-page-active .buyer-demo-tools:not([hidden]) {
+    display: grid !important;
+    width: 100% !important;
+    height: auto !important;
+    min-height: 0 !important;
+    overflow: visible !important;
+  }
+  .demo-tab-panels { display: block !important; }
+  .demo-tab-panel:not([hidden]) { display: grid !important; grid-template-rows: auto !important; }
+  .demo-create-panel:not([hidden]),
+  .demo-editor-panel:not([hidden]) {
+    display: grid !important;
+    height: auto !important;
+    min-height: 0 !important;
+    align-content: start !important;
+    overflow: visible !important;
+  }
+  .demo-run-panel:not([hidden]) { grid-template-rows: auto auto auto !important; gap: 6px !important; }
+  .demo-preview { max-height: none !important; overflow: visible !important; }
+  .buyer-demo-tools:not([hidden]) { display: grid !important; grid-template-rows: auto !important; gap: 6px !important; }
+  .buyer-demo-editor {
+    display: grid !important;
+    width: 100% !important;
+    height: auto !important;
+    min-height: 0 !important;
+    grid-template-columns: minmax(0, 1fr) !important;
+    grid-template-rows: auto auto !important;
+    gap: 6px !important;
+    overflow: visible !important;
+  }
+  .demo-editor-form-pane {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) !important;
+    grid-template-rows: auto !important;
+    grid-template-areas: none !important;
+    align-content: start !important;
+    gap: 6px !important;
+    height: auto !important;
+    min-height: 0 !important;
+    overflow: visible !important;
+  }
+  .demo-editor-form-pane > * { grid-area: auto !important; grid-column: auto !important; }
+  .demo-editor-form-pane > .buyer-demo-meta,
+  .demo-editor-form-pane > #buyer-demo-step-form {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    grid-auto-rows: max-content !important;
+    gap: 6px !important;
+    padding: 6px !important;
+    overflow: visible !important;
+  }
+  .demo-editor-form-pane .admin-field { min-width: 0 !important; }
+  .demo-editor-form-pane .form-control,
+  .demo-editor-form-pane .form-select,
+  .demo-create-panel .form-control {
+    width: 100% !important;
+    max-width: none !important;
+    min-width: 0 !important;
+    min-height: 34px !important;
+    height: 34px !important;
+    padding: 4px 7px !important;
+    font-size: .82rem !important;
+  }
+  .demo-editor-form-pane #buyer-demo-step-form button { grid-column: 1 / -1 !important; min-height: 34px !important; }
+  .demo-editor-form-pane .buyer-demo-editor-actions { flex-wrap: wrap !important; }
+  .demo-editor-steps-pane {
+    display: grid !important;
+    grid-template-rows: auto auto !important;
+    height: auto !important;
+    min-height: 0 !important;
+    overflow: visible !important;
+  }
+  .demo-editor-steps-pane .buyer-demo-draft {
+    display: grid !important;
+    height: auto !important;
+    max-height: none !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    grid-template-rows: none !important;
+    grid-auto-rows: minmax(42px, auto) !important;
+    align-content: start !important;
+    overflow: visible !important;
+    scrollbar-width: none !important;
+  }
+  .demo-editor-steps-pane .buyer-demo-draft li { min-height: 42px !important; height: auto !important; }
+  .demo-editor-steps-pane .buyer-demo-draft::-webkit-scrollbar,
+  .demo-preview::-webkit-scrollbar { display: none !important; }
+  .admin-view:not([hidden]) { grid-template-rows: auto !important; gap: 8px !important; }
+  .monitor-view:not([hidden]) { grid-template-rows: auto auto auto !important; gap: 6px !important; }
+  .monitor-table-wrap,
+  .admin-table-scroll { max-width: 100% !important; overflow-x: auto !important; scrollbar-width: none !important; }
+  .monitor-table-wrap::-webkit-scrollbar,
+  .admin-table-scroll::-webkit-scrollbar { display: none !important; }
+  .app-footer { position: relative !important; min-height: 24px !important; }
+}
+
+@media (max-width: 600px) {
+  .demo-tabs { gap: 3px !important; padding: 3px !important; }
+  .demo-tab { min-height: 42px !important; padding: 4px 3px !important; font-size: clamp(.58rem, 2.7vw, .72rem) !important; }
+  .demo-editor-form-pane > .buyer-demo-meta,
+  .demo-editor-form-pane > #buyer-demo-step-form,
+  .demo-page-active .demo-create-panel .admin-login-form { grid-template-columns: minmax(0, 1fr) !important; }
+  .demo-editor-steps-pane .buyer-demo-draft { grid-template-columns: minmax(0, 1fr) !important; }
+  .drive-stick-unit,
+  .arm-stick-unit { min-height: 165px !important; }
+}
+
+/* Phone portrait DEMO: stack full-width editor sections and keep rows compact. */
+@media (max-width: 700px) and (orientation: portrait) {
+  .page-shell.demo-page-active .demo-editor-panel:not([hidden]) .buyer-demo-editor {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) !important;
+    grid-template-rows: auto auto !important;
+    align-items: start !important;
+    gap: 8px !important;
+    height: auto !important;
+    overflow: visible !important;
+  }
+  .page-shell.demo-page-active .demo-editor-panel:not([hidden]) .demo-editor-form-pane {
+    display: grid !important;
+    width: 100% !important;
+    grid-template-columns: minmax(0, 1fr) !important;
+    grid-template-rows: auto auto auto auto auto !important;
+    grid-template-areas: "heading" "meta" "form" "total" "actions" !important;
+    align-content: start !important;
+    gap: 7px !important;
+    height: auto !important;
+    min-height: 0 !important;
+    overflow: visible !important;
+  }
+  .page-shell.demo-page-active .demo-editor-panel:not([hidden]) .demo-editor-form-pane > * {
+    grid-column: 1 !important;
+    min-width: 0 !important;
+    width: 100% !important;
+  }
+  .page-shell.demo-page-active .demo-editor-panel:not([hidden]) .demo-editor-form-pane > .buyer-demo-meta,
+  .page-shell.demo-page-active .demo-editor-panel:not([hidden]) .demo-editor-form-pane > #buyer-demo-step-form {
+    grid-template-columns: minmax(0, 1fr) !important;
+    grid-auto-rows: max-content !important;
+    gap: 7px !important;
+    padding: 7px !important;
+  }
+  .page-shell.demo-page-active .demo-editor-panel:not([hidden]) .demo-editor-form-pane > #buyer-demo-step-form button {
+    grid-column: 1 !important;
+  }
+  .page-shell.demo-page-active .demo-editor-panel:not([hidden]) .demo-editor-steps-pane {
+    display: grid !important;
+    width: 100% !important;
+    height: auto !important;
+    min-height: 0 !important;
+    grid-template-rows: auto auto !important;
+    align-content: start !important;
+    gap: 5px !important;
+    overflow: visible !important;
+  }
+  .page-shell.demo-page-active .demo-editor-panel:not([hidden]) .demo-editor-steps-pane .buyer-demo-draft {
+    display: grid !important;
+    width: 100% !important;
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    grid-template-columns: minmax(0, 1fr) !important;
+    grid-template-rows: none !important;
+    grid-auto-rows: minmax(48px, auto) !important;
+    align-content: start !important;
+    gap: 5px !important;
+    overflow: visible !important;
+  }
+  .page-shell.demo-page-active .demo-editor-panel:not([hidden]) .demo-editor-steps-pane .buyer-demo-draft li {
+    display: grid !important;
+    width: 100% !important;
+    height: auto !important;
+    min-height: 48px !important;
+    grid-template-columns: minmax(0, 1fr) 30px 30px 30px !important;
+    gap: 5px !important;
+    padding: 5px 7px !important;
+  }
+  .page-shell.demo-page-active .demo-editor-panel:not([hidden]) .demo-editor-steps-pane .buyer-demo-draft button {
+    width: 30px !important;
+    min-width: 30px !important;
+    height: 30px !important;
+    min-height: 30px !important;
+    font-size: .85rem !important;
+  }
+  .page-shell.demo-page-active .demo-editor-panel:not([hidden]) .demo-editor-steps-pane .buyer-demo-step-label {
+    display: block !important;
+    width: 100% !important;
+    font-size: .8rem !important;
+    text-overflow: clip !important;
+    white-space: normal !important;
+    overflow-wrap: anywhere !important;
+  }
+  .page-shell.demo-page-active .demo-editor-panel:not([hidden]) .demo-editor-steps-pane .buyer-demo-step-copy small {
+    display: block !important;
+    font-size: .68rem !important;
+    white-space: normal !important;
+  }
+  .page-shell.demo-page-active .demo-box .form-select:focus-visible {
+    outline: 2px solid #7752c7 !important;
+    outline-offset: 1px !important;
+    box-shadow: 0 0 0 2px #d9cafa !important;
+  }
+}
+
+@media (max-width: 1024px) and (orientation: landscape) {
+  .control-view:not([hidden]) .drive-stick-unit,
+  .control-view:not([hidden]) .arm-stick-unit { min-height: 155px !important; }
+  .demo-editor-panel:not([hidden]) .buyer-demo-editor { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; grid-template-rows: auto !important; }
+  .demo-editor-steps-pane .buyer-demo-draft { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
+}
+
+/* Mantén Administración en el área disponible del panel, también en móvil. */
+.admin-view.is-authenticated:not([hidden]) {
+  display: grid !important;
+  width: 100% !important;
+  height: 100% !important;
+  max-height: 100% !important;
+  min-height: 0 !important;
+  grid-template-rows: minmax(0, 1fr) !important;
+  align-content: stretch !important;
+  overflow: hidden !important;
+  scrollbar-width: none !important;
+}
+.admin-view.is-authenticated:not([hidden])::-webkit-scrollbar { display: none !important; }
+.admin-view.is-authenticated:not([hidden]) > .admin-heading,
+.admin-view.is-authenticated:not([hidden]) > .section-hint { display: none !important; }
+.admin-dashboard:not([hidden]) {
+  display: grid !important;
+  width: 100% !important;
+  height: 100% !important;
+  max-height: 100% !important;
+  min-height: 0 !important;
+  grid-template-rows: auto auto auto minmax(0, 1fr) !important;
+  gap: clamp(4px, .7vh, 8px) !important;
+  overflow: hidden !important;
+}
+.admin-dashboard-tabs[hidden], .admin-tab-panel[hidden] { display: none !important; }
+.admin-user-bar { min-width: 0; padding-bottom: 6px; }
+.admin-role-notice { margin: 0; padding: 7px 10px; }
+.admin-dashboard-tabs { min-width: 0; }
+.admin-tab-panel:not([hidden]) { min-width: 0; min-height: 0; height: 100%; overflow: hidden; }
+.admin-metrics-panel:not([hidden]) { display: grid !important; grid-template-rows: auto auto minmax(0, 1fr) auto auto; min-height: 0; overflow: hidden; }
+.admin-metrics-grid { min-height: 0; grid-template-columns: repeat(4, minmax(0, 1fr)); grid-auto-rows: minmax(0, 1fr); }
+.admin-vehicles-panel:not([hidden]) { display: grid !important; grid-template-rows: auto minmax(0, 1fr); min-height: 0; margin: 0; overflow: auto; scrollbar-width: none; }
+.admin-vehicles-panel:not([hidden])::-webkit-scrollbar { display: none; }
+.admin-vehicles-list { min-height: 0; align-content: start; overflow: auto; scrollbar-width: none; }
+.admin-vehicles-list::-webkit-scrollbar { display: none; }
+#admin-tools:not([hidden]) { display: flex !important; min-height: 0; flex-direction: column; gap: 5px; overflow: hidden; }
+#admin-tools .admin-toolbar, #admin-tools .admin-filter-form { flex: 0 0 auto; margin: 0; }
+#admin-tools #admin-resource-status { flex: 0 0 auto; min-height: 1.15em; margin: 0; font-size: .72rem; }
+#admin-tools #admin-invitation-token:not([hidden]) { flex: 0 0 auto; max-height: 15%; overflow: auto; }
+#admin-tools .admin-create-form:not([hidden]) { flex: 0 1 auto; max-height: 30%; min-height: 0; margin: 0; padding: 7px; overflow: auto; scrollbar-width: none; }
+#admin-tools .admin-create-form::-webkit-scrollbar { display: none; }
+#admin-tools .admin-table-shell { flex: 1 1 0; min-height: 0; overflow: hidden; }
+#admin-tools .admin-table-scroll { width: 100%; height: 100%; overflow: auto; scrollbar-width: none; }
+#admin-tools .admin-table-scroll::-webkit-scrollbar { display: none; }
+#admin-tools .admin-table { min-width: 650px; font-size: .68rem; }
+#admin-tools .admin-table th, #admin-tools .admin-table td { padding: 5px 7px; }
+@media (max-width: 767.98px) {
+  .admin-dashboard:not([hidden]) { gap: 4px !important; padding: 5px !important; }
+  .admin-dashboard-tabs button { min-height: 34px; padding: 4px 3px; font-size: clamp(.61rem, 2.4vw, .72rem); }
+  .admin-user-bar { align-items: center; gap: 5px; }
+  .admin-user-bar > div { gap: 4px; font-size: .68rem; }
+  .admin-user-bar .admin-secondary-button { min-height: 32px; padding: 3px 6px; font-size: .62rem; }
+  .admin-role-notice { padding: 5px 7px; font-size: .64rem; }
+  .admin-metrics-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .admin-metric-card { padding: 5px 7px; }
+  .admin-metric-card span { font-size: .58rem; }
+  .admin-metric-card strong { font-size: .95rem; }
+  #admin-tools .admin-toolbar { align-items: end; gap: 4px; }
+  #admin-tools .admin-resource-field { width: min(64%, 280px); }
+  #admin-tools .admin-toolbar-actions { gap: 3px; }
+  #admin-tools .admin-toolbar-actions button { min-height: 32px; padding: 3px 5px; font-size: .6rem; }
+  #admin-tools .admin-filter-form { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 4px; padding: 5px; }
+  #admin-tools .admin-filter-form .admin-field label { font-size: .6rem; }
+  #admin-tools .admin-filter-form .form-control, #admin-tools .admin-filter-form .form-select { min-height: 32px; height: 32px; padding: 3px 6px; font-size: .65rem; }
+  #admin-tools .admin-filter-form > button { min-height: 32px; padding: 3px; font-size: .6rem; }
+  #admin-tools .admin-pagination { grid-column: 1 / -1; justify-content: space-between; font-size: .62rem; }
+  #admin-tools .admin-pagination button { min-height: 30px; padding: 3px 5px; font-size: .6rem; }
+  #admin-tools .admin-create-form:not([hidden]) { max-height: 34%; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 5px; }
+  #admin-tools .admin-create-form .admin-form-title,
+  #admin-tools .admin-create-form .admin-form-actions { grid-column: 1 / -1; }
+  #admin-tools .admin-table { min-width: 620px; font-size: .58rem; }
+  #admin-tools .admin-table th, #admin-tools .admin-table td { padding: 4px; }
+}
+
+/* Última capa de Administración: prevalece sobre los ajustes móviles históricos. */
+.admin-view.is-authenticated:not([hidden]) { height: 100% !important; max-height: 100% !important; min-height: 0 !important; overflow: hidden !important; }
+.admin-dashboard:not([hidden]) { height: 100% !important; max-height: 100% !important; min-height: 0 !important; grid-template-rows: auto auto auto minmax(0, 1fr) !important; overflow: hidden !important; }
+.admin-metrics-panel:not([hidden]) { grid-template-rows: auto auto auto auto auto !important; align-content: start !important; overflow: auto !important; scrollbar-width: none; }
+.admin-metrics-panel:not([hidden])::-webkit-scrollbar { display: none; }
+.admin-metrics-panel .admin-metrics-grid { grid-template-columns: repeat(4, minmax(0, 1fr)) !important; grid-auto-rows: minmax(70px, auto) !important; align-content: start; }
+.admin-metrics-panel .admin-metric-card { display: flex; min-height: 70px; flex-direction: column; justify-content: center; gap: 5px; overflow: visible; }
+.admin-metrics-panel .admin-metric-card span { line-height: 1.25; overflow-wrap: anywhere; }
+.admin-metrics-panel .admin-metric-card strong { margin: 0; font-size: clamp(1.05rem, 2vw, 1.45rem); line-height: 1.1; }
+.admin-metrics-panel .admin-metrics-note { line-height: 1.35; overflow-wrap: anywhere; }
+#admin-tools:not([hidden]) { display: flex !important; min-height: 0; flex-direction: column; }
+#admin-tools .admin-table-shell { flex: 1 1 0; min-height: 0; }
+@media (max-width: 767.98px) {
+  .admin-dashboard:not([hidden]) { height: 100% !important; }
+  .admin-metrics-panel:not([hidden]) { grid-template-rows: auto auto auto auto auto !important; padding: 7px !important; }
+  .admin-metrics-panel .admin-metrics-grid { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; grid-auto-rows: minmax(64px, auto) !important; }
+  .admin-metrics-panel .admin-metric-card { min-height: 64px; padding: 7px; }
+  .admin-metrics-panel .admin-metric-card span { font-size: .66rem; }
+}
+
+/* Panel de administrador: orden legible y contenido dentro de cada tarjeta. */
+.admin-dashboard:not([hidden]) {
+  grid-template-rows: auto auto auto minmax(0, 1fr) !important;
+  min-width: 0;
+}
+.admin-user-bar,
+.admin-user-bar > div,
+.admin-role-notice,
+.admin-dashboard-tabs,
+.admin-dashboard-tabs button,
+.admin-tab-panel,
+.admin-subheading { min-width: 0; }
+.admin-user-bar { flex-wrap: wrap; }
+.admin-user-bar strong,
+.admin-role-notice,
+.admin-dashboard-tabs button,
+.admin-subheading h2 { overflow-wrap: anywhere; }
+.admin-dashboard-tabs button { white-space: normal; line-height: 1.2; }
+.admin-metrics-panel:not([hidden]) {
+  grid-template-rows: auto auto minmax(0, 1fr) auto auto !important;
+  min-height: 0;
+  overflow: hidden !important;
+}
+.admin-metrics-panel .admin-metrics-grid {
+  grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  grid-template-rows: repeat(2, minmax(0, 1fr));
+  grid-auto-rows: unset !important;
+  min-height: 0;
+  align-content: stretch;
+}
+.admin-metrics-panel .admin-metric-card {
+  min-width: 0;
+  min-height: 0 !important;
+  overflow: hidden;
+}
+.admin-metrics-panel .admin-metrics-note {
+  min-width: 0;
+  margin: 0;
+  line-height: 1.25;
+  overflow-wrap: anywhere;
+}
+.admin-vehicles-panel:not([hidden]),
+.admin-vehicles-list { min-width: 0; overflow: hidden !important; }
+.admin-vehicles-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 230px), 1fr)); align-content: start; }
+@media (max-width: 767.98px) {
+  .admin-user-bar { align-items: center; }
+  .admin-user-bar > div { flex: 1 1 180px; }
+  .admin-metrics-panel .admin-metrics-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    grid-template-rows: repeat(4, minmax(0, 1fr));
+  }
+  .admin-metrics-panel .admin-metric-card { padding: 6px; }
+  .admin-metrics-panel .admin-metric-card span { font-size: clamp(.58rem, 2.2vw, .7rem); }
+  .admin-vehicles-list { grid-template-columns: 1fr; gap: 5px; }
+  .admin-vehicle-card { min-width: 0; padding: 6px; }
+  .admin-vehicle-card p { overflow-wrap: anywhere; }
+}
+
+/* En la sesión administradora el orden visual debe ser el mismo que el orden acordado. */
+.page-shell.admin-session .control-sidebar {
+  grid-template-areas: "admin control monitoring demo" !important;
+  grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+}
+@media (max-width: 767.98px) {
+  .page-shell.admin-session .control-sidebar {
+    grid-template-areas: "admin control monitoring demo" !important;
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  }
+}

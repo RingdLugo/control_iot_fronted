@@ -1,10 +1,10 @@
-import { MovementCatalog } from "./MovementCatalog.js?v=20261109-3";
+import { MovementCatalog } from "./MovementCatalog.js?v=20261123-1";
 
 const KEYS = { ArrowUp: "forward", w: "forward", W: "forward", ArrowDown: "backward", s: "backward", S: "backward", ArrowLeft: "left", a: "left", A: "left", ArrowRight: "right", d: "right", D: "right" };
 
 export class JoystickController {
-  constructor({ pad, handle, commands, onCommand, onDirection, group = "drive" }) {
-    Object.assign(this, { pad, handle, commands, onCommand, onDirection, group });
+  constructor({ pad, handle, commands, onCommand, onDirection, onMove = null, group = "drive" }) {
+    Object.assign(this, { pad, handle, commands, onCommand, onDirection, onMove, group });
     this.pointerId = null; this.direction = null; this.keyDirection = null; this.frame = 0; this.pending = null;
   }
   mount() {
@@ -21,9 +21,12 @@ export class JoystickController {
     if (next === this.direction) return;
     this.direction = next;
     if (!next) { this.onDirection("neutral", this.group); return; }
-    const command = MovementCatalog.commandForDirection(this.commands, next, this.group);
     this.onDirection(next, this.group);
-    if (command) this.onCommand(command); else this.onDirection(`missing:${next}`, this.group);
+    if (this.onMove) this.onMove(next, this.group);
+    else {
+      const command = MovementCatalog.commandForDirection(this.commands, next, this.group);
+      if (command) this.onCommand(command); else this.onDirection(`missing:${next}`, this.group);
+    }
   }
   #move(point) {
     const rect = this.pad.getBoundingClientRect(); const cx = rect.left + rect.width / 2; const cy = rect.top + rect.height / 2;

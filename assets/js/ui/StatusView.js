@@ -1,4 +1,4 @@
-const LABELS = { websocket: ["WebSocket WSS", "◉"], api: ["Servidor AWS · API de 21 servicios", "☁"], database: ["Base de datos · Amazon RDS", "▤"] };
+const LABELS = { websocket: ["WebSocket WSS", "◉"], api: ["API FastAPI · AWS", "☁"], database: ["Base de datos · Amazon RDS", "▤"] };
 
 export class StatusView {
   #stateKind(key, value) {

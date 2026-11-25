@@ -6,12 +6,13 @@
     <meta name="theme-color" content="#fff7fc" />
     <meta name="description" content="Control táctil para el vehículo IoT." />
     <title>Control IoT · Wish Ride</title>
-    <link rel="icon" type="image/svg+xml" href="./assets/favicon.svg?v=20261109-3" />
+    <link rel="icon" type="image/svg+xml" href="./assets/icons/favicon.svg?v=20261112-1" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Nunito:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="./css/styles.css?v=20261109-3" />
+    <link rel="stylesheet" href="./assets/css/styles.css?v=20261123-6" />
+    <link rel="stylesheet" href="./assets/css/admin.css?v=20261123-25" />
   </head>
   <body>
     <div class="page-shell">
@@ -19,8 +20,9 @@
       <header class="topbar container-xl">
         <a class="brand" href="./" aria-label="Wish Ride, Control IoT">
           <span class="brand-orbit" aria-hidden="true">✦</span>
-          <span><strong>Control IoT</strong><small>WISH RIDE · VEHÍCULO <span id="header-vehicle-id">05</span></small></span>
+          <span><strong>Control IoT</strong><small>WISH RIDE · UNIDAD <span id="header-vehicle-id">05</span></small></span>
         </a>
+        <button class="public-session-exit" id="public-session-exit" type="button" hidden>Salir del control</button>
         <button class="mobile-menu-button" id="menu-toggle" type="button" aria-expanded="false" aria-controls="control-navigation" aria-label="Abrir menú">☰</button>
       </header>
 
@@ -29,13 +31,15 @@
           <div class="status-grid" id="connection-status" aria-live="polite" aria-atomic="false">
             <p class="status-loading">Comprobando servicios…</p>
           </div>
-          <p class="status-footnote">WSS indica la conexión navegador-servidor, no al vehículo físico; API comprueba GET /; RDS queda sin verificar si no hay diagnóstico.</p>
+          <p class="status-footnote">WSS indica la sesión navegador-servidor; no confirma ESP físico. API y RDS se comprueban desde /health en el backend.</p>
         </section>
 
         <div class="workspace-grid">
           <nav class="control-sidebar" id="control-navigation" aria-label="Menú de Control IoT">
-            <button class="sidebar-link is-current" type="button" data-view-target="control" aria-current="page"><span aria-hidden="true">⌖</span> Control</button>
-            <button class="sidebar-link" type="button" data-view-target="demo"><span aria-hidden="true">☷</span> DEMO</button>
+            <button class="sidebar-link is-current" type="button" data-view-target="control" aria-current="page"><span class="nav-icon" aria-hidden="true">⌖</span><span class="nav-label">CONTROL</span></button>
+            <button class="sidebar-link" type="button" data-view-target="monitoring"><span class="nav-icon" aria-hidden="true">◷</span><span class="nav-label">MONITOREO</span></button>
+            <button class="sidebar-link" type="button" data-view-target="demo"><span class="nav-icon" aria-hidden="true">☷</span><span class="nav-label">DEMO</span></button>
+            <button class="sidebar-link" type="button" data-view-target="admin"><span class="nav-icon" aria-hidden="true">⚙</span><span class="nav-label">ADMINISTRACIÓN</span></button>
           </nav>
 
           <div class="workspace-content">
@@ -49,31 +53,44 @@
                 <div class="console-topline">
                   <span class="console-logo"><span id="vehicle-name">Vehículo IoT</span> <span aria-hidden="true">✦</span></span>
                   <span class="console-model"><span id="vehicle-id">Vehículo 05</span> · <span id="vehicle-controller">ESP8266</span></span>
+                  <button id="simulated-config-open" class="simulated-config-open" type="button" hidden>⚙ Configurar movimientos</button>
                 </div>
 
                 <div class="controller-main">
                   <section class="stick-unit drive-stick-unit" data-stick-group="drive" aria-labelledby="drive-stick-title">
-                    <h2 class="stick-title" id="drive-stick-title">AVANCE Y GIRO</h2>
                     <div class="joystick-wrap">
                       <span class="joy-label joy-up" aria-hidden="true">▲</span>
                       <span class="joy-label joy-left" aria-hidden="true">◀</span>
                       <span class="joy-label joy-right" aria-hidden="true">▶</span>
                       <span class="joy-label joy-down" aria-hidden="true">▼</span>
-                      <div class="joystick" id="joystick" role="group" tabindex="0" aria-disabled="true" aria-label="Joystick de desplazamiento. Usa flechas o WASD; al soltar se solicita DETENER.">
+                      <div class="joystick" id="drive-joystick" role="group" tabindex="0" aria-disabled="true" aria-label="Joystick de desplazamiento. Usa flechas o WASD; al soltar se solicita DETENER.">
                         <span class="joy-ring" aria-hidden="true"></span>
-                        <span class="joy-handle" id="joystick-handle" aria-hidden="true"><span>✦</span></span>
+                        <span class="joy-handle" id="drive-joystick-handle" aria-hidden="true"><span>✦</span></span>
                       </div>
                     </div>
-                    <div class="direction-readout" aria-live="polite"><span class="direction-dot"></span><span id="drive-direction-label">En pausa</span></div>
-                    <div class="stick-mapping direction-button-grid" id="drive-mapping" role="group" aria-label="Botones de desplazamiento"></div>
+                    <div class="stick-side-status"><h2 class="stick-title" id="drive-stick-title">AVANCE Y GIRO</h2><div class="direction-readout" aria-live="polite"><span class="direction-dot"></span><span id="drive-direction-label">En pausa</span></div></div>
                   </section>
 
-                  <section class="center-controls" aria-label="Acciones centrales">
+                  <section class="stick-unit arm-stick-unit" data-stick-group="arm" aria-labelledby="arm-stick-title">
+                    <div class="joystick-wrap">
+                      <span class="joy-label joy-up" aria-hidden="true">▲</span>
+                      <span class="joy-label joy-left" aria-hidden="true">◀</span>
+                      <span class="joy-label joy-right" aria-hidden="true">▶</span>
+                      <span class="joy-label joy-down" aria-hidden="true">▼</span>
+                      <div class="joystick" id="arm-joystick" role="group" tabindex="0" aria-disabled="true" aria-label="Joystick de pala. Arriba y abajo suben y bajan; izquierda y derecha mueven la pala. Al soltar se solicita DETENER.">
+                        <span class="joy-ring" aria-hidden="true"></span>
+                        <span class="joy-handle" id="arm-joystick-handle" aria-hidden="true"><span>✦</span></span>
+                      </div>
+                    </div>
+                    <div class="stick-side-status"><h2 class="stick-title" id="arm-stick-title">CONTROL DE PALA</h2><div class="direction-readout" aria-live="polite"><span class="direction-dot"></span><span id="arm-direction-label">En pausa</span></div></div>
+                  </section>
+
+                  <section class="center-controls" aria-label="Acción prioritaria">
                     <div class="center-stop" id="center-stop"></div>
                   </section>
 
                   <section class="stick-unit aux-controls-unit" aria-labelledby="aux-controls-title">
-                    <h2 class="stick-title" id="aux-controls-title">ACCIONES DEL CATÁLOGO</h2>
+                    <h2 class="stick-title" id="aux-controls-title">OTRAS ACCIONES</h2>
                     <div class="console-function-grid" id="auxiliary-controls" aria-live="polite">
                       <p class="subtle-message">Cargando acciones del vehículo…</p>
                     </div>
@@ -85,6 +102,32 @@
                 </div>
                 <button class="stop-button" id="stop-button" type="button" disabled aria-busy="false" aria-label="DETENER, acción prioritaria"><span class="stop-glyph" aria-hidden="true">■</span><span class="stop-label">DETENER</span><small>prioridad</small></button>
               </div>
+
+              <section id="simulated-motion-settings" class="simulated-motion-settings" aria-labelledby="simulated-motion-title" hidden>
+                <header class="simulated-motion-heading">
+                  <div><p class="eyebrow">SOLO CARRITO SIMULADO</p><h2 id="simulated-motion-title">Configurar movimientos</h2></div>
+                  <div class="simulated-motion-heading-actions"><span>Los cambios se guardan para tu cuenta y nunca accionan hardware físico.</span><button id="simulated-config-back" class="admin-secondary-button" type="button">Volver al control</button></div>
+                </header>
+                <div class="simulated-motion-tabs" role="tablist" aria-label="Configuración del simulador">
+                  <button class="is-active" type="button" role="tab" aria-selected="true" data-sim-tab="movements">Movimientos</button>
+                  <button type="button" role="tab" aria-selected="false" data-sim-tab="bindings">Asignar joysticks</button>
+                </div>
+                <section class="simulated-motion-tab-panel" data-sim-panel="movements" role="tabpanel">
+                  <p class="simulated-motion-help">Escribe cualquier acción virtual. El ángulo solo se necesita si quieres describir un giro.</p>
+                  <form id="simulated-motion-form" class="simulated-motion-form">
+                    <div class="admin-field"><label for="simulated-motion-name">Nombre del movimiento</label><input id="simulated-motion-name" class="form-control" maxlength="60" placeholder="Girar a la derecha 90°" required /></div>
+                    <div class="admin-field"><label for="simulated-motion-angle">Ángulo (opcional)</label><input id="simulated-motion-angle" class="form-control" type="number" min="0" max="360" placeholder="Sin ángulo" /></div>
+                    <div class="admin-field"><label for="simulated-motion-duration">Duración (ms)</label><input id="simulated-motion-duration" class="form-control" type="number" min="100" max="10000" value="1000" required /></div>
+                    <button class="admin-secondary-button" type="submit">＋ Agregar movimiento</button>
+                  </form>
+                  <div class="simulated-motion-list" aria-label="Movimientos guardados"></div>
+                </section>
+                <section class="simulated-motion-tab-panel" data-sim-panel="bindings" role="tabpanel" hidden>
+                  <p class="simulated-motion-help">Elige qué acción ejecutará cada dirección en cada joystick.</p>
+                  <div class="simulated-joystick-bindings" aria-label="Asignaciones de movimientos a los joysticks"></div>
+                </section>
+                <p id="simulated-motion-status" class="admin-feedback" role="status" aria-live="polite">Cargando configuración del simulador…</p>
+              </section>
 
               <section class="action-status" aria-labelledby="action-status-title">
                 <div class="action-status-icon" aria-hidden="true">✦</div>
@@ -102,13 +145,193 @@
               <div class="demo-box">
                 <label class="visually-hidden" for="demo-select">Selecciona una DEMO</label>
                 <select id="demo-select" class="form-select demo-select" disabled><option value="">Cargando DEMO…</option></select>
-                <div class="demo-preview" id="demo-preview" hidden aria-live="polite"></div>
-                <div class="demo-actions">
-                  <button class="demo-start" id="demo-start" type="button" disabled><span aria-hidden="true">▶</span> Iniciar DEMO</button>
-                  <button class="demo-cancel" id="demo-cancel" type="button" disabled>Cancelar</button>
+                <div class="demo-tabs" role="tablist" aria-label="Secciones de DEMO">
+                  <button id="demo-tab-run" class="demo-tab is-active" type="button" role="tab" aria-selected="true" aria-controls="demo-run-panel" tabindex="0" data-demo-tab="run">Ejecutar</button>
+                  <button id="demo-tab-create" class="demo-tab" type="button" role="tab" aria-selected="false" aria-controls="demo-create-panel" tabindex="-1" data-demo-tab="create" hidden>Crear DEMO</button>
+                  <button id="demo-tab-edit" class="demo-tab" type="button" role="tab" aria-selected="false" aria-controls="demo-editor-panel" tabindex="-1" data-demo-tab="edit" hidden>Editor de pasos</button>
                 </div>
-                <p class="demo-note" id="demo-note" aria-live="polite">Preparando catálogo…</p>
+                <div class="demo-tab-panels">
+                  <section id="demo-run-panel" class="demo-tab-panel demo-run-panel" role="tabpanel" aria-labelledby="demo-tab-run">
+                    <div class="demo-preview" id="demo-preview" hidden aria-live="polite"></div>
+                    <div class="demo-actions">
+                      <button class="demo-start" id="demo-start" type="button" disabled><span aria-hidden="true">▶</span> Iniciar DEMO</button>
+                      <button class="demo-cancel" id="demo-cancel" type="button" disabled>Cancelar</button>
+                    </div>
+                    <p class="demo-note" id="demo-note" aria-live="polite">Preparando catálogo…</p>
+                  </section>
+                  <div id="buyer-demo-tools" class="buyer-demo-tools" hidden>
+                    <section id="demo-create-panel" class="demo-tab-panel demo-create-panel" role="tabpanel" aria-labelledby="demo-tab-create" hidden>
+                      <div class="demo-panel-heading"><div><p class="eyebrow">SECUENCIAS PRIVADAS</p><h2>Mis DEMOs</h2></div><p>Crea una secuencia para tu carrito.</p></div>
+                      <form id="buyer-demo-create-form" class="admin-login-form">
+                        <div class="admin-field"><label for="buyer-demo-name">Nombre de la DEMO</label><input id="buyer-demo-name" name="nombre" class="form-control" required maxlength="80" /></div>
+                        <div class="admin-field"><label for="buyer-demo-description">Descripción</label><input id="buyer-demo-description" name="descripcion" class="form-control" maxlength="255" /></div>
+                        <button class="admin-secondary-button" type="submit">Crear DEMO</button>
+                      </form>
+                      <p id="buyer-demo-status" class="admin-feedback" role="status" aria-live="polite">Las DEMOs se guardan en la API para tu carrito.</p>
+                    </section>
+                    <section id="demo-editor-panel" class="demo-tab-panel demo-editor-panel" role="tabpanel" aria-labelledby="demo-tab-edit" hidden>
+                      <section class="buyer-demo-editor" aria-labelledby="buyer-demo-editor-title">
+                        <div class="demo-editor-form-pane">
+                          <div class="demo-panel-heading"><div><p class="eyebrow">ORDEN, MOVIMIENTO Y PAUSAS</p><h2 id="buyer-demo-editor-title">Editor de pasos</h2></div><p>Selecciona una DEMO editable arriba.</p></div>
+                          <div class="buyer-demo-meta"><div class="admin-field"><label for="buyer-editor-name">Nombre</label><input id="buyer-editor-name" class="form-control" maxlength="80" /></div><div class="admin-field"><label for="buyer-editor-description">Descripción</label><input id="buyer-editor-description" class="form-control" maxlength="255" /></div></div>
+                          <form id="buyer-demo-step-form" class="admin-login-form">
+                            <div class="admin-field"><label for="buyer-step-command">Comando</label><select id="buyer-step-command" name="id_comando" class="form-select" required></select></div>
+                            <div class="admin-field"><label for="buyer-step-duration">Duración (ms, máximo 10000)</label><input id="buyer-step-duration" name="duracion_ms" type="number" min="0" max="10000" value="1000" class="form-control" required /></div>
+                            <div class="admin-field"><label for="buyer-step-pause">Pausa (ms)</label><input id="buyer-step-pause" name="pausa_ms" type="number" min="0" max="10000" value="500" class="form-control" required /></div>
+                            <button class="admin-secondary-button" type="submit">Agregar paso</button>
+                          </form>
+                          <p id="buyer-demo-total" class="admin-feedback">Duración total: 0 s (máximo 60 s)</p>
+                          <div class="buyer-demo-editor-actions"><button id="buyer-demo-save" type="button" class="admin-primary-button">Guardar cambios</button><button id="buyer-demo-cancel" type="button" class="admin-secondary-button">Cancelar edición</button></div>
+                        </div>
+                        <section class="demo-editor-steps-pane" aria-labelledby="buyer-demo-steps-title">
+                          <div class="demo-editor-steps-heading"><p class="eyebrow">SECUENCIA ORDENADA</p><h3 id="buyer-demo-steps-title">Pasos de la DEMO</h3></div>
+                          <ol id="buyer-demo-draft" class="buyer-demo-draft" aria-label="Secuencia editable de la DEMO"></ol>
+                        </section>
+                      </section>
+                    </section>
+                  </div>
+                </div>
               </div>
+            </section>
+
+            <section class="monitor-view" id="monitor-view" aria-labelledby="monitor-title" hidden>
+              <header class="section-heading monitor-heading">
+                <div><p class="eyebrow">ACTUALIZACIÓN EN TIEMPO REAL</p><h1 id="monitor-title">Monitoreo del vehículo</h1></div>
+                <button class="monitor-refresh" id="monitor-refresh" type="button" aria-label="Actualizar estado e historial">↻ <span>Actualizar</span></button>
+              </header>
+              <article class="monitor-latest" aria-live="polite" aria-atomic="true">
+                <div class="monitor-latest-icon" aria-hidden="true">✦</div>
+                <div class="monitor-latest-copy">
+                  <p class="eyebrow">ÚLTIMO ESTADO REPORTADO</p>
+                  <h2 id="monitor-latest-name">Cargando estado…</h2>
+                  <p id="monitor-latest-details" class="monitor-latest-details">Consultando la API del vehículo.</p>
+                  <p id="monitor-latest-source" class="monitor-latest-source">La recepción de un evento no confirma movimiento físico.</p>
+                </div>
+              </article>
+              <section class="monitor-history" aria-labelledby="monitor-history-title">
+                <div class="monitor-history-heading">
+                  <div><p class="eyebrow">REGISTROS PERSISTIDOS</p><h2 id="monitor-history-title">Últimos 10 movimientos individuales</h2></div>
+                  <span class="history-count" id="history-count">—</span>
+                </div>
+                <p class="monitor-feedback" id="monitor-feedback" role="status" aria-live="polite">Cargando historial…</p>
+                <div class="monitor-table-wrap">
+                  <table class="monitor-table">
+                    <caption class="visually-hidden">Movimientos individuales del vehículo, ordenados del más reciente al más antiguo</caption>
+                    <thead><tr><th scope="col">#</th><th scope="col">Movimiento</th><th scope="col">Fecha</th><th scope="col">Hora</th></tr></thead>
+                    <tbody id="monitor-history-body"><tr><td colspan="4">Cargando registros…</td></tr></tbody>
+                  </table>
+                </div>
+                <p class="monitor-time-note">Fecha y hora mostradas tal como las entrega la API; su zona horaria debe confirmarse con el backend.</p>
+              </section>
+            </section>
+
+            <section class="admin-view" id="admin-view" aria-labelledby="admin-title" hidden>
+              <header class="section-heading admin-heading">
+                <div><p class="eyebrow">ACCESO A CONTROL IOT</p><h1 id="admin-title">Acceso a Control IoT</h1></div>
+                <span class="heading-sticker sticker-blue" aria-hidden="true">⚙</span>
+              </header>
+              <p class="section-hint">Selecciona Usuario, Modo invitado o Administrador.</p>
+
+                <section class="admin-login-card" id="admin-login-panel" aria-label="Acceso a Control IoT">
+                  <div class="access-tabs" role="tablist" aria-label="Tipo de acceso">
+                    <button type="button" role="tab" id="access-tab-user" aria-controls="access-panel-user" aria-selected="true" data-access-tab="user">Usuario</button>
+                    <button type="button" role="tab" id="access-tab-guest" aria-controls="access-panel-guest" aria-selected="false" data-access-tab="guest">Modo invitado</button>
+                    <button type="button" role="tab" id="access-tab-admin" aria-controls="access-panel-admin" aria-selected="false" data-access-tab="admin">Administrador</button>
+                  </div>
+                  <section id="access-panel-user" class="access-panel" role="tabpanel" aria-labelledby="access-tab-user" data-access-panel="user">
+                    <div class="admin-login-intro"><span class="admin-card-icon" aria-hidden="true">♙</span><div><h2 id="admin-login-title">Iniciar sesión</h2><p>Accede a tu cuenta de usuario y a tu carrito simulado.</p></div></div>
+                    <div id="user-login-slot">
+                      <form id="admin-login-form" class="admin-login-form" autocomplete="on">
+                        <div class="admin-field"><label for="admin-email">Correo electrónico</label><input id="admin-email" name="correo" type="email" class="form-control" autocomplete="username" required maxlength="254" /></div>
+                        <div class="admin-field"><label for="admin-password">Contraseña</label><input id="admin-password" name="password" type="password" class="form-control" autocomplete="current-password" required minlength="1" maxlength="128" /></div>
+                        <button class="admin-primary-button" type="submit">Entrar</button>
+                        <div class="google-login-option" hidden><span>o continúa con</span><div id="google-login-button-user" hidden></div></div>
+                      </form>
+                      <p id="admin-login-status" class="admin-feedback" role="status" aria-live="polite">La sesión se guarda solo en esta pestaña.</p>
+                    </div>
+                  </section>
+                  <section id="access-panel-guest" class="access-panel" role="tabpanel" aria-labelledby="access-tab-guest" data-access-panel="guest" hidden>
+                    <section class="guest-access-card" aria-labelledby="guest-login-title">
+                      <span class="admin-card-icon" aria-hidden="true">⌁</span>
+                      <div><h2 id="guest-login-title">Prueba temporal de exhibición</h2><p>Explora los modelos con unidades de exhibición disponibles y solicita una sesión limitada. La API reserva la unidad y autoriza solo la DEMO y los comandos permitidos.</p></div>
+                      <div class="guest-catalog-actions">
+                        <label for="guest-model-select">Modelo disponible</label>
+                        <select id="guest-model-select" class="form-select"><option value="">Cargando catálogo…</option></select>
+                        <button id="guest-session-request" class="admin-secondary-button" type="button" disabled>Solicitar prueba de 10 minutos</button>
+                      </div>
+                      <div id="guest-catalog-list" class="guest-catalog-list" aria-label="Catálogo público de modelos" aria-live="polite"></div>
+                      <p id="guest-access-status" class="admin-feedback" role="status" aria-live="polite">Consultando unidades de exhibición…</p>
+                    </section>
+                  </section>
+                  <section id="access-panel-admin" class="access-panel" role="tabpanel" aria-labelledby="access-tab-admin" data-access-panel="admin" hidden>
+                    <div class="admin-login-intro"><span class="admin-card-icon" aria-hidden="true">⚙</span><div><h2>Acceso de administrador</h2><p>Usa la cuenta con rol de administrador registrada en la API.</p></div></div>
+                    <form id="admin-account-login-form" class="admin-login-form" autocomplete="on">
+                      <div class="admin-field"><label for="admin-account-email">Correo electrónico</label><input id="admin-account-email" name="correo" type="email" class="form-control" autocomplete="username" required maxlength="254" /></div>
+                      <div class="admin-field"><label for="admin-account-password">Contraseña</label><input id="admin-account-password" name="password" type="password" class="form-control" autocomplete="current-password" required minlength="1" maxlength="128" /></div>
+                      <button class="admin-primary-button" type="submit">Entrar a Administración</button>
+                      <div class="google-login-option" hidden><span>o continúa con</span><div id="google-login-button-admin" hidden></div></div>
+                    </form>
+                    <p id="admin-account-login-status" class="admin-feedback" role="status" aria-live="polite">Inicia sesión para abrir el panel de administración.</p>
+                  </section>
+              </section>
+
+              <section class="admin-dashboard" id="admin-dashboard" hidden>
+                <div class="admin-user-bar">
+                  <div><span class="admin-user-label">Sesión</span><strong id="admin-user-name">—</strong><span id="admin-user-role" class="admin-role-chip">—</span></div>
+                  <button id="admin-logout" type="button" class="admin-secondary-button">Cerrar sesión</button>
+                </div>
+                <div id="admin-role-notice" class="admin-role-notice" role="status"></div>
+                <div id="admin-dashboard-tabs" class="admin-dashboard-tabs" role="tablist" aria-label="Secciones de administración" hidden>
+                  <button type="button" role="tab" id="admin-tab-summary" aria-controls="admin-metrics-panel" aria-selected="true" data-admin-tab="summary">Resumen</button>
+                  <button type="button" role="tab" id="admin-tab-vehicles" aria-controls="admin-vehicles-panel" aria-selected="false" data-admin-tab="vehicles">Unidades</button>
+                  <button type="button" role="tab" id="admin-tab-manage" aria-controls="admin-tools" aria-selected="false" data-admin-tab="manage">Gestión de datos</button>
+                </div>
+                <section id="admin-metrics-panel" class="admin-metrics-panel admin-tab-panel" data-admin-panel="summary" role="tabpanel" aria-labelledby="admin-tab-summary" hidden>
+                  <div class="admin-subheading"><div><p class="eyebrow">DATOS CONSULTADOS EN AWS/RDS</p><h2 id="admin-metrics-title">Resumen de la empresa</h2></div><button id="admin-metrics-refresh" class="admin-secondary-button" type="button">Actualizar métricas</button></div>
+                  <p id="admin-metrics-status" class="admin-feedback" role="status" aria-live="polite">Cargando métricas reales…</p>
+                  <div id="admin-metrics-grid" class="admin-metrics-grid" aria-live="polite"></div>
+                  <p id="admin-wss-note" class="admin-metrics-note">La sesión WSS no verifica conexión física del ESP.</p>
+                  <div class="admin-dashboard-shortcuts" aria-label="Accesos a gestión">
+                    <button type="button" data-admin-resource="modelos">Modelos</button><button type="button" data-admin-resource="unidades">Unidades</button><button type="button" data-admin-resource="clientes">Clientes</button><button type="button" data-admin-resource="asignaciones">Asignaciones</button><button type="button" data-admin-resource="demos">DEMO</button>
+                  </div>
+                </section>
+                <section id="admin-vehicles-panel" class="admin-vehicles-panel admin-tab-panel" data-admin-panel="vehicles" role="tabpanel" aria-labelledby="admin-tab-vehicles" hidden>
+                  <div class="admin-subheading"><div><p class="eyebrow">UNIDADES AUTORIZADAS</p><h2 id="admin-vehicles-title">Mis vehículos</h2></div><span id="admin-vehicles-count" class="history-count">—</span></div>
+                  <div id="admin-vehicles-list" class="admin-vehicles-list" aria-live="polite"><p class="admin-empty">Consultando unidades autorizadas…</p></div>
+                </section>
+                <section id="admin-tools" class="admin-tab-panel" data-admin-panel="manage" role="tabpanel" aria-labelledby="admin-tab-manage" aria-label="Herramientas de administración" hidden>
+                  <div class="admin-toolbar">
+                    <div class="admin-field admin-resource-field"><label for="admin-resource">Área de gestión</label>
+                      <select id="admin-resource" class="form-select">
+                        <option value="modelos">Modelos comerciales</option>
+                        <option value="unidades">Unidades e inventario</option>
+                        <option value="clientes">Compradores (cuenta + carrito)</option>
+                        <option value="usuarios">Usuarios y roles</option>
+                        <option value="asignaciones">Asignaciones</option>
+                        <option value="demos">Demos</option>
+                        <option value="pasos">Pasos de una DEMO</option>
+                        <option value="sesiones">Sesiones de invitado</option>
+                        <option value="auditoria">Auditoría</option>
+                      </select>
+                    </div>
+                    <div class="admin-toolbar-actions"><button id="admin-reload" type="button" class="admin-secondary-button">↻ Actualizar</button><button id="admin-create-toggle" type="button" class="admin-primary-button">＋ Nuevo</button></div>
+                  </div>
+                  <form id="admin-filter-form" class="admin-filter-form">
+                    <div class="admin-field" id="admin-filter-text-wrap"><label id="admin-filter-text-label" for="admin-filter-text">Buscar</label><input id="admin-filter-text" class="form-control" type="search" /></div>
+                    <div class="admin-field" id="admin-filter-option-wrap"><label id="admin-filter-option-label" for="admin-filter-option">Filtro</label><select id="admin-filter-option" class="form-select"><option value="">Todos</option></select></div>
+                    <button class="admin-secondary-button" type="submit">Aplicar filtro</button>
+                    <div class="admin-pagination"><button class="admin-secondary-button" id="admin-page-prev" type="button">Anterior</button><span id="admin-page-label">Página 1</span><button class="admin-secondary-button" id="admin-page-next" type="button">Siguiente</button></div>
+                  </form>
+                  <p id="admin-resource-status" class="admin-feedback" role="status" aria-live="polite">Selecciona un área para consultar la API.</p>
+                  <div id="admin-invitation-token" class="admin-token-result" hidden></div>
+                  <form id="admin-create-form" class="admin-create-form" hidden></form>
+                  <div class="admin-table-shell">
+                    <div class="admin-table-scroll" tabindex="0" aria-label="Tabla de registros; desliza horizontalmente si es necesario">
+                      <table class="table table-sm admin-table"><caption id="admin-table-caption">Registros del área seleccionada</caption><thead id="admin-table-head"></thead><tbody id="admin-table-body"><tr><td>Inicia sesión para consultar los datos.</td></tr></tbody></table>
+                    </div>
+                  </div>
+                </section>
+              </section>
             </section>
           </div>
         </div>
@@ -118,6 +341,6 @@
         <p>Desarrollado por <strong>Ingrid Alison Porras Lugo</strong> · 2026</p>
       </footer>
     </div>
-    <script type="module" src="./js/main.js?v=20261109-3"></script>
+    <script type="module" src="./assets/js/main.js?v=20261124-2"></script>
   </body>
 </html>
